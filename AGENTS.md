@@ -139,198 +139,86 @@ These are the building blocks for every page. Getting them right early enforces 
 #### 2.1 Core Utilities
 
 - **`src/lib/utils.ts`**
-  - Add `cn()` helper for conditional classes (wrapping `clsx` + `tailwind-merge`):
-
-    ```ts
-    import { clsx } from 'clsx';
-    import { twMerge } from 'tailwind-merge';
-
-    export function cn(...inputs: Parameters<typeof clsx>) {
-      return twMerge(clsx(...inputs));
-    }
-    ```
+  - Add `cn()` helper for conditional classes, wrapping `clsx` and `tailwind-merge`. Accepts any number of class inputs and returns a merged, deduplicated class string.
 
 #### 2.2 Typography Primitives
 
 - **`Heading.tsx`**
-  - Semantic heading wrapper using the secondary color for titles.
-  - API (example):
-
-    ```ts
-    type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
-
-    export interface HeadingProps extends React.HTMLAttributes<HTMLHeadingElement> {
-      as?: HeadingLevel; // defaults to 2
-    }
-    ```
-
-  - Implementation: Render `<h{as}>` with Tailwind classes like `text-secondary font-semibold` and responsive sizes (e.g., `text-3xl md:text-4xl` for h1/h2).
+  - Semantic heading wrapper using `text-secondary` for titles
+  - Props: `as` (heading level 1-6, defaults to 2), extends `HTMLAttributes<HTMLHeadingElement>`
+  - Render dynamic `<h1>`–`<h6>` with responsive font sizes (e.g., larger for h1/h2)
 
 - **`Text.tsx`**
-  - Body text with the `text` color token for readability.
-  - API:
-
-    ```ts
-    export interface TextProps extends React.HTMLAttributes<HTMLParagraphElement> {
-      as?: 'p' | 'span' | 'div';
-      muted?: boolean; // lighter color for secondary text
-    }
-    ```
-
-  - Use `text-text` for normal, a lighter gray for `muted`.
+  - Body text component using `text-text` color for readability
+  - Props: `as` (p, span, or div), `muted` boolean for lighter secondary text
+  - Extends `HTMLAttributes<HTMLParagraphElement>`
 
 #### 2.3 Layout Primitives
 
 - **`Container.tsx`**
-  - Centers content and controls horizontal padding.
-  - API:
-
-    ```ts
-    export interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
-      maxWidth?: 'lg' | 'xl' | '2xl' | 'full'; // default: 'xl'
-    }
-    ```
-
-  - Implementation: `mx-auto px-4 md:px-8` with `max-w-7xl` (or variants) based on `maxWidth`.
+  - Centers content with horizontal padding
+  - Props: `maxWidth` (lg, xl, 2xl, or full; defaults to xl)
+  - Extends `HTMLAttributes<HTMLDivElement>`
 
 - **`Section.tsx`**
-  - Semantic wrapper for major page sections.
-  - API:
-
-    ```ts
-    export interface SectionProps extends React.HTMLAttributes<HTMLElement> {
-      id?: string;
-      bg?: 'default' | 'muted' | 'white'; // maps to background tokens
-      as?: 'section' | 'div';
-      'aria-labelledby'?: string;
-    }
-    ```
-
-  - Implementation:
-    - Default: `as="section"`, `bg="default"` → `bg-background`.
-    - `muted` → `bg-background` with optional `border-y border-surface`.
-    - `white` → `bg-white`.
-    - Always apply `py-section` spacing token from Tailwind config.
+  - Semantic wrapper for major page sections with consistent vertical spacing
+  - Props: `id`, `bg` (default, muted, or white), `as` (section or div), `aria-labelledby`
+  - Extends `HTMLAttributes<HTMLElement>`
+  - Background variants map to palette tokens: default → `bg-background`, muted → with border accents, white → `bg-white`
 
 #### 2.4 Interactive Primitives
 
 - **`Button.tsx`**
-  - Primary CTA for conversions; secondary for less prominent actions; align strictly with palette roles.
-  - API:
+  - Primary CTA for conversions; secondary for less prominent actions
+  - Props: `variant` (primary, secondary, outline, ghost), `size` (sm, md, lg), `fullWidth`, `isLoading`
+  - Extends `ButtonHTMLAttributes<HTMLButtonElement>`
+  - Variant styling uses palette tokens (no raw hex): primary uses `bg-primary`, secondary uses `bg-secondary`, outline has `border-surface`, ghost is transparent
+  - Handle `disabled` and `isLoading` states with appropriate ARIA attributes
+  - Implement with `React.forwardRef` for focus management
 
-    ```ts
-    export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost';
-    export type ButtonSize = 'sm' | 'md' | 'lg';
-
-    export interface ButtonProps
-      extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-      variant?: ButtonVariant;
-      size?: ButtonSize;
-      fullWidth?: boolean;
-      isLoading?: boolean;
-    }
-    ```
-
-  - Implementation notes:
-    - Use Tailwind tokens from Step 1, **no raw hex values**:
-      - `primary`: `bg-primary text-white hover:bg-primary-dark focus-visible:outline-primary`
-      - `secondary`: `bg-secondary text-white hover:bg-secondary/90`
-      - `outline`: `border border-surface text-secondary bg-white hover:bg-background`
-      - `ghost`: `text-primary bg-transparent hover:bg-background`
-    - Respect `disabled` & `isLoading` (add `aria-busy`, `cursor-not-allowed`, reduce opacity).
-    - Ensure keyboard focus styles: `focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`.
-    - Implement with `React.forwardRef<HTMLButtonElement, ButtonProps>`.
-
-- **`LinkButton.tsx` (optional but useful for nav/CTAs)**
-  - Wraps `next/link` but uses Button styling with `asChild` pattern or a simple `a`-styled button for links.
+- **`LinkButton.tsx`** (optional)
+  - Wraps `next/link` with Button styling for navigation CTAs
 
 - **`Badge.tsx`**
-  - For small labels (e.g., "CFA", "CPA", "New service").
-  - API:
-
-    ```ts
-    export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-      variant?: 'neutral' | 'success' | 'info';
-    }
-    ```
-
-  - Implementation:
-    - Neutral: `bg-surface text-secondary`.
-    - Info (e.g., for insights): `bg-primary/10 text-primary`.
+  - Small labels for credentials (e.g., "CFA", "CPA") or status indicators
+  - Props: `variant` (neutral, success, info), extends `HTMLAttributes<HTMLSpanElement>`
+  - Neutral uses `bg-surface text-secondary`, info uses `bg-primary/10 text-primary`
 
 #### 2.5 Card & Surface Primitives
 
 - **`Card.tsx`**
-  - Used for services, team members, testimonials.
-  - API:
+  - Container for services, team members, testimonials
+  - Props: `variant` (default, bordered, outlined), `as` (div or article)
+  - Extends `HTMLAttributes<HTMLDivElement>`
+  - Base styling: white background, text color, rounded corners, optional light shadow or border
 
-    ```ts
-    export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-      variant?: 'default' | 'bordered' | 'outlined';
-      as?: 'div' | 'article';
-    }
-    ```
-
-  - Implementation:
-    - Base: `bg-white text-text rounded-lg shadow-sm` (if you want very light shadows) or just `border` for a flatter design.
-    - Use `border-surface` for `bordered`/`outlined`.
-    - Maintain good contrast and large enough padding (e.g., `p-6`).
-
-- **`Divider.tsx` (simple horizontal rule)**
-  - Implementation: `border-t border-surface my-8`.
+- **`Divider.tsx`**
+  - Simple horizontal rule using `border-surface` color with vertical margin
 
 #### 2.6 Form Primitives
 
 These are **presentational only**; validation and form logic live in Step 4 (React Hook Form).
 
 - **`Label.tsx`**
-  - API:
-
-    ```ts
-    export interface LabelProps
-      extends React.LabelHTMLAttributes<HTMLLabelElement> {}
-    ```
-
-  - Implementation: `block text-sm font-medium text-secondary mb-1`.
+  - Extends `LabelHTMLAttributes<HTMLLabelElement>`
+  - Styled with `text-secondary`, small font, medium weight
 
 - **`Input.tsx`**
-  - API:
-
-    ```ts
-    export interface InputProps
-      extends React.InputHTMLAttributes<HTMLInputElement> {
-      hasError?: boolean;
-    }
-    ```
-
-  - Implementation:
-    - Base: `w-full rounded-md border border-surface bg-white text-text placeholder:text-slate-400 px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1`.
-    - If `hasError`, add `border-red-500` and `aria-invalid="true"`.
+  - Props: `hasError` boolean, extends `InputHTMLAttributes<HTMLInputElement>`
+  - Base styling: full width, rounded, `border-surface`, `text-text`, focus ring in primary color
+  - Error state: red border with `aria-invalid`
 
 - **`Textarea.tsx`** and **`Select.tsx`**
-  - Similar props to `Input` (`hasError?: boolean`), use `<textarea>` and `<select>` respectively.
-  - Prefer **native `<select>`** for accessibility; style with same border/background/focus tokens.
+  - Same props pattern as Input (`hasError` boolean)
+  - Use native elements for accessibility; match Input styling
 
-- **`FormField.tsx` (optional molecule)**
-  - Wraps `Label`, form control, and error text.
-  - API:
+- **`FormField.tsx`** (optional molecule)
+  - Wraps Label, form control, and error message
+  - Props: `id`, `label`, `error`, `children`, optional `hint`
+  - Associates label via `htmlFor`, links error to input via `aria-describedby`
 
-    ```ts
-    export interface FormFieldProps {
-      id: string;
-      label: string;
-      error?: string;
-      children: React.ReactElement;
-      hint?: string;
-    }
-    ```
-
-  - Implementation:
-    - Associates `Label` via `htmlFor={id}`.
-    - If `error`, render below with `id={`${id}-error`}` and have child input `aria-describedby` and `aria-invalid`.
-
-- **`Checkbox.tsx`** (for "Subscribe", "Agree to terms")
-  - Base implementation wrapping `<input type="checkbox">`, keeping native behavior and visible label.
+- **`Checkbox.tsx`**
+  - Native checkbox with visible label, for "Subscribe" or "Agree to terms" patterns
 
 #### 2.7 Accessibility Expectations
 
@@ -370,11 +258,81 @@ These are **presentational only**; validation and form logic live in Step 4 (Rea
 #### Why now?
 Frames every page; reuse primitives inside them.
 
-- In src/components/layout/: Build Navbar.tsx (logo with text-primary, nav menu from constants using text-secondary, mobile menu), Footer.tsx (links, contact, socials with bg-secondary).
-- Add to root layout.
-- Make responsive with Tailwind breakpoints.
- 
-**Best practice:** Keep layouts "dumb" (props-driven, no heavy logic). Use palette for accents (e.g., active links in primary).
+- **File location:** Implement layout components in `src/components/layout/` and integrate with root layout.
+
+#### 3.1 Core Layout Components
+
+- **`Navbar.tsx`**
+  - Main navigation with logo and menu items
+  - Mobile-responsive with hamburger menu
+  - Uses `text-primary` for logo, `text-secondary` for nav links
+  - Active link styling with `text-primary` and border accents
+
+- **`Footer.tsx`**
+  - Site footer with company info, quick links, and social media
+  - Background: `bg-secondary` with white text
+  - Responsive grid layout (4-col desktop → 1-col mobile)
+
+- **`MobileMenu.tsx`**
+  - Collapsible navigation drawer for mobile devices
+  - Slide-down animation with focus management
+  - Keyboard navigation support (Escape to close)
+
+#### 3.2 TypeScript Interfaces
+
+Define the following interfaces:
+
+- **`NavLink`**: Core navigation item with `href`, `label`, and optional `isActive` flag
+- **`NavbarProps`**: Extends `HTMLAttributes<HTMLElement>` with `logo` (ReactNode), `navLinks` array, `mobileMenuOpen` state, and `onMobileMenuToggle` callback
+- **`FooterProps`**: Extends `HTMLAttributes<HTMLElement>` with `companyInfo` object (name, tagline, address, phone, email), `quickLinks` array, and `socialLinks` array (href, label, icon)
+- **`MobileMenuProps`**: Include `isOpen` boolean, `onClose` callback, and `navLinks` array
+
+#### 3.3 Implementation Guidelines
+
+- **Logo styling:** `text-primary` color with proper contrast
+- **Navigation links:** `text-secondary` with hover states in `text-primary`
+- **Mobile menu toggle:** Hamburger icon with `aria-expanded` and `aria-controls`
+- **Footer content:** Company info, navigation links, contact details, social media
+- **Responsive behavior:** Desktop horizontal nav, mobile collapsible menu
+
+#### 3.4 Accessibility Requirements
+
+- Use semantic `<nav>` and `<footer>` elements with proper ARIA labels
+- Include a "Skip to main content" link as the first focusable element
+- Ensure keyboard navigation works (Tab, Enter, Escape)
+- Mobile menu: Focus management and screen reader announcements
+- Color contrast: Verify white text on dark footer meets WCAG AA standards
+- Interactive elements must have visible focus indicators
+
+#### 3.5 TypeScript Patterns
+
+- Define Props interfaces extending relevant HTML attributes
+- Use discriminated unions for component variants where applicable
+- Export component types for external use
+- Implement with `React.forwardRef` for focusable elements
+
+#### 3.6 Integration & Constants
+
+- Import components in `src/app/layout.tsx`
+- Use `NAV_LINKS` and `COMPANY_INFO` constants from `src/constants/index.ts`
+- Pass navigation and company data as props
+- Ensure consistent data structure across components
+
+#### 3.7 Responsive Design
+
+- **Desktop (md+):** Horizontal navigation, full footer grid
+- **Mobile (<md):** Hamburger menu, stacked footer layout
+- **Breakpoints:** Use Tailwind's `md:` and `sm:` prefixes consistently
+- **Touch targets:** Minimum 44px for mobile interactive elements
+
+#### 3.8 State Management
+
+- Manage `mobileMenuOpen` state in root layout using `useState`
+- Pass state and toggle callback as props to Navbar and MobileMenu
+- Keep layout components stateless ("dumb") — state lives in the parent
+
+**Time estimate:** 45-90 minutes.  
+**Best practice:** Keep layouts "dumb" (props-driven, no heavy logic). Use palette colors consistently (nav: `text-secondary`/`text-primary`, footer: `bg-secondary`). Test keyboard navigation and mobile menu functionality. Ensure proper focus management for accessibility.
 
 ### Step 4: Section Components (Organisms - Reusable Page Blocks)
 
