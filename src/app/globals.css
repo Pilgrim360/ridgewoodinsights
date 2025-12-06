@@ -1,24 +1,11 @@
 @import "tailwindcss";
 
-@config {
-  theme: {
-    colors: {
-      primary: '#006466',
-      secondary: '#2C3E50',
-      text: '#415161',
-      surface: '#E2E7ED',
-      background: '#F8F9FB',
-      white: '#FFFFFF'
-    }
-  }
-}
-
 @layer base {
   html {
     scroll-behavior: smooth;
   }
 
   body {
-    color: var(--color-text);
+    color: #415161;
   }
 }
