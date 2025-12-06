@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import { Navbar, Footer } from '@/components/layout';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -10,7 +11,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: 'Ridgewood Insights - Accounting and Financial Insights Firm',
-  description: 'Professional accounting services and financial insights for businesses and individuals.',
+  description:
+    'Professional accounting services and financial insights for businesses and individuals.',
 };
 
 export default function RootLayout({
@@ -20,8 +22,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={inter.variable}>
-      <body className={`${inter.className} antialiased bg-background`}>
-        {children}
+      <body className={`${inter.className} antialiased bg-background flex min-h-screen flex-col`}>
+        <Navbar />
+        <main id="main-content" className="flex-1">
+          {children}
+        </main>
+        <Footer />
       </body>
     </html>
   );
