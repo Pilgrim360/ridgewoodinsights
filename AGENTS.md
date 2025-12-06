@@ -150,8 +150,7 @@ Frames every page; reuse primitives inside them.
 - In src/components/layout/: Build Navbar.tsx (logo with text-primary, nav menu from constants using text-secondary, mobile menu), Footer.tsx (links, contact, socials with bg-secondary).
 - Add to root layout.
 - Make responsive with Tailwind breakpoints.
-
-**Time estimate:** 1 hour.  
+ 
 **Best practice:** Keep layouts "dumb" (props-driven, no heavy logic). Use palette for accents (e.g., active links in primary).
 
 ### Step 4: Section Components (Organisms - Reusable Page Blocks)
@@ -159,12 +158,11 @@ Frames every page; reuse primitives inside them.
 #### Why here?
 Larger composable units built from primitives; establishes patterns.
 
-- In src/components/sections/: Build Hero.tsx (above-fold with bg-background, headings in secondary, main CTA button in primary), ServicesOverview.tsx (brief showcase with Cards in white on background), AboutTrust.tsx (why choose us, text in text color), CTA.tsx (contact/consultation button in primary), Testimonials.tsx, etc.
+- In src/components/sections/: Build Hero.tsx (above-fold with bg-background, headings in secondary, main CTA button in primary), ServicesOverview.tsx (brief showcase with Cards in white on background), AboutTrust.tsx (why choose us, text in text color), CTA.tsx (contact/consultation button in primary), Testimonials.tsx, Inights/Latestnews.tsx, etc.
 - In src/components/forms/: Build ContactForm.tsx (with React Hook Form, validation; inputs in text color with borders in surface).
 - Handle images: Use next/image with placeholders.
 - Compose with primitives (e.g., Hero includes heading, text, Button).
 
-**Time estimate:** 2-4 hours.  
 **Best practice:** Prop-driven for reusability (e.g., Hero props: title, subtitle, imageSrc). Use grids/flex for layouts. Apply palette roles strictly (e.g., borders in surface, backgrounds in off-white).
 
 ### Step 5: Assemble Pages (Full Compositions - In Order of Importance)
@@ -172,14 +170,13 @@ Larger composable units built from primitives; establishes patterns.
 #### Why later?
 Pages are thin containers; build once components are ready. Follow user journey: Home → Services → About → Contact.
 
-- Start with Home (src/app/(marketing)/page.tsx): Stack sections (Hero > Services > About/Trust > CTA), using background as page bg.
+- Start with Home (src/app/(marketing)/page.tsx): Stack sections (Hero > Services > About/Trust > CTA > Insights), using background as page bg.
 - Services (/services): Detail offerings (use Cards with white bg, text in text color).
 - About (/about): Team, history, values (headings in secondary).
 - Contact (/contact): Form, info, map (form elements in palette colors).
 - Stub portal if needed.
 - Add metadata per page for SEO (use generateMetadata).
-
-**Time estimate:** 1-2 hours per page.  
+ 
 **Best practice:** Keep pages thin—no inline logic; use Suspense for loading. Get to 70% across pages before polishing.
 
 ### Step 6: Polish & Optimization (Cross-Cutting Refinements)
@@ -193,7 +190,6 @@ Refine globally after structure is in place.
 - Implement SEO: Proper metadata, alt text.
 - Accessibility: Run Lighthouse audits; ensure color contrast meets standards (e.g., text on white).
 
-**Time estimate:** 1-2 hours.  
 **Best practice:** Test on mobile/desktop; avoid custom CSS—stick to Tailwind. Verify palette usage for consistency and readability.
 
 ### Step 7: Testing, Additional Features, and Deployment (Wrap-Up)
@@ -206,7 +202,6 @@ Ensure end-to-end functionality; add extras only as needed.
 - Optimize performance: Analyze with next build.
 - Deploy: GitHub + Vercel for auto-deploys; add analytics (Google or Vercel).
 
-**Time estimate:** 30-60 minutes.  
 **Best practice:** Write minimal tests (e.g., for forms); iterate based on real content.
 
 ## Quick Start Checklist
