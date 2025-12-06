@@ -1,0 +1,123 @@
+'use client';
+
+import Link from 'next/link';
+import { Button } from '../ui/Button';
+import { Heading } from '../ui/Heading';
+import { Text } from '../ui/Text';
+import { Container } from '../ui/Container';
+import { Section } from '../ui/Section';
+
+export interface CTAAction {
+  label: string;
+  href: string;
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+}
+
+export interface CTAProps {
+  title: string;
+  description?: string;
+  primaryAction: CTAAction;
+  secondaryAction?: CTAAction;
+  variant?: 'centered' | 'split' | 'inline';
+  backgroundVariant?: 'default' | 'muted' | 'white';
+  urgencyMessage?: string;
+  className?: string;
+}
+
+export function CTA({
+  title,
+  description,
+  primaryAction,
+  secondaryAction,
+  variant = 'centered',
+  backgroundVariant = 'default',
+  urgencyMessage,
+  className = '',
+}: CTAProps) {
+  const backgroundClasses = {
+    default: 'bg-background',
+    muted: 'bg-muted border border-surface',
+    white: 'bg-white',
+  };
+
+  const contentClasses = {
+    centered: 'text-center max-w-3xl mx-auto',
+    split: 'grid gap-8 md:grid-cols-2 md:items-center lg:gap-12',
+    inline: 'flex flex-col md:flex-row items-center justify-between gap-6',
+  };
+
+  const buttonContainerClasses = {
+    centered: 'flex flex-col sm:flex-row gap-4 justify-center items-center',
+    split: 'flex flex-col sm:flex-row gap-4',
+    inline: 'flex flex-col sm:flex-row gap-4 md:flex-shrink-0',
+  };
+
+  return (
+    <Section
+      id="cta"
+      bg={backgroundVariant}
+      className={`${backgroundClasses[backgroundVariant]} ${className}`}
+      aria-labelledby="cta-title"
+    >
+      <Container maxWidth="xl">
+        <div className={contentClasses[variant]}>
+          {/* Content */}
+          <div className={`space-y-4 ${variant === 'split' ? '' : 'md:max-w-2xl'}`}>
+            <Heading
+              as="h2"
+              id="cta-title"
+              className="text-2xl md:text-3xl lg:text-4xl font-bold text-secondary"
+            >
+              {title}
+            </Heading>
+            
+            {description && (
+              <Text
+                as="p"
+                className="text-text text-lg leading-relaxed"
+              >
+                {description}
+              </Text>
+            )}
+            
+            {urgencyMessage && (
+              <Text
+                as="p"
+                className="text-primary font-semibold text-sm uppercase tracking-wide"
+              >
+                {urgencyMessage}
+              </Text>
+            )}
+          </div>
+          
+          {/* Actions */}
+          <div className={buttonContainerClasses[variant]}>
+            <Button
+              asChild
+              variant={primaryAction.variant || 'primary'}
+              size="lg"
+              className="min-h-[44px]"
+            >
+              <Link href={primaryAction.href} aria-label={primaryAction.label}>
+                {primaryAction.label}
+              </Link>
+            </Button>
+            
+            {secondaryAction && (
+              <Button
+                asChild
+                variant={secondaryAction.variant || 'outline'}
+                size="lg"
+                className="min-h-[44px]"
+              >
+                <Link href={secondaryAction.href} aria-label={secondaryAction.label}>
+                  {secondaryAction.label}
+                </Link>
+              </Button>
+            )}
+          </div>
+        </div>
+      </Container>
+    </Section>
+  );
+}
