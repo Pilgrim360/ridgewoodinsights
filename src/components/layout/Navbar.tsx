@@ -6,13 +6,14 @@ import { cn } from '@/lib/utils';
 import { Container } from '@/components/ui';
 import { NAV_LINKS, SITE_NAME } from '@/constants';
 import { MobileMenu } from './MobileMenu';
-import { useState } from 'react';
 
-export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {}
+export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
+  mobileMenuOpen: boolean;
+  setMobileMenuOpen: (open: boolean) => void;
+}
 
-export function Navbar({ className, ...props }: NavbarProps) {
+export function Navbar({ className, mobileMenuOpen, setMobileMenuOpen, ...props }: NavbarProps) {
   const pathname = usePathname();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <>
@@ -62,10 +63,10 @@ export function Navbar({ className, ...props }: NavbarProps) {
             <button
               type="button"
               className="inline-flex items-center justify-center rounded-md p-2 text-secondary hover:bg-background hover:text-primary focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary md:hidden"
-              onClick={() => setMobileMenuOpen(true)}
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-expanded={mobileMenuOpen}
               aria-controls="mobile-menu"
-              aria-label="Open main menu"
+              aria-label="Toggle main menu"
             >
               <svg
                 className="h-6 w-6"

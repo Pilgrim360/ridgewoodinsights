@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -46,13 +47,12 @@ export function MobileMenu({ isOpen, onClose, navLinks }: MobileMenuProps) {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  useEffect(() => {
-    onClose();
-  }, [pathname, onClose]);
+  // Remove pathname-based auto-close for now to fix immediate flicker
+  // The menu should only close when user explicitly clicks a link, backdrop, or close button
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-50 md:hidden"
       role="dialog"
@@ -113,6 +113,7 @@ export function MobileMenu({ isOpen, onClose, navLinks }: MobileMenuProps) {
                         : 'text-secondary hover:bg-background hover:text-primary'
                     )}
                     aria-current={isActive ? 'page' : undefined}
+                    onClick={onClose}
                   >
                     {link.label}
                   </Link>
@@ -122,6 +123,7 @@ export function MobileMenu({ isOpen, onClose, navLinks }: MobileMenuProps) {
           </ul>
         </nav>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
