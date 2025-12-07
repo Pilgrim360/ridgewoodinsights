@@ -3,6 +3,7 @@ export const SITE_NAME = 'Ridgewood Insights';
 export const NAV_LINKS = [
   { href: '/', label: 'Home' },
   { href: '/services', label: 'Services' },
+  { href: '/insights', label: 'Insights' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
 ];
@@ -184,6 +185,18 @@ export const TESTIMONIALS = [
 ];
 
 // Insights/Blog Data
+export interface Insight {
+  id: string;
+  title: string;
+  excerpt: string;
+  date: string;
+  readTime?: string;
+  category: string;
+  author: string;
+  image?: string;
+  link: string;
+}
+
 export const INSIGHTS = [
   {
     id: 'insight-1',
@@ -214,6 +227,96 @@ export const INSIGHTS = [
     category: 'Business Strategy',
     author: 'John Smith, CPA',
     link: '/insights/quarterly-reviews',
+  },
+  {
+    id: 'insight-4',
+    title: 'Understanding Cash Flow Management for Entrepreneurs',
+    excerpt: 'Master the fundamentals of cash flow management to ensure your business remains solvent and can seize growth opportunities.',
+    date: '2024-01-01',
+    readTime: '6 min read',
+    category: 'Business Strategy',
+    author: 'Mike Johnson, CPA',
+    link: '/insights/cash-flow-management',
+  },
+  {
+    id: 'insight-5',
+    title: 'Investment Strategies for High-Net-Worth Individuals',
+    excerpt: 'Explore sophisticated investment approaches designed to preserve and grow wealth for affluent clients.',
+    date: '2023-12-28',
+    readTime: '7 min read',
+    category: 'Financial Planning',
+    author: 'Jane Doe, CFA',
+    link: '/insights/investment-strategies',
+  },
+  {
+    id: 'insight-6',
+    title: 'Navigating Business Succession Planning',
+    excerpt: 'Learn how to create a comprehensive succession plan that ensures your business legacy continues smoothly.',
+    date: '2023-12-20',
+    readTime: '5 min read',
+    category: 'Business Consulting',
+    author: 'John Smith, CPA',
+    link: '/insights/succession-planning',
+  },
+  {
+    id: 'insight-7',
+    title: 'Year-End Tax Planning Checklist',
+    excerpt: 'Don\'t miss these critical year-end tax planning opportunities to optimize your 2024 tax position.',
+    date: '2023-12-15',
+    readTime: '4 min read',
+    category: 'Tax Planning',
+    author: 'Mike Johnson, CPA',
+    link: '/insights/year-end-tax-planning',
+  },
+  {
+    id: 'insight-8',
+    title: 'The Impact of Inflation on Retirement Planning',
+    excerpt: 'Understand how rising inflation affects retirement savings and learn strategies to protect your nest egg.',
+    date: '2023-12-10',
+    readTime: '5 min read',
+    category: 'Financial Planning',
+    author: 'Jane Doe, CFA',
+    link: '/insights/inflation-retirement',
+  },
+  {
+    id: 'insight-9',
+    title: 'Digital Transformation in Accounting Practices',
+    excerpt: 'Explore how technology is revolutionizing the accounting industry and what it means for small businesses.',
+    date: '2023-12-05',
+    readTime: '6 min read',
+    category: 'Business Strategy',
+    author: 'John Smith, CPA',
+    link: '/insights/digital-transformation',
+  },
+  {
+    id: 'insight-10',
+    title: 'Estate Planning Essentials for Business Owners',
+    excerpt: 'Protect your business and family with comprehensive estate planning strategies tailored for entrepreneurs.',
+    date: '2023-11-30',
+    readTime: '7 min read',
+    category: 'Estate Planning',
+    author: 'Mike Johnson, CPA',
+    link: '/insights/estate-planning-business',
+  },
+  {
+    id: 'insight-11',
+    title: 'Understanding Business Valuation Methods',
+    excerpt: 'Learn the key approaches to valuing a business, whether for sale, partnership, or strategic planning.',
+    date: '2023-11-25',
+    readTime: '6 min read',
+    category: 'Business Consulting',
+    author: 'Jane Doe, CFA',
+    link: '/insights/business-valuation',
+  },
+  {
+    id: 'insight-12',
+    title: 'Tax Implications of Remote Work Policies',
+    excerpt: 'Navigate the tax considerations when implementing or updating remote work arrangements for your employees.',
+    date: '2023-11-20',
+    readTime: '4 min read',
+    category: 'Tax Planning',
+    author: 'John Smith, CPA',
+    link: '/insights/remote-work-tax',
   },
 ];
 

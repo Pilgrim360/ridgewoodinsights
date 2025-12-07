@@ -9,18 +9,7 @@ import { Text } from '../ui/Text';
 import { Badge } from '../ui/Badge';
 import { Container } from '../ui/Container';
 import { Section } from '../ui/Section';
-
-export interface Insight {
-  id: string;
-  title: string;
-  excerpt: string;
-  date: string;
-  readTime?: string;
-  category: string;
-  author: string;
-  image?: string;
-  link: string;
-}
+import { type Insight } from '../../constants';
 
 export interface InsightsProps {
   title: string;

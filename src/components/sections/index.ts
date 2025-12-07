@@ -15,7 +15,8 @@ export { Testimonials } from './Testimonials';
 export type { TestimonialsProps, Testimonial } from './Testimonials';
 
 export { Insights } from './Insights';
-export type { InsightsProps, Insight } from './Insights';
+export type { InsightsProps } from './Insights';
+export type { Insight } from '../../constants';
 export { ServiceDetails } from './ServiceDetails';
 export type { ServiceDetailsProps } from './ServiceDetails';
 
