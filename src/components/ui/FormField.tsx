@@ -9,9 +9,10 @@ export interface FormFieldProps {
   hint?: string;
   children: React.ReactElement;
   className?: string;
+  required?: boolean;
 }
 
-export function FormField({ id, label, error, hint, children, className }: FormFieldProps) {
+export function FormField({ id, label, error, hint, children, className, required }: FormFieldProps) {
   const describedBy = [
     hint ? `${id}-hint` : null,
     error ? `${id}-error` : null,
@@ -30,7 +31,10 @@ export function FormField({ id, label, error, hint, children, className }: FormF
 
   return (
     <div className={cn('space-y-1', className)}>
-      <Label htmlFor={id}>{label}</Label>
+      <Label htmlFor={id}>
+        {label}
+        {required && <span className="text-red-500 ml-1">*</span>}
+      </Label>
       {childWithProps}
       {hint && !error && (
         <p id={`${id}-hint`} className="text-sm text-text/70">

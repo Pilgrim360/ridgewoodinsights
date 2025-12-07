@@ -54,7 +54,7 @@ const serviceOptions = [
 
 export function ContactForm({
   title = 'Get in Touch',
-  subtitle = 'We\'d love to hear from you',
+  subtitle = "We'd love to hear from you",
   onSubmit,
   submitButtonLabel = 'Send Message',
   variant = 'default',
@@ -68,7 +68,6 @@ export function ContactForm({
     handleSubmit,
     formState: { errors },
     reset,
-    watch,
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: {

@@ -7,9 +7,19 @@ const config: Config = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    container: {
+      center: true,
+      padding: '1rem',
+      screens: {
+        '2xl': '1400px',
+      },
+    },
     extend: {
       colors: {
-        primary: '#006466',
+        primary: {
+          DEFAULT: '#006466',
+          dark: '#004d4f', // 10% darker
+        },
         secondary: '#2C3E50',
         text: '#415161',
         surface: '#E2E7ED',

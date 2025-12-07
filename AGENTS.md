@@ -562,17 +562,112 @@ Larger composable units built from primitives; establishes patterns for consiste
 
 ### Step 5: Assemble Pages (Full Compositions - In Order of Importance)
 
-#### Why later?
-Pages are thin containers; build once components are ready. Follow user journey: Home → Services → About → Contact.
+### Why later?
+Pages are thin containers that orchestrate section components; build once foundational components are ready. Follow the logical user journey: Home → Services → About → Contact, prioritizing pages that drive conversions and provide essential information.
 
-- Start with Home (src/app/(marketing)/page.tsx): Stack sections (Hero > Services > About/Trust > CTA > Insights), using background as page bg.
-- Services (/services): Detail offerings (use Cards with white bg, text in text color).
-- About (/about): Team, history, values (headings in secondary).
-- Contact (/contact): Form, info, map (form elements in palette colors).
-- Stub portal if needed.
-- Add metadata per page for SEO (use generateMetadata).
- 
-**Best practice:** Keep pages thin—no inline logic; use Suspense for loading. Get to 70% across pages before polishing.
+#### Page Assembly Philosophy
+Pages should serve as composition containers that orchestrate section components without containing complex business logic. Each page acts as a conductor, passing data and configuration to reusable sections while maintaining clean separation of concerns. This approach ensures consistency across the site while allowing individual pages to have unique content and layout requirements.
+
+### Step 5.1: Home Page Assembly (src/app/(marketing)/page.tsx)
+
+#### Purpose and Strategy
+The home page serves as the primary conversion funnel, introducing visitors to Ridgewood Insights' value proposition and guiding them toward key actions. This page should establish immediate credibility while presenting a clear path to engagement.
+
+#### Page Structure and Composition
+- **Section Stack Order**: Hero section for immediate impact, followed by Services overview for quick understanding, About/Trust section for credibility building, Call-to-Action for conversion, and Insights section for thought leadership
+- **Background Strategy**: Use background color from the Ridgewood Palette as the main page canvas, with individual sections maintaining consistent vertical spacing
+- **Content Density**: Balance promotional content with valuable information to avoid overwhelming visitors while maintaining engagement
+
+#### Implementation Approach
+Import section components and arrange them in a logical flow that matches user decision-making patterns. Pass content as props from constants or data files rather than hardcoding within the page component. Ensure each section receives appropriate configuration for its display variant and responsive behavior.
+
+#### SEO and Performance Considerations
+Implement comprehensive metadata including page title, description, and relevant keywords. Use structured data markup for organization information and key services. Optimize for Core Web Vitals by ensuring above-the-fold content loads quickly and implementing proper image optimization throughout sections.
+
+#### Accessibility and User Experience
+Maintain proper heading hierarchy throughout the page composition. Ensure keyboard navigation flows logically between sections. Implement skip links and proper ARIA labeling for complex interactive elements within sections.
+
+### Step 5.2: Services Page Assembly (src/app/(marketing)/services/page.tsx)
+
+#### Purpose and Strategy
+The services page provides detailed information about Ridgewood Insights' offerings, helping potential clients understand specific service capabilities and encouraging consultation requests.
+
+#### Page Structure and Composition
+- **Service Presentation**: Use card-based layouts with white backgrounds to create clear visual separation between services. Maintain consistent typography with headings in secondary color and body text in readable slate gray
+- **Content Organization**: Group related services logically, potentially using subheadings or category divisions for complex service portfolios
+- **Interactive Elements**: Include service-specific CTAs that connect to contact forms or consultation booking systems
+
+#### Implementation Approach
+Compose service detail sections that provide comprehensive information without overwhelming users. Use progressive disclosure patterns where appropriate, allowing users to explore services at their own pace. Integrate contact elements strategically throughout the page rather than concentrating them at the bottom.
+
+#### Content Strategy and Trust Building
+Present services with clear explanations of processes, benefits, and typical client outcomes. Include relevant credentials and certifications for each service area. Use case studies or success stories to demonstrate real-world application of services.
+
+### Step 5.3: About Page Assembly (src/app/(marketing)/about/page.tsx)
+
+#### Purpose and Strategy
+The about page builds personal connection and trust by showcasing the team, company history, values, and professional credentials that differentiate Ridgewood Insights.
+
+#### Page Structure and Composition
+- **Team Presentation**: Use card-based layouts for team members with professional styling. Ensure consistent visual treatment while allowing individual personality to show through
+- **Company Story**: Organize historical information chronologically with clear visual breaks and compelling narrative flow
+- **Values and Mission**: Present core values with supporting explanations and real-world applications
+
+#### Implementation Approach
+Create dedicated sections for different aspects of the company story. Use timeline components for company history and achievement sections for individual team member highlights. Maintain consistent use of the Ridgewood Palette throughout, with secondary color for headings and body text in readable slate gray.
+
+#### Trust and Credibility Enhancement
+Highlight professional certifications prominently using badge components. Include client testimonials or success metrics where appropriate. Ensure all claims are substantiated with verifiable information or professional credentials.
+
+### Step 5.4: Contact Page Assembly (src/app/(marketing)/contact/page.tsx)
+
+#### Purpose and Strategy
+The contact page serves as the primary conversion point, making it easy for potential clients to reach out while providing necessary company information and multiple communication channels.
+
+#### Page Structure and Composition
+- **Form Integration**: Position the contact form prominently using the palette colors for form elements. Ensure form fields follow accessibility best practices with proper labeling and error handling
+- **Contact Information**: Present company details in a clearly organized layout with consistent typography and visual hierarchy
+- **Location and Accessibility**: If applicable, include location information and accessibility details for in-person meetings
+
+#### Implementation Approach
+Integrate the comprehensive contact form component while ensuring proper data handling and validation. Include alternative contact methods and emergency contact procedures where relevant. Use the full range of form components to create a professional, accessible experience.
+
+#### User Experience and Conversion Optimization
+Streamline the contact process by minimizing required fields while capturing essential information. Provide clear expectations for response times and next steps. Include trust signals such as security certifications or privacy policy links.
+
+### Step 5.5: Future Portal Integration (Optional)
+
+#### Strategic Considerations
+If a client portal is planned, stub the route group structure while maintaining focus on the primary marketing site. Ensure any portal infrastructure doesn't interfere with the main site's performance or user experience.
+
+#### Implementation Approach
+Create placeholder routes that can be developed later without disrupting the core marketing site functionality. Plan for potential integration points where portal services might complement marketing content.
+
+### Step 5.6: SEO and Metadata Implementation
+
+#### Page-Level SEO Strategy
+Implement comprehensive metadata for each page using generateMetadata, including unique titles, descriptions, and relevant keywords. Ensure metadata reflects the specific content and value proposition of each page while maintaining consistency with overall site branding.
+
+#### Technical SEO Considerations
+Create proper URL structures that reflect the logical site hierarchy. Implement breadcrumb navigation where appropriate. Ensure all pages have unique content to avoid duplicate content issues and maintain proper indexing.
+
+#### Performance and Monitoring
+Monitor page load times and user engagement metrics. Implement proper error boundaries and loading states for each page. Use analytics to understand user behavior patterns and optimize page compositions accordingly.
+
+#### Best Practice Guidelines
+- **Page Composition**: Keep page components thin by delegating complex logic to section components
+- **Loading Strategy**: Implement Suspense boundaries for progressive loading of page sections
+- **Error Handling**: Use error boundaries at the page level to prevent site-wide failures
+- **Content Management**: Source page content from constants or data files rather than hardcoding
+- **Responsive Design**: Ensure all pages maintain functionality and visual appeal across device types
+- **Quality Assurance**: Test each page thoroughly before proceeding to polish phase
+
+#### Development Workflow
+Follow the vertical slice methodology: assemble basic structures for all key pages before returning to polish individual pages. This approach ensures consistent user experience across the site while allowing for iterative improvement based on real usage patterns.
+
+**Time estimate:** 45-90 minutes per page, with additional time for SEO implementation and testing.
+
+**Quality Standard:** Each page should achieve 70% completion before moving to the final polish phase, with full functionality, proper SEO implementation, and responsive design across all device types.
 
 ### Step 6: Polish & Optimization (Cross-Cutting Refinements)
 

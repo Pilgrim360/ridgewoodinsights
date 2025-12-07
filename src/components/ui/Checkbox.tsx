@@ -1,29 +1,32 @@
 import { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 
-export interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'children'> {
   label?: string;
+  children?: React.ReactNode;
+  hasError?: boolean;
 }
 
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
-  ({ label, className, id, ...props }, ref) => {
+  ({ label, children, className, id, hasError, ...props }, ref) => {
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex items-start gap-2">
         <input
           ref={ref}
           type="checkbox"
           id={id}
           className={cn(
-            'h-4 w-4 rounded border-surface text-primary',
+            'h-4 w-4 mt-1 rounded border-surface text-primary',
             'focus:ring-2 focus:ring-primary focus:ring-offset-1',
             'disabled:cursor-not-allowed disabled:opacity-50',
+            hasError && 'border-red-500',
             className
           )}
           {...props}
         />
-        {label && (
-          <label htmlFor={id} className="text-sm text-text cursor-pointer">
-            {label}
+        {(label || children) && (
+          <label htmlFor={id} className="text-sm text-text cursor-pointer select-none">
+            {label || children}
           </label>
         )}
       </div>

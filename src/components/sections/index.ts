@@ -16,3 +16,25 @@ export type { TestimonialsProps, Testimonial } from './Testimonials';
 
 export { Insights } from './Insights';
 export type { InsightsProps, Insight } from './Insights';
+export { ServiceDetails } from './ServiceDetails';
+export type { ServiceDetailsProps } from './ServiceDetails';
+
+export { OurStory } from './OurStory';
+export type { OurStoryProps } from './OurStory';
+
+export { CompanyValues } from './CompanyValues';
+export type { CompanyValuesProps, Value } from './CompanyValues';
+
+export { TeamGrid } from './TeamGrid';
+export type { TeamGridProps, TeamMember } from './TeamGrid';
+
+export { CredentialsList } from './CredentialsList';
+export type { CredentialsListProps } from './CredentialsList';
+
+export { ContactInfo } from './ContactInfo';
+export type { ContactInfoProps, CompanyInfo } from './ContactInfo';
+
+export { FAQ } from './FAQ';
+export type { FAQProps, FAQItem } from './FAQ';
+
+export { ContactFormSection } from './ContactFormSection';

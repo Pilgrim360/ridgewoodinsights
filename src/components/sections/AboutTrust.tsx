@@ -82,7 +82,7 @@ export function AboutTrust({
               </div>
             )}
             <blockquote className="text-text italic mb-4 leading-relaxed">
-              "{signal.description}"
+              {`"${signal.description}"`}
             </blockquote>
             <div className="border-t border-surface pt-4">
               <Text as="p" className="font-semibold text-secondary">
@@ -106,7 +106,7 @@ export function AboutTrust({
               {signal.icon && <signal.icon className="w-6 h-6 text-primary" />}
             </div>
             <Heading
-              as="h4"
+              as={4}
               className="text-lg font-semibold text-secondary mb-2"
             >
               {signal.title}
@@ -148,7 +148,7 @@ export function AboutTrust({
             )}
             
             <Heading
-              as="h2"
+              as={2}
               id="about-trust-title"
               className="text-2xl md:text-3xl lg:text-4xl font-bold text-secondary"
             >
