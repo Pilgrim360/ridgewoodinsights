@@ -1,4 +1,5 @@
 import { forwardRef } from 'react';
+import { Slot } from '@radix-ui/react-slot';
 import { cn } from '@/lib/utils';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost';
@@ -9,6 +10,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   size?: ButtonSize;
   fullWidth?: boolean;
   isLoading?: boolean;
+  asChild?: boolean;
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
@@ -34,14 +36,16 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       disabled,
       className,
       children,
+      asChild = false,
       ...props
     },
     ref
   ) => {
+    const Comp = asChild ? Slot : 'button';
     const isDisabled = disabled || isLoading;
 
     return (
-      <button
+      <Comp
         ref={ref}
         disabled={isDisabled}
         aria-busy={isLoading}
@@ -83,7 +87,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ) : (
           children
         )}
-      </button>
+      </Comp>
     );
   }
 );

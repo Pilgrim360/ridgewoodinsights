@@ -25,13 +25,24 @@ const contactFormSchema = z.object({
   company: z.string().optional(),
   serviceInterest: z.string().optional(),
   message: z.string().min(10, 'Message must be at least 10 characters long'),
-  newsletter: z.boolean().default(false),
+  newsletter: z.boolean(),
   terms: z.boolean().refine(val => val === true, {
     message: 'You must agree to the terms and conditions',
   }),
 });
 
-type ContactFormData = z.infer<typeof contactFormSchema>;
+// type ContactFormData = z.infer<typeof contactFormSchema>;
+interface ContactFormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  company?: string;
+  serviceInterest?: string;
+  message: string;
+  newsletter: boolean;
+  terms: boolean;
+}
 
 export interface ContactFormProps {
   title?: string;

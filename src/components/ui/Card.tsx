@@ -1,9 +1,11 @@
 import { forwardRef } from 'react';
+import { Slot } from '@radix-ui/react-slot';
 import { cn } from '@/lib/utils';
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'bordered' | 'outlined';
   as?: 'div' | 'article';
+  asChild?: boolean;
 }
 
 const variantClasses = {
@@ -13,15 +15,16 @@ const variantClasses = {
 };
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(
-  ({ variant = 'default', as: Tag = 'div', className, children, ...props }, ref) => {
+  ({ variant = 'default', as: Tag = 'div', asChild = false, className, children, ...props }, ref) => {
+    const Comp = asChild ? Slot : Tag;
     return (
-      <Tag
+      <Comp
         ref={ref}
         className={cn('rounded-lg p-6 text-text', variantClasses[variant], className)}
         {...props}
       >
         {children}
-      </Tag>
+      </Comp>
     );
   }
 );

@@ -58,7 +58,7 @@ export function ServicesOverview({
           )}
           
           <Heading
-            as="h2"
+            as={2}
             id="services-title"
             className="text-2xl md:text-3xl lg:text-4xl font-bold text-secondary mb-6"
           >
@@ -92,7 +92,7 @@ export function ServicesOverview({
                   
                   {/* Title */}
                   <Heading
-                    as="h3"
+                    as={3}
                     id={`service-${service.id}-title`}
                     className="text-xl font-semibold text-secondary mb-3 group-hover:text-primary transition-colors duration-300"
                   >

@@ -104,6 +104,7 @@ export const SERVICES = [
     ],
   },
 ];
+export type Service = typeof SERVICES[number];
 
 // Trust Signals Data
 export const TRUST_SIGNALS = [

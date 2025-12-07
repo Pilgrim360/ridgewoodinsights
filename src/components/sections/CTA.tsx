@@ -64,7 +64,7 @@ export function CTA({
           {/* Content */}
           <div className={`space-y-4 ${variant === 'split' ? '' : 'md:max-w-2xl'}`}>
             <Heading
-              as="h2"
+              as={2}
               id="cta-title"
               className="text-2xl md:text-3xl lg:text-4xl font-bold text-secondary"
             >
