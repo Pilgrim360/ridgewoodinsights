@@ -39,12 +39,6 @@ export function Hero({
   alignment = 'left',
   className = '',
 }: HeroProps) {
-  const backgroundClasses = {
-    default: 'bg-background',
-    muted: 'bg-muted border border-surface',
-    white: 'bg-white',
-  };
-
   const alignmentClasses = {
     left: 'text-left',
     center: 'text-center',

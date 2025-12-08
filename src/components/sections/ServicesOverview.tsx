@@ -6,7 +6,7 @@ import { Heading } from '../ui/Heading';
 import { Text } from '../ui/Text';
 import { Container } from '../ui/Container';
 import { Section } from '../ui/Section';
-import { Badge } from '../ui/Badge';
+
 
 export interface Service {
   id: string;
@@ -68,7 +68,7 @@ export function ServicesOverview({
 
         {/* Services Grid */}
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 mb-12">
-          {displayServices.map((service, index) => (
+          {displayServices.map((service) => (
             <Card
               key={service.id}
               variant="default"

@@ -47,7 +47,7 @@ export function OurStory({
                 Our founder, John Smith, recognized that many people felt overwhelmed by 
                 financial complexity and underserved by large, impersonal accounting firms. 
                 He set out to create a different kind of practice—one that combines
-                professional expertise with genuine care for each client's unique situation.
+                professional expertise with genuine care for each client&apos;s unique situation.
               </Text>
               <Text as="p">
                 Today, our team of certified professionals continues that tradition, 

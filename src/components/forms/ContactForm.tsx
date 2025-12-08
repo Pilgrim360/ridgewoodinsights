@@ -141,7 +141,7 @@ export function ContactForm({
             </Heading>
             
             <Text className="text-text mb-6">
-              Your message has been sent successfully. We'll get back to you within 24 hours.
+              Your message has been sent successfully. We&apos;ll get back to you within 24 hours.
             </Text>
             
             <Button

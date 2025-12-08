@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import { Container } from '@/components/ui';
 import { COMPANY_INFO, QUICK_LINKS, SOCIAL_LINKS } from '@/constants';
 
-export interface FooterProps extends React.HTMLAttributes<HTMLElement> {}
+export type FooterProps = React.HTMLAttributes<HTMLElement>;
 
 export function Footer({ className, ...props }: FooterProps) {
   const currentYear = new Date().getFullYear();

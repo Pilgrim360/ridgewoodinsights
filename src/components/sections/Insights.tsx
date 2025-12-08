@@ -44,7 +44,7 @@ export function Insights({
     });
   };
 
-  const renderInsightCard = (insight: Insight, index: number) => (
+  const renderInsightCard = (insight: Insight) => (
     <Card
       key={insight.id}
       variant="default"
@@ -128,7 +128,7 @@ export function Insights({
           {displayInsights.map((insight) => (
             <div key={insight.id} className="w-full flex-shrink-0 px-4">
               <div className="max-w-sm mx-auto">
-                {renderInsightCard(insight, 0)}
+                {renderInsightCard(insight)}
               </div>
             </div>
           ))}
@@ -154,7 +154,7 @@ export function Insights({
 
   const renderList = () => (
     <div className="space-y-8">
-      {displayInsights.map((insight, index) => (
+      {displayInsights.map((insight) => (
         <Card
           key={insight.id}
           variant="default"
@@ -261,8 +261,8 @@ export function Insights({
         {layout === 'list' && renderList()}
         {layout === 'grid' && (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {displayInsights.map((insight, index) => 
-              renderInsightCard(insight, index)
+            {displayInsights.map((insight) => 
+              renderInsightCard(insight)
             )}
           </div>
         )}

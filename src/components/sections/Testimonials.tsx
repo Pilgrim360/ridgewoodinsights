@@ -60,7 +60,7 @@ export function Testimonials({
     );
   };
 
-  const renderTestimonial = (testimonial: Testimonial, index: number) => (
+  const renderTestimonial = (testimonial: Testimonial) => (
     <Card
       key={testimonial.id}
       variant="default"
@@ -82,7 +82,7 @@ export function Testimonials({
 
       {/* Quote */}
       <blockquote className="text-text italic mb-6 leading-relaxed relative z-10">
-        "{testimonial.quote}"
+        &ldquo;{testimonial.quote}&rdquo;
       </blockquote>
 
       {/* Author Info */}
@@ -134,7 +134,7 @@ export function Testimonials({
           {displayTestimonials.map((testimonial) => (
             <div key={testimonial.id} className="w-full flex-shrink-0 px-4">
               <div className="max-w-2xl mx-auto">
-                {renderTestimonial(testimonial, 0)}
+                {renderTestimonial(testimonial)}
               </div>
             </div>
           ))}
@@ -161,13 +161,13 @@ export function Testimonials({
   const renderFeatured = () => (
     <div className="max-w-4xl mx-auto">
       <div className="text-center mb-12">
-        {displayTestimonials[0] && renderTestimonial(displayTestimonials[0], 0)}
+        {displayTestimonials[0] && renderTestimonial(displayTestimonials[0])}
       </div>
       
       {displayTestimonials.length > 1 && (
         <div className="grid gap-8 md:grid-cols-2">
-          {displayTestimonials.slice(1).map((testimonial, index) => 
-            renderTestimonial(testimonial, index + 1)
+          {displayTestimonials.slice(1).map((testimonial) => 
+            renderTestimonial(testimonial)
           )}
         </div>
       )}
@@ -207,8 +207,8 @@ export function Testimonials({
         {layout === 'featured' && renderFeatured()}
         {layout === 'grid' && (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {displayTestimonials.map((testimonial, index) => 
-              renderTestimonial(testimonial, index)
+            {displayTestimonials.map((testimonial) => 
+              renderTestimonial(testimonial)
             )}
           </div>
         )}
