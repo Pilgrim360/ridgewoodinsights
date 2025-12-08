@@ -1,7 +1,7 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
+import { cn } from '@/lib/utils';
 import { Button } from '../ui/Button';
 import { Heading } from '../ui/Heading';
 import { Text } from '../ui/Text';
@@ -34,8 +34,6 @@ export function Hero({
   primaryCTA,
   secondaryCTA,
   imageSrc,
-  imageAlt = '',
-  backgroundVariant = 'default',
   alignment = 'left',
   className = '',
 }: HeroProps) {
@@ -44,61 +42,74 @@ export function Hero({
     center: 'text-center',
   };
 
+  const sectionStyle = imageSrc ? { backgroundImage: `url(${imageSrc})` } : {};
+
   return (
     <Section
       id="hero"
-      bg={backgroundVariant}
-      className={`py-16 md:py-24 ${className}`}
+      className={cn(
+        'relative flex min-h-screen items-center bg-cover bg-center py-20',
+        className
+      )}
+      style={sectionStyle}
       aria-labelledby="hero-title"
     >
-      <Container maxWidth="xl">
-        <div className={`grid items-center gap-12 md:gap-16 lg:grid-cols-2 ${alignmentClasses[alignment]}`}>
+      <div className="absolute inset-0 bg-black/60" />
+      <Container className="relative" maxWidth="xl">
+        <div className={`grid items-center gap-8 ${alignmentClasses[alignment]}`}>
           {/* Content */}
           <div className="space-y-6">
             {subtitle && (
               <Text
                 as="p"
-                className="text-primary font-semibold uppercase tracking-wide text-sm md:text-base"
+                className="font-semibold uppercase tracking-wide text-sm md:text-base text-white/90"
               >
                 {subtitle}
               </Text>
             )}
-            
             <Heading
               as={1}
               id="hero-title"
-              className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-secondary leading-tight"
+              className={cn(
+                'text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight max-w-4xl',
+                alignment === 'center' && 'mx-auto'
+              )}
             >
               {title}
             </Heading>
-            
             {description && (
               <Text
                 as="p"
-                className="text-text text-lg md:text-xl leading-relaxed max-w-2xl"
+                className={cn(
+                  'text-white/90 text-lg md:text-xl leading-relaxed max-w-3xl',
+                  alignment === 'center' && 'mx-auto'
+                )}
               >
                 {description}
               </Text>
             )}
-            
             {/* CTAs */}
-            <div className={`flex flex-col sm:flex-row gap-4 pt-4 ${alignment === 'center' ? 'items-center justify-center' : ''}`}>
+            <div
+              className={cn(
+                'flex flex-col sm:flex-row gap-4 pt-6',
+                alignment === 'center' ? 'items-center justify-center' : 'items-start'
+              )}
+            >
               <Link href={primaryCTA.href} aria-label={primaryCTA.label}>
                 <Button
                   variant={primaryCTA.variant || 'primary'}
                   size="lg"
-                  className="min-h-[44px] w-full sm:w-auto"
+                  className="min-h-[48px] w-full sm:w-auto"
                 >
                   {primaryCTA.label}
                 </Button>
               </Link>
-              
               {secondaryCTA && (
                 <Link href={secondaryCTA.href} aria-label={secondaryCTA.label}>
                   <Button
                     variant={secondaryCTA.variant || 'outline'}
                     size="lg"
-                    className="min-h-[44px] w-full sm:w-auto"
+                    className="min-h-[48px] w-full sm:w-auto"
                   >
                     {secondaryCTA.label}
                   </Button>
@@ -106,24 +117,6 @@ export function Hero({
               )}
             </div>
           </div>
-          
-          {/* Image */}
-          {imageSrc && (
-            <div className="relative">
-              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl shadow-xl">
-                <Image
-                  src={imageSrc}
-                  alt={imageAlt}
-                  fill
-                  className="object-cover"
-                  priority
-                  placeholder="blur"
-                  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
-              </div>
-            </div>
-          )}
         </div>
       </Container>
     </Section>
