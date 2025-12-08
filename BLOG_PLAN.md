@@ -4,15 +4,15 @@ Public: Static + ISR (blazing fast, SEO-optimized).
 Admin: Authenticated interface for writing/publishing (restricted to specific emails).
 Cost: Free (Supabase Free Tier + Vercel).
 Tech: Next.js 15+ App Router, Supabase (Postgres, Auth, Storage).
-1. Architecture & Schema
-Tech Stack
+## 1. Architecture & Schema
+### 1.1 Tech Stack
 Frontend: Next.js 15+ App Router (Server Components + ISR).
 Database: Supabase Postgres.
 Auth: Supabase Auth (Magic Link) + Middleware protection.
 Storage: Supabase Storage (Public bucket for images).
-Database Schema
+### 1.2 Database Schema
 Run the following structure in your Supabase SQL Editor:
-1. Enums & Tables
+#### 1.2.1 Enums & Tables
 code
 SQL
 -- Enums for consistency
@@ -51,11 +51,11 @@ create table posts (
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
-2. Row Level Security (RLS) Policies
+#### 1.2.2 Row Level Security (RLS) Policies
 Public Read: Enable generic read access for posts where status = 'published'.
 Admin Write: Only authenticated users matching specific IDs (or policies checking an is_admin flag in profiles) can insert/update.
-2. Implementation Steps
-1. Install Dependencies
+## 2. Implementation Steps
+### 2.1 Install Dependencies
 Remove legacy packages and use the modern SSR library.
 code
 Bash
@@ -64,7 +64,7 @@ Optional (for Admin UI):
 code
 Bash
 npm install @tiptap/react @tiptap/starter-kit
-Step 2: Supabase Client Setup
+### 2.2 Supabase Client Setup
 Create a robust server client that handles Next.js 15 asynchronous cookies.
 File: src/lib/supabase/server.ts
 code
@@ -96,8 +96,8 @@ export async function createClient() {
     }
   );
 }
-Step 3: Public Blog Pages (ISR)
-1. Blog Index (src/app/blog/page.tsx)
+### 2.3 Public Blog Pages (ISR)
+#### 2.3.1 Blog Index (src/app/blog/page.tsx)
 Fetch posts where status === 'published'.
 Use revalidate to enable Incremental Static Regeneration.
 code
@@ -121,7 +121,7 @@ export default async function BlogIndex() {
     </div>
   );
 }
-2. Single Post (src/app/blog/[slug]/page.tsx)
+#### 2.3.2 Single Post (src/app/blog/[slug]/page.tsx)
 Use generateStaticParams to pre-build known paths.
 code
 TypeScript
@@ -155,9 +155,9 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
     </article>
   );
 }
-Step 4: Admin Authentication & Security
+### 2.4 Admin Authentication & Security
 Instead of checking auth in a Layout, use Middleware to protect the /admin route entirely.
-1. Middleware (src/middleware.ts)
+#### 2.4.1 Middleware (src/middleware.ts)
 code
 TypeScript
 import { createServerClient } from '@supabase/ssr';
@@ -202,9 +202,9 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: ['/admin/:path*', '/((?!_next/static|_next/image|favicon.ico).*)'],
 };
-2. Login Page (src/app/login/page.tsx)
+#### 2.4.2 Login Page (src/app/login/page.tsx)
 Create a simple form using Supabase Auth helpers to send a Magic Link.
-Step 5: Admin Dashboard (/admin)
+### 2.5 Admin Dashboard (/admin)
 Create a Client Component for the dashboard to handle form state and image uploads.
 List View: Fetch all posts (including drafts).
 Editor View:
@@ -227,14 +227,14 @@ const uploadImage = async (file: File) => {
 };
 Editor: Textarea or TipTap.
 Save: Upsert data to posts table.
-Step 6: Configuration
-1. Environment Variables (.env.local)
+### 2.6 Configuration
+#### 2.6.1 Environment Variables (.env.local)
 code
 Text
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 ADMIN_EMAIL=admin@example.com
-2. Image Optimization (next.config.mjs)
+#### 2.6.2 Image Optimization (next.config.mjs)
 Allow Next.js to optimize images from your Supabase bucket.
 code
 JavaScript
@@ -251,7 +251,7 @@ const nextConfig = {
   },
 };
 export default nextConfig;
-3. Deployment Checklist
+#### 2.6.3 Deployment Checklist
 Vercel Project: Import repository.
 Environment Variables: Add all variables from .env.local to Vercel Project Settings.
 Supabase: Ensure "blog-images" bucket is set to Public.
