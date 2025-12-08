@@ -26,6 +26,8 @@ export default function InsightsPage() {
         title="Insights"
         subtitle="Financial Insights & Strategies"
         description="Stay informed with expert financial insights, tax strategies, and business advice to help you make smarter decisions for your future."
+        imageSrc="https://images.unsplash.com/photo-1664575602276-acd073f104c1?q=80&w=2070&auto=format&fit=crop"
+        imageAlt="Financial insights and strategies"
         primaryCTA={{
           label: 'Contact Us',
           href: '/contact',
