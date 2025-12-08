@@ -97,6 +97,13 @@ src/
 - **TypeScript Usage:** Define interfaces for all props (e.g., interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> { variant?: 'primary' | 'secondary'; }); avoid any; use unknown if needed.
 - **Accessibility:** Add ARIA roles and keyboard nav (e.g., via @headlessui/react).
 
+## Page Composition Rules
+
+- **Never create single-file page components** in `components/pages/`. This folder should not exist.
+- **Pages are thin orchestrators**: Each page in `app/(marketing)/` should compose multiple section components from `components/sections/`, not delegate to a single component.
+- **Follow the established pattern**: Look at existing pages (Services, About, Contact) before implementing new ones. Pages import and arrange sections like `Hero`, `CTA`, `Testimonials`, etc.
+- **Client logic belongs in sections**: If a page needs client-side interactivity (e.g., "Load More"), create a section component with `'use client'` rather than making the entire page a client component.
+
 ## Scripts (in package.json)
 
 ```json
