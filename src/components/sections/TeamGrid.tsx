@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { Section } from '@/components/ui/Section';
 import { Container } from '@/components/ui/Container';
 import { Heading } from '@/components/ui/Heading';
@@ -60,11 +61,25 @@ export function TeamGrid({
               variant="default"
               className="p-6 text-center hover:shadow-lg transition-all duration-300"
             >
-              {/* Avatar Placeholder */}
-              <div className="w-24 h-24 bg-surface rounded-full mx-auto mb-4 flex items-center justify-center">
-                <span className="text-2xl font-bold text-secondary">
-                  {member.name.split(' ').map(n => n[0]).join('')}
-                </span>
+              {/* Team Member Image */}
+              <div className="w-24 h-24 mx-auto mb-4 relative">
+                {member.image ? (
+                  <Image
+                    src={member.image}
+                    alt={`${member.name} - ${member.title}`}
+                    fill
+                    className="rounded-full object-cover"
+                    sizes="96px"
+                    placeholder="blur"
+                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
+                  />
+                ) : (
+                  <div className="w-full h-full bg-surface rounded-full flex items-center justify-center">
+                    <span className="text-2xl font-bold text-secondary">
+                      {member.name.split(' ').map(n => n[0]).join('')}
+                    </span>
+                  </div>
+                )}
               </div>
               
               <Heading as={3} className="text-xl font-semibold text-secondary mb-1">

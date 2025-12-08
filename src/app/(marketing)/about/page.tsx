@@ -42,6 +42,8 @@ export default function AboutPage() {
           href: '/contact',
           variant: 'outline',
         }}
+        imageSrc="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1426&q=80"
+        imageAlt="Professional team meeting discussing financial strategies"
         backgroundVariant="default"
         alignment="center"
       />
