@@ -54,7 +54,7 @@ export function Hero({
       style={sectionStyle}
       aria-labelledby="hero-title"
     >
-      <div className="absolute inset-0 bg-black/60" />
+      <div className="absolute inset-0 bg-black/40" />
       <Container className="relative" maxWidth="xl">
         <div className={`grid items-center gap-8 ${alignmentClasses[alignment]}`}>
           {/* Content */}
