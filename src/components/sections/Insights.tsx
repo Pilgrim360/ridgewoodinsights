@@ -180,18 +180,21 @@ export function Insights({
                 aria-label="Latest insights"
             >
                 <div
-                    className="flex transition-transform duration-500 ease-in-out gap-6"
+                    className="flex transition-transform duration-500 ease-in-out"
                     style={{
                         transform: `translateX(-${currentSlide * (100 / itemsPerView)}%)`,
                     }}
                 >
-                    {displayInsights.map((insight) => (
+                    {displayInsights.map((insight, index) => (
                         <div
                             key={insight.id}
-                            className="flex-shrink-0 px-4"
-                            style={{ width: `${100 / itemsPerView}%` }}
+                            className="flex-shrink-0"
+                            style={{
+                                width: `${100 / itemsPerView}%`,
+                                paddingRight: index < displayInsights.length - 1 ? '1.5rem' : '0',
+                            }}
                         >
-                            <div className="h-full">
+                            <div className="h-full px-4">
                                 {renderInsightCard(insight)}
                             </div>
                         </div>
