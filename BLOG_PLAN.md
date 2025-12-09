@@ -27,6 +27,7 @@ create type disclaimer_type as enum ('none', 'general', 'legal');
 create table profiles (
   id uuid references auth.users(id) primary key,
   email text,
+  is_admin boolean default false,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
@@ -57,6 +58,27 @@ create table posts (
 );
 ```
 
+#### 1.2.2 Auto-Create Profile Trigger
+Add a trigger to automatically create a profile record when a user signs up:
+
+```sql
+-- Trigger function to create a profile for new users
+create or replace function public.handle_new_user()
+returns trigger as $$
+begin
+  insert into public.profiles (id, email)
+  values (new.id, new.email);
+  return new;
+end;
+$$ language plpgsql security definer;
+
+-- Attach the trigger to the auth.users table
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
+```
+
 ### 1.3 Row Level Security (RLS) Policies
 RLS is crucial for securing your data. Enable RLS on all tables and add the following policies:
 
@@ -68,9 +90,12 @@ alter table posts enable row level security;
 
 -- Helper function to check if user is admin
 create or replace function is_admin()
-returns boolean as $
-  select auth.email() = current_setting('app.admin_email', true);
-$ language sql stable;
+returns boolean as $$
+  select exists (
+    select 1 from profiles
+    where id = auth.uid() and is_admin = true
+  );
+$$ language sql stable;
 
 -- Profiles Policies
 -- 1. Users can read their own profile
@@ -124,6 +149,16 @@ create policy "Admins can do everything on categories" on categories
 1. Go to the "Storage" section in your Supabase project.
 2. Create a new bucket named `blog-images`.
 3. Make the bucket **public**.
+
+#### Expected Storage Path Structure
+Images must be uploaded to paths in the format: `{user-id}/{filename}`. For example:
+```
+blog-images/
+  └── 550e8400-e29b-41d4-a716-446655440000/
+      ├── cover-image-post-1.jpg
+      └── featured-image-post-2.png
+```
+
 4. Add the following storage policies to secure image access:
 
 ```sql
@@ -132,11 +167,12 @@ create policy "Admins can do everything on categories" on categories
 create policy "Public can view images" on storage.objects
   for select using (bucket_id = 'blog-images');
 
--- 2. Allow authenticated users to upload images
+-- 2. Allow authenticated users to upload images (must use user-id as first folder)
 create policy "Authenticated users can upload images" on storage.objects
   for insert with check (
     bucket_id = 'blog-images' and 
-    auth.role() = 'authenticated'
+    auth.role() = 'authenticated' and
+    auth.uid()::text = (storage.foldername(name))[1]
   );
 
 -- 3. Allow users to update their own images
@@ -185,11 +221,18 @@ create index idx_posts_blog_listing on posts(status, published_at desc)
 ### 1.6 Initial Setup Instructions
 After creating the database schema and policies, you need to set up the initial admin user and categories:
 
-#### 1.6.1 Set Admin Email Configuration
-1. In Supabase, go to Settings > Database
-2. Add a new database parameter:
-   - Parameter name: `app.admin_email`
-   - Parameter value: `your-admin-email@example.com` (your actual admin email)
+#### 1.6.1 Promote Admin User
+After your admin user signs up through Supabase Auth (the profile will be created automatically via the trigger), promote them to admin:
+
+```sql
+-- Replace with your actual admin email
+update profiles 
+set is_admin = true 
+where email = 'your-admin-email@example.com';
+
+-- Verify the update
+select id, email, is_admin from profiles where is_admin = true;
+```
 
 #### 1.6.2 Create Initial Categories
 Run this SQL to create some default blog categories:
@@ -201,16 +244,6 @@ insert into categories (name, slug) values
 ('Business Insights', 'business-insights'),
 ('Industry News', 'industry-news'),
 ('Accounting Tips', 'accounting-tips');
-```
-
-#### 1.6.3 Create Admin User Profile
-After your admin user signs up through Supabase Auth, create their profile:
-
-```sql
--- Replace with the actual user ID from auth.users
-insert into profiles (id, email) 
-select id, email from auth.users 
-where email = current_setting('app.admin_email', true);
 ```
 
 ## 2. Implementation Steps
