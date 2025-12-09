@@ -74,7 +74,7 @@ create table posts (
   title text not null,
   slug text unique not null,
   excerpt text,
-  content_markdown text,
+  content_html text,
   cover_image text,
   status post_status default 'draft',
   published_at timestamptz,
@@ -369,11 +369,11 @@ ADMIN_EMAIL=albertnkhata@hotmail.com
 ### 7.2: Install Dependencies
 
 ```bash
-npm install @supabase/supabase-js @supabase/ssr react-markdown remark-gfm
+npm install @supabase/supabase-js @supabase/ssr react-quill
 ```
 
 **Verification:**
-- [ ] Check `package.json` — all 4 dependencies listed
+- [ ] Check `package.json` — all 3 dependencies listed
 - [ ] `node_modules/` updated
 
 ---

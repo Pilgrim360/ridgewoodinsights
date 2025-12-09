@@ -25,7 +25,7 @@ This contains your routing. Since we are using a "collapsible" design, icons are
 - Posts (manage all blog entries)
 - Media (image and file library)
 - Categories (content organization)
-- Comments (moderation and management)
+- Comments (moderation and management - coming soon)
 - Settings (site configuration)
 - Analytics (traffic and engagement metrics) - coming soon
 
@@ -123,7 +123,7 @@ The main workspace that updates based on the selected navigation item. This area
 - `title` (text) - Blog post title
 - `slug` (text, unique) - URL-friendly identifier
 - `excerpt` (text, nullable) - Preview text for listings
-- `content_markdown` (text, nullable) - Full article body in markdown
+- `content_html` (text, nullable) - Full article body in HTML
 - `cover_image` (text, nullable) - Featured image URL
 - `status` (enum) - One of: 'draft', 'published', 'scheduled'
 - `published_at` (timestamptz, nullable) - Publication date
@@ -162,7 +162,6 @@ The main workspace that updates based on the selected navigation item. This area
 
 **Additional Features:**
 - List view with filterable columns (status, category, author, date)
-- Create new post form with markdown editor
 - Edit existing posts with side-by-side markdown preview
 - Category selection dropdown (from categories table)
 - Featured image upload with preview
@@ -184,11 +183,12 @@ The main workspace that updates based on the selected navigation item. This area
 - Last saved timestamp
 - Preview toggle
 
-**Main Editor Area:**
-- Left: Full-width markdown editor with real-time word count
-- Right: Live preview pane showing rendered markdown
-- Keyboard shortcuts help panel (accessible via ?)
-- Focus mode toggle to hide sidebar and reduce distractions
+**Main Editor Area:** 
+- Rich text editor (WYSIWYG) with HTML output
+- Toolbar with formatting options (bold, italic, headings, lists, links, code blocks)
+- Live preview of rendered HTML
+- Word count display
+- Auto-save status indicator
 
 **Sidebar (Post Metadata):**
 - Category dropdown with multi-select option
@@ -512,7 +512,7 @@ blog-images/
 
 ### Step 5: Post Editor Page (3-4 hours)
 
-**Objectives:** Build the complex editor with markdown preview and metadata
+**Objectives:** Build the complex editor with rich text editing and HTML output
 
 - [ ] Create `admin/posts/[id]/page.tsx` and `admin/posts/new/page.tsx`
 - [ ] Build Top Action Bar (sticky):
@@ -522,9 +522,10 @@ blog-images/
   - Status indicator
   - Last saved timestamp
 - [ ] Build Main Editor Area:
-  - Left: Markdown editor (textarea or CodeMirror)
-  - Right: Live preview pane
+  - Rich text editor (WYSIWYG) with formatting toolbar
+  - Formatting controls (bold, italic, heading levels, lists, links, code blocks)
   - Word count display
+  - Auto-save status indicator
 - [ ] Build Sidebar (Post Metadata):
   - Category dropdown
   - Featured image upload
@@ -546,15 +547,13 @@ blog-images/
 - `src/components/admin/PostEditor/Editor.tsx`
 - `src/components/admin/PostEditor/EditorTopBar.tsx`
 - `src/components/admin/PostEditor/EditorSidebar.tsx`
-- `src/components/admin/PostEditor/MarkdownPreview.tsx`
+- `src/components/admin/PostEditor/QuillEditor.tsx`
 - `src/components/admin/PostEditor/ImageUpload.tsx`
 - `src/hooks/usePostEditor.ts` (state + auto-save logic)
-- `src/lib/admin/markdown.ts` (markdown utilities)
+- `src/lib/admin/html.ts` (HTML utilities)
 
 **Dependencies to Add:**
-- `react-markdown` (for preview)
-- `remark` + `remark-gfm` (markdown parsing)
-- `codemirror` or `monaco-editor` (optional, for enhanced editor)
+- `react-quill` (rich text editor with HTML output)
 
 **Database Queries:**
 - Fetch post by ID
@@ -563,11 +562,13 @@ blog-images/
 - Image upload to Supabase Storage
 
 **Testing:**
-- Test markdown preview updates in real-time
+- Test rich text editor formatting (bold, italic, headings, lists, etc.)
 - Verify auto-save functionality
 - Test unsaved changes warning
 - Confirm image uploads work
 - Check draft/publish status changes
+- Verify HTML output is clean and semantic
+- Test link insertion and editing
 
 ---
 
@@ -666,7 +667,8 @@ blog-images/
 ### Content Guidelines
 
 - **Blog posts:** Write clear, value-focused content for accounting/finance audience
-- **Markdown:** Use proper heading hierarchy, bold, italics, code blocks
+- **HTML Editor:** Use the rich text editor to format content; it automatically generates clean, semantic HTML
+- **Formatting:** Use proper heading hierarchy (H1, H2, H3), bold, italics, lists, and code blocks as needed
 - **Excerpts:** Provide compelling preview text (2-3 sentences)
 - **Categories:** Use predefined categories from SUPABASE_SETUP.md
 - **Disclaimers:** Add appropriate disclaimer_type for compliance
