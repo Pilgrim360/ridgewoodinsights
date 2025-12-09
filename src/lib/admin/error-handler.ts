@@ -1,4 +1,4 @@
-import { AdminError, AdminErrorType } from '@/types/admin';
+import { AdminError } from '@/types/admin';
 
 /**
  * Comprehensive error handler for admin CMS operations
@@ -9,7 +9,7 @@ export class AdminErrorHandler {
   static parse(error: unknown): AdminError {
     // Handle Supabase-specific errors
     if (error instanceof Error && 'status' in error) {
-      const err = error as any;
+      const err = error as Error & { status?: number; message: string };
       const status = err.status;
 
       // RLS violations

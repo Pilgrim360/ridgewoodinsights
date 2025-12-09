@@ -18,6 +18,7 @@ interface UseMutationOptions {
   successMessage?: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function useAdminMutation<T, E = unknown>(
   mutationFn: () => Promise<T>,
   options: UseMutationOptions = {}

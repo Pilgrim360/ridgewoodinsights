@@ -74,7 +74,7 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
     const supabase = getSupabaseClient();
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event: string, session: any) => {
+    } = supabase.auth.onAuthStateChange(async (event: string, session: Record<string, unknown> | null) => {
       if (event === 'SIGNED_OUT') {
         setUser(null);
       } else if (session?.user) {

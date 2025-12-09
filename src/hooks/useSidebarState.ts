@@ -7,7 +7,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { SidebarState } from '@/types/admin';
 
 const STORAGE_KEY_EXPANDED = 'ridgewood-admin-sidebar-expanded';
-const STORAGE_KEY_MOBILE_OPEN = 'ridgewood-admin-mobile-menu-open';
+// Note: STORAGE_KEY_MOBILE_OPEN intentionally unused (mobile state resets on reload for UX)
+// const STORAGE_KEY_MOBILE_OPEN = 'ridgewood-admin-mobile-menu-open';
 
 export const useSidebarState = (): SidebarState => {
   const [isExpanded, setIsExpanded] = useState<boolean>(true);

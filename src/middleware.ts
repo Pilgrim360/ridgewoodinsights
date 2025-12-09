@@ -17,7 +17,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Create Supabase client from request
-  let supabaseResponse = NextResponse.next({
+  const supabaseResponse = NextResponse.next({
     request,
   });
 
@@ -66,3 +66,5 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: ['/admin/:path*'],
 };
+
+// Note: Login is excluded in the middleware function itself (line 15)

@@ -16,6 +16,7 @@ const BUCKET_NAME = 'blog-images';
 export async function uploadImage(
   file: File,
   userId: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onProgress?: (progress: number) => void
 ): Promise<{ url: string; path: string }> {
   // Validate image
@@ -33,7 +34,7 @@ export async function uploadImage(
     const storagePath = `${userId}/${fileName}`;
 
     // Upload file
-    const { data, error } = await supabase.storage
+    const { error } = await supabase.storage
       .from(BUCKET_NAME)
       .upload(storagePath, file, {
         cacheControl: '3600',

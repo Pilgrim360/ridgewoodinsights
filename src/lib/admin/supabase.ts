@@ -6,7 +6,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
-import { AdminError, AdminErrorType } from '@/types/admin';
+import { AdminError } from '@/types/admin';
 
 // Initialize Supabase client
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -17,6 +17,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey);
 /**
  * Format Supabase errors into user-friendly messages
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function formatSupabaseError(error: any): AdminError {
   // Check for specific error codes
   if (error?.code === 'PGRST116') {
@@ -64,8 +65,9 @@ function formatSupabaseError(error: any): AdminError {
  * Wrapper for Supabase queries with error handling
  * Converts Supabase errors to AdminError format
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function withErrorHandling<T>(
-  fn: () => Promise<{ data: T | null; error: any }>
+  fn: () => Promise<{ data: T | null; error: Record<string, unknown> | null }>
 ): Promise<T> {
   try {
     const { data, error } = await fn();
@@ -80,7 +82,7 @@ export async function withErrorHandling<T>(
     }
 
     return data;
-  } catch (error: any) {
+  } catch (error) {
     throw error;
   }
 }
@@ -140,6 +142,7 @@ export async function signOut() {
  * Helper: Convert Supabase error object to friendly message
  * Use this in components when catching errors
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getErrorMessage(error: any): string {
   if (error instanceof Error) {
     return error.message;

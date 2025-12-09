@@ -24,7 +24,7 @@ export async function getSettings(): Promise<SiteSettings> {
     // Convert array of {key: value} to object
     if (Array.isArray(data) && data.length > 0) {
       const settings: Record<string, string> = {};
-      data.forEach((item: any) => {
+      data.forEach((item: Record<string, string>) => {
         settings[item.key] = item.value;
       });
 
