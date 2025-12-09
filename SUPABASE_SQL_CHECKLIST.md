@@ -1,48 +1,10 @@
-# Supabase Setup for Ridgewood Insights Blog
+# Supabase SQL Commands - Execution Order
 
-**Status:** Complete ✓  
-**Last Updated:** December 9, 2025
-
-## Quick Checklist
-
-- [x] Phase 1: Project & Credentials
-- [x] Phase 2: Database Schema
-- [x] Phase 3: Row Level Security (RLS)
-- [x] Phase 4: Storage
-- [x] Phase 5: Performance Indexes
-- [x] Phase 6: Initial Data
-- [x] Phase 7: Local Setup
+Run these in **Supabase SQL Editor** in this exact order. Copy each block, paste it in the editor, and click **Run**.
 
 ---
 
-## Phase 1: Project & Credentials
-
-### Steps
-
-1. Go to [Supabase](https://supabase.com/) and sign in
-2. Click "New project"
-3. Fill in:
-   - **Name:** ridgewood-insights (or similar)
-   - **Database Password:** Generate a strong password, save it
-   - **Region:** Choose closest to your users
-4. Wait for project initialization (~2 minutes)
-5. Once ready, navigate to **Settings > API**
-6. Copy and save:
-   - **Project URL** → will be `NEXT_PUBLIC_SUPABASE_URL=https://nnnfcbmzygubyhufxwln.supabase.co'
-   - **anon (public) key** → will be `NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_ZSCnt2zPLhDxAHVTLgglSg_YfstBeLN`
-
-### Verification
-
-- [ ] Project created and initialized
-- [ ] Both URL and anon key copied to notes
-
----
-
-## Phase 2: Database Schema
-
-Go to **SQL Editor** in Supabase console and run the following SQL blocks in order.
-
-### 2.1: Create Enums & Tables
+## 1. Create Enums & Tables
 
 ```sql
 -- Enums for consistency
@@ -84,11 +46,11 @@ create table posts (
 );
 ```
 
-**Verification:**
-- [ ] Check **Tables** panel: profiles, categories, posts visible
-- [ ] Check **Enums** section: post_status, disclaimer_type listed
+**After running:** Check Tables panel for `profiles`, `categories`, `posts`.
 
-### 2.2: Create Auto-Profile Trigger
+---
+
+## 2. Create Auto-Profile Trigger
 
 ```sql
 -- Trigger function to create a profile for new users
@@ -108,15 +70,11 @@ create trigger on_auth_user_created
   for each row execute procedure public.handle_new_user();
 ```
 
-**Verification:**
-- [ ] Check **Triggers** section: on_auth_user_created visible
-- [ ] Later: After first admin signup, verify profile auto-created
+**After running:** Check Triggers section for `on_auth_user_created`.
 
 ---
 
-## Phase 3: Row Level Security (RLS)
-
-### 3.1: Enable RLS on All Tables
+## 3. Enable RLS on All Tables
 
 ```sql
 -- Enable RLS on all tables
@@ -125,11 +83,11 @@ alter table categories enable row level security;
 alter table posts enable row level security;
 ```
 
-**Verification:**
-- [ ] Go to each table in **Tables** panel
-- [ ] Check **RLS** toggle is enabled (blue/on)
+**After running:** Check each table's RLS toggle (should be blue/enabled).
 
-### 3.2: Create Admin Helper Function
+---
+
+## 4. Create Admin Helper Function
 
 ```sql
 -- Helper function to check if user is admin
@@ -142,10 +100,11 @@ returns boolean as $$
 $$ language sql stable;
 ```
 
-**Verification:**
-- [ ] Function appears in **Functions** section
+**After running:** Check Functions section for `is_admin`.
 
-### 3.3: Add Profiles Policies
+---
+
+## 5. Add Profiles Policies
 
 ```sql
 -- Profiles Policies
@@ -162,7 +121,11 @@ create policy "Admins can do everything on profiles" on profiles
   for all using (is_admin());
 ```
 
-### 3.4: Add Posts Policies
+**After running:** Check `profiles` table RLS policies (should have 3).
+
+---
+
+## 6. Add Posts Policies
 
 ```sql
 -- Posts Policies
@@ -191,7 +154,11 @@ create policy "Admins can do everything on posts" on posts
   for all using (is_admin());
 ```
 
-### 3.5: Add Categories Policies
+**After running:** Check `posts` table RLS policies (should have 6).
+
+---
+
+## 7. Add Categories Policies
 
 ```sql
 -- Categories Policies
@@ -204,30 +171,11 @@ create policy "Admins can do everything on categories" on categories
   for all using (is_admin());
 ```
 
-**Verification:**
-- [ ] Go to each table's **RLS** section
-- [ ] Verify all policies are listed:
-  - profiles: 3 policies
-  - posts: 6 policies
-  - categories: 2 policies
+**After running:** Check `categories` table RLS policies (should have 2).
 
 ---
 
-## Phase 4: Storage Setup
-
-### 4.1: Create Blog Images Bucket
-
-1. Go to **Storage** in Supabase console
-2. Click **Create a new bucket**
-3. Name: `blog-images`
-4. Check **Public bucket** (toggle on)
-5. Click **Create bucket**
-
-**Verification:**
-- [ ] Bucket `blog-images` appears in storage list
-- [ ] **Public** status is enabled
-
-### 4.2: Add Storage Policies
+## 8. Add Storage Policies
 
 ```sql
 -- Storage policies for blog-images bucket
@@ -262,15 +210,11 @@ create policy "Admins can do everything on storage" on storage.objects
   for all using (is_admin());
 ```
 
-**Verification:**
-- [ ] Go to `blog-images` bucket in Storage
-- [ ] Check **Policies** tab: 5 policies listed
+**After running:** Go to Storage > `blog-images` bucket > Policies tab. Should have 5 policies.
 
 ---
 
-## Phase 5: Performance Indexes
-
-Run in SQL Editor:
+## 9. Create Performance Indexes
 
 ```sql
 -- Indexes for better performance
@@ -293,30 +237,15 @@ create index idx_posts_blog_listing on posts(status, published_at desc)
   where status in ('published', 'draft');
 ```
 
-**Verification:**
-- [ ] Go to each table, check **Indexes** tab
-- [ ] Verify all 8 indexes are created
+**After running:** Check each table's Indexes section. Should have 8 total.
 
 ---
 
-## Phase 6: Initial Data Setup
+## 10. Promote Admin User
 
-### 6.1: Create Admin User (First)
+**First:** Go to **Authentication > Users** and add user with email `albertnkhata@hotmail.com` (generate a password).
 
-1. Go to **Authentication > Users** in Supabase
-2. Click **Add user**
-3. Email: `albertnkhata@hotmail.com`
-4. Password: Generate a temporary password
-5. Click **Create user**
-
-**Note:** A profile will auto-create via the trigger.
-
-**Verification:**
-- [ ] User appears in **Authentication > Users** list
-
-### 6.2: Promote Admin User
-
-Go to **SQL Editor** and run:
+**Then run this SQL:**
 
 ```sql
 -- Replace with your actual admin email
@@ -328,10 +257,11 @@ where email = 'albertnkhata@hotmail.com';
 select id, email, is_admin from profiles where is_admin = true;
 ```
 
-**Verification:**
-- [ ] Query returns 1 row with is_admin = true
+**After running:** Query should return 1 row with `is_admin = true`.
 
-### 6.3: Create Initial Categories
+---
+
+## 11. Create Initial Categories
 
 ```sql
 insert into categories (name, slug) values
@@ -342,93 +272,22 @@ insert into categories (name, slug) values
 ('Accounting Tips', 'accounting-tips');
 ```
 
-**Verification:**
-- [ ] Go to **categories** table
-- [ ] Verify 5 rows exist with correct names and slugs
+**After running:** Go to `categories` table and verify 5 rows exist.
 
 ---
 
-## Phase 7: Local Setup
+## Summary
 
-### 7.1: Create `.env.local`
+- [ ] 1. Enums & Tables
+- [ ] 2. Trigger
+- [ ] 3. Enable RLS
+- [ ] 4. Admin Helper Function
+- [ ] 5. Profiles Policies
+- [ ] 6. Posts Policies
+- [ ] 7. Categories Policies
+- [ ] 8. Storage Policies
+- [ ] 9. Indexes
+- [ ] 10. Promote Admin User
+- [ ] 11. Create Initial Categories
 
-In the project root (`/home/user/ridgewoodinsights/`), create a file named `.env.local`:
-
-```
-NEXT_PUBLIC_SUPABASE_URL=https://nnnfcbmzygubyhufxwln.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_ZSCnt2zPLhDxAHVTLgglSg_YfstBeLN
-ADMIN_EMAIL=albertnkhata@hotmail.com
-```
-
-✓ All values set.
-
-**Verification:**
-- [ ] File created and saved
-- [ ] No values are hardcoded elsewhere
-
-### 7.2: Install Dependencies
-
-```bash
-npm install @supabase/supabase-js @supabase/ssr react-markdown remark-gfm
-```
-
-**Verification:**
-- [ ] Check `package.json` — all 4 dependencies listed
-- [ ] `node_modules/` updated
-
----
-
-## Phase 8: Next Steps (After Supabase is Ready)
-
-Once all phases complete:
-
-1. Create Supabase client files (`src/lib/supabase/server.ts`, etc.)
-2. Build public blog pages (`/insights` index and single post)
-3. Set up admin authentication and dashboard
-4. Test end-to-end
-
----
-
-## Troubleshooting
-
-### Tables not created
-- Check SQL Editor for error messages
-- Ensure SQL was run in correct order
-- Look for syntax errors (missing semicolons)
-
-### RLS policies not working
-- Verify RLS is **enabled** on each table (blue toggle)
-- Check `is_admin()` function exists
-- Test with direct auth user
-
-### Storage bucket not accessible
-- Ensure bucket is marked **public**
-- Check storage policies are created
-- Verify bucket name matches `blog-images` exactly
-
-### Profile not auto-created
-- Check trigger exists in Triggers section
-- Manual test: Create new auth user, then check profiles table
-
----
-
-## Quick SQL Snippets (Later Reference)
-
-**Check all policies on a table:**
-```sql
-select schemaname, tablename, policyname, qual, with_check from pg_policies where tablename = 'posts';
-```
-
-**Check indexes:**
-```sql
-select schemaname, tablename, indexname from pg_indexes where tablename = 'posts';
-```
-
-**Reset all profiles to non-admin (CAUTION):**
-```sql
-update profiles set is_admin = false;
-```
-
----
-
-**Status**: Update this checklist as you progress through each phase.
+**All done!** Then move to Phase 7 in `SUPABASE_SETUP.md` for dependencies.
