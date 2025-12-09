@@ -97,10 +97,12 @@ export default function HomePage() {
         title="Latest Insights"
         subtitle="Financial Tips & News"
         insights={INSIGHTS}
-        layout="grid"
-        maxDisplay={3}
-        showLoadMore={true}
+        layout="carousel"
+        maxDisplay={6}
+        itemsPerView={3}
+        showLoadMore={false}
         loadMoreHref="/insights"
+        autoAdvanceInterval={6000}
       />
     </>
   );
