@@ -444,12 +444,12 @@ npm start               # Start production server
 | 2 | ✓ Complete | Sidebar Navigation (desktop/mobile, responsive, accessible) |
 | 3 | ✓ Complete | Dashboard Page (stats, activity feed, quick actions) |
 | 4 | ✓ Complete | Posts List Page (filters, table, pagination) |
-| 5 | ⏹ Pending | Post Editor (TipTap, auto-save, image upload) |
-| 6 | ⏹ Pending | Categories Management (CRUD, validation) |
+| 5 | ✓ Complete | Post Editor (TipTap, auto-save, image upload) |
+| 6 | ✓ Complete | Categories Management (CRUD, validation) |
 | 7 | ⏹ Pending | Settings Page (site config) |
 | 8 | ⏹ Pending | Testing & Deployment |
 
 ---
 
 **Last Updated:** December 10, 2025  
-**Document Version:** 2.1 (Step 3 Complete)
+**Document Version:** 2.2 (Step 6 Complete)
