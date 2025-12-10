@@ -443,7 +443,7 @@ npm start               # Start production server
 | 1 | ✓ Complete | Foundation & Setup (types, auth, error handling, validation) |
 | 2 | ✓ Complete | Sidebar Navigation (desktop/mobile, responsive, accessible) |
 | 3 | ✓ Complete | Dashboard Page (stats, activity feed, quick actions) |
-| 4 | ⏹ Pending | Posts List Page (filters, table, pagination) |
+| 4 | ✓ Complete | Posts List Page (filters, table, pagination) |
 | 5 | ⏹ Pending | Post Editor (TipTap, auto-save, image upload) |
 | 6 | ⏹ Pending | Categories Management (CRUD, validation) |
 | 7 | ⏹ Pending | Settings Page (site config) |
