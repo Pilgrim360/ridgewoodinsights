@@ -82,3 +82,17 @@ export function formatDuration(seconds: number): string {
 
   return `${hours}h ${minutes}m`;
 }
+
+/**
+ * Format file size in bytes as human-readable string
+ * e.g., "1.2 KB", "2.5 MB", "3.1 GB"
+ */
+export function formatFileSize(bytes: number): string {
+  if (bytes === 0) return '0 Bytes';
+
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}

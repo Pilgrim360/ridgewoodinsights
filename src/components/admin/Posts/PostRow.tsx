@@ -17,6 +17,8 @@ export interface PostRowProps {
   categories: CategoryData[];
   onDelete: (postId: string) => Promise<void>;
   isDeleting?: boolean;
+  isSelected?: boolean;
+  onSelectChange?: (postId: string) => void;
 }
 
 const STATUS_BADGE_STYLES = {
@@ -30,6 +32,8 @@ export function PostRow({
   categories,
   onDelete,
   isDeleting = false,
+  isSelected = false,
+  onSelectChange,
 }: PostRowProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -54,7 +58,18 @@ export function PostRow({
 
   return (
     <>
-      <tr className="border-b border-surface hover:bg-background/50 transition-colors">
+      <tr className={`border-b border-surface hover:bg-background/50 transition-colors ${isSelected ? 'bg-background' : ''}`}>
+        {/* Selection Checkbox */}
+        <td className="px-4 py-3 text-sm">
+          <input
+            type="checkbox"
+            checked={isSelected}
+            onChange={() => onSelectChange && onSelectChange(post.id!)}
+            onClick={(e) => e.stopPropagation()}
+            className="h-4 w-4 rounded border-surface text-primary focus:ring-primary"
+          />
+        </td>
+
         {/* Title */}
         <td className="px-4 py-3 text-sm">
           <Link

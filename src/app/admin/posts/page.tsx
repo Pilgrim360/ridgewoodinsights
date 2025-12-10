@@ -7,7 +7,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { useAdminError } from '@/contexts/AdminErrorContext';
-import { getPosts, deletePost } from '@/lib/admin/posts';
+import { getPosts, deletePost, bulkDeletePosts, bulkPublishPosts } from '@/lib/admin/posts';
 import { FilterBar } from '@/components/admin/Posts/FilterBar';
 import { PostsTable } from '@/components/admin/Posts/PostsTable';
 import { PostData, PostFilters, CategoryData } from '@/types/admin';
@@ -25,6 +25,7 @@ interface PageState {
   } | null;
   isLoading: boolean;
   isDeleting: boolean;
+  selectedPosts: string[];
   error: string | null;
 }
 
@@ -42,6 +43,7 @@ export default function PostsPage() {
     pagination: null,
     isLoading: true,
     isDeleting: false,
+    selectedPosts: [],
     error: null,
   });
 
@@ -135,6 +137,7 @@ export default function PostsPage() {
           posts: result.data,
           pagination: result.meta,
           isDeleting: false,
+          selectedPosts: prev.selectedPosts.filter(id => id !== postId),
         }));
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to delete post';
@@ -144,6 +147,82 @@ export default function PostsPage() {
     },
     [state.filters, showError, showSuccess]
   );
+
+  // Handle bulk delete
+  const handleBulkDelete = useCallback(
+    async (postIds: string[]) => {
+      if (postIds.length === 0) return;
+
+      setState((prev) => ({ ...prev, isDeleting: true }));
+
+      try {
+        await bulkDeletePosts(postIds);
+        showSuccess(`${postIds.length} post(s) deleted successfully`);
+
+        // Refresh posts list
+        const result = await getPosts(state.filters);
+        setState((prev) => ({
+          ...prev,
+          posts: result.data,
+          pagination: result.meta,
+          isDeleting: false,
+          selectedPosts: [],
+        }));
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Failed to delete posts';
+        showError(message);
+        setState((prev) => ({ ...prev, isDeleting: false }));
+      }
+    },
+    [state.filters, showError, showSuccess]
+  );
+
+  // Handle bulk publish
+  const handleBulkPublish = useCallback(
+    async (postIds: string[]) => {
+      if (postIds.length === 0) return;
+
+      setState((prev) => ({ ...prev, isDeleting: true }));
+
+      try {
+        await bulkPublishPosts(postIds);
+        showSuccess(`${postIds.length} post(s) published successfully`);
+
+        // Refresh posts list
+        const result = await getPosts(state.filters);
+        setState((prev) => ({
+          ...prev,
+          posts: result.data,
+          pagination: result.meta,
+          isDeleting: false,
+          selectedPosts: [],
+        }));
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Failed to publish posts';
+        showError(message);
+        setState((prev) => ({ ...prev, isDeleting: false }));
+      }
+    },
+    [state.filters, showError, showSuccess]
+  );
+
+  // Handle post selection
+  const handleSelectPost = useCallback((postId: string) => {
+    setState((prev) => ({
+      ...prev,
+      selectedPosts: prev.selectedPosts.includes(postId)
+        ? prev.selectedPosts.filter(id => id !== postId)
+        : [...prev.selectedPosts, postId],
+    }));
+  }, []);
+
+  // Handle select all
+  const handleSelectAll = useCallback((postIds: string[]) => {
+    setState((prev) => ({
+      ...prev,
+      selectedPosts: postIds,
+    }));
+  }, []);
 
   // Fallback pagination if not loaded yet
   const paginationMeta = state.pagination || {
@@ -169,9 +248,14 @@ export default function PostsPage() {
         categories={state.categories}
         pagination={paginationMeta}
         onDelete={handleDeletePost}
+        onBulkDelete={handleBulkDelete}
+        onBulkPublish={handleBulkPublish}
         onPageChange={handlePageChange}
         isLoading={state.isLoading}
         isDeleting={state.isDeleting}
+        selectedPosts={state.selectedPosts}
+        onSelectChange={handleSelectPost}
+        onSelectAll={handleSelectAll}
       />
     </div>
   );

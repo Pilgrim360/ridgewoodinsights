@@ -240,3 +240,124 @@ export async function saveDraft(id: string, updates: Partial<PostData>): Promise
     status: 'draft',
   });
 }
+
+/**
+ * Get post revisions
+ */
+export async function getPostRevisions(postId: string): Promise<any[]> {
+  try {
+    const { data, error } = await supabase
+      .from('posts')
+      .select('revision_history')
+      .eq('id', postId)
+      .single();
+
+    if (error) throw error;
+    if (!data) return [];
+
+    // Parse revision history if it exists
+    if (data.revision_history && Array.isArray(data.revision_history)) {
+      return data.revision_history;
+    }
+
+    return [];
+  } catch (error) {
+    console.error('Error fetching post revisions:', error);
+    return [];
+  }
+}
+
+/**
+ * Add a revision to post history
+ */
+export async function addPostRevision(postId: string, revisionData: any): Promise<void> {
+  try {
+    // Get current revision history
+    const currentRevisions = await getPostRevisions(postId);
+
+    // Add new revision
+    const updatedRevisions = [
+      {
+        ...revisionData,
+        id: Date.now().toString(),
+        created_at: new Date().toISOString(),
+      },
+      ...currentRevisions.slice(0, 9) // Keep only last 10 revisions
+    ];
+
+    // Update post with new revision history
+    const { error } = await supabase
+      .from('posts')
+      .update({
+        revision_history: updatedRevisions
+      })
+      .eq('id', postId);
+
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error adding post revision:', error);
+    throw error;
+  }
+}
+
+/**
+ * Restore a post from revision
+ */
+export async function restorePostRevision(postId: string, revision: any): Promise<void> {
+  try {
+    // Update post with revision data
+    const { error } = await supabase
+      .from('posts')
+      .update({
+        title: revision.title,
+        content: revision.content,
+        status: revision.status,
+        excerpt: revision.excerpt,
+        category_id: revision.category_id,
+        cover_image: revision.cover_image,
+      })
+      .eq('id', postId);
+
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error restoring post revision:', error);
+    throw error;
+  }
+}
+
+/**
+ * Bulk delete posts
+ */
+export async function bulkDeletePosts(ids: string[]): Promise<void> {
+  try {
+    const { error } = await supabase
+      .from('posts')
+      .delete()
+      .in('id', ids);
+
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error bulk deleting posts:', error);
+    throw error;
+  }
+}
+
+/**
+ * Bulk publish posts
+ */
+export async function bulkPublishPosts(ids: string[]): Promise<void> {
+  try {
+    const { error } = await supabase
+      .from('posts')
+      .update({
+        status: 'published',
+        published_at: new Date().toISOString()
+      })
+      .in('id', ids);
+
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error bulk publishing posts:', error);
+    throw error;
+  }
+}

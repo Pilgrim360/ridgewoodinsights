@@ -10,15 +10,21 @@ import { cn } from '@/lib/utils';
 import { PostData, CategoryData, PaginationMeta } from '@/types/admin';
 import { PostRow } from './PostRow';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 
 export interface PostsTableProps {
   posts: PostData[];
   categories: CategoryData[];
   pagination: PaginationMeta;
   onDelete: (postId: string) => Promise<void>;
+  onBulkDelete: (postIds: string[]) => Promise<void>;
+  onBulkPublish: (postIds: string[]) => Promise<void>;
   onPageChange: (page: number) => void;
   isLoading?: boolean;
   isDeleting?: boolean;
+  selectedPosts?: string[];
+  onSelectChange?: (postId: string) => void;
+  onSelectAll?: (postIds: string[]) => void;
 }
 
 export function PostsTable({
@@ -26,9 +32,14 @@ export function PostsTable({
   categories,
   pagination,
   onDelete,
+  onBulkDelete,
+  onBulkPublish,
   onPageChange,
   isLoading = false,
   isDeleting = false,
+  selectedPosts = [],
+  onSelectChange,
+  onSelectAll,
 }: PostsTableProps) {
   if (isLoading) {
     return (
@@ -51,6 +62,32 @@ export function PostsTable({
 
   return (
     <div className="space-y-4">
+      {/* Bulk Actions Toolbar */}
+      {selectedPosts.length > 0 && (
+        <div className="flex gap-2 mb-4 p-2 bg-background rounded-lg border border-surface">
+          <Button
+            variant="outline"
+            onClick={() => onBulkDelete(selectedPosts)}
+            disabled={isDeleting}
+          >
+            Delete Selected
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => onBulkPublish(selectedPosts)}
+            disabled={isDeleting}
+          >
+            Publish Selected
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={() => onSelectAll && onSelectAll([])}
+          >
+            Clear Selection
+          </Button>
+        </div>
+      )}
+
       {/* Table Container */}
       <div className="rounded-lg border border-surface bg-white overflow-hidden">
         {/* Responsive table wrapper */}
@@ -58,6 +95,20 @@ export function PostsTable({
           <table className="w-full">
             <thead>
               <tr className="border-b border-surface bg-background">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-secondary">
+                  <input
+                    type="checkbox"
+                    checked={selectedPosts.length > 0 && selectedPosts.length === posts.length}
+                    onChange={(e) => {
+                      if (e.target.checked && onSelectAll) {
+                        onSelectAll(posts.map(post => post.id!));
+                      } else if (onSelectAll) {
+                        onSelectAll([]);
+                      }
+                    }}
+                    className="h-4 w-4 rounded border-surface text-primary focus:ring-primary"
+                  />
+                </th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-secondary">
                   Title
                 </th>
@@ -83,6 +134,8 @@ export function PostsTable({
                   categories={categories}
                   onDelete={onDelete}
                   isDeleting={isDeleting}
+                  isSelected={selectedPosts.includes(post.id!)}
+                  onSelectChange={onSelectChange}
                 />
               ))}
             </tbody>

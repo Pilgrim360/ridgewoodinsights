@@ -11,8 +11,9 @@ export interface EditorState {
   content: string;
   category_id: string | null;
   cover_image: string | null;
-  status: 'draft' | 'published';
+  status: 'draft' | 'published' | 'scheduled';
   excerpt: string;
+  published_at?: string;
 }
 
 export interface UsePostEditorOptions {
@@ -59,6 +60,7 @@ export function usePostEditor({
           cover_image: stateToSave.cover_image,
           excerpt: stateToSave.excerpt,
           status: stateToSave.status,
+          published_at: stateToSave.published_at,
         });
 
         setLastSaved(new Date());

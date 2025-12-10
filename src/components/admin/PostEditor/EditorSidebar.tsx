@@ -50,15 +50,36 @@ export function EditorSidebar({
         <select
           value={state.status}
           onChange={(e) =>
-            updateField('status', e.target.value as 'draft' | 'published')
+            updateField('status', e.target.value as 'draft' | 'published' | 'scheduled')
           }
           disabled={disabled}
           className="w-full px-3 py-2 border border-surface rounded-lg text-sm bg-white text-text focus:outline-none focus:ring-2 focus:ring-primary disabled:bg-background disabled:text-text/50"
         >
           <option value="draft">Draft</option>
           <option value="published">Published</option>
+          <option value="scheduled">Scheduled</option>
         </select>
       </div>
+
+      {/* Scheduled Date - only show if status is scheduled */}
+      {state.status === 'scheduled' && (
+        <div>
+          <label htmlFor="scheduled-date" className="block text-sm font-medium text-secondary mb-2">
+            Schedule Date
+          </label>
+          <input
+            id="scheduled-date"
+            type="datetime-local"
+            value={state.published_at || ''}
+            onChange={(e) => updateField('published_at', e.target.value)}
+            disabled={disabled}
+            className="w-full px-3 py-2 border border-surface rounded-lg text-sm bg-white text-text focus:outline-none focus:ring-2 focus:ring-primary disabled:bg-background disabled:text-text/50"
+          />
+          <p className="text-xs text-text/60 mt-1">
+            When this post should be published
+          </p>
+        </div>
+      )}
 
       {/* Slug */}
       <div>
