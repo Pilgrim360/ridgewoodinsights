@@ -95,3 +95,28 @@ export function getImageUrl(storagePath: string): string {
 
   return publicUrl;
 }
+
+/**
+ * Upload a post image - convenience wrapper that gets userId from Supabase auth
+ */
+export async function uploadPostImage(file: File): Promise<string> {
+  try {
+    const supabase = getSupabaseClient();
+
+    // Get current user
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    // Upload using userId
+    const { url } = await uploadImage(file, user.id);
+    return url;
+  } catch (error) {
+    const parsedError = AdminErrorHandler.parse(error);
+    throw new Error(parsedError.message);
+  }
+}

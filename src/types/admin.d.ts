@@ -12,11 +12,12 @@ export interface PostData {
   title: string;
   slug: string;
   excerpt?: string;
+  content?: string;
   content_html?: string;
-  cover_image?: string;
-  category_id?: string;
+  cover_image?: string | null;
+  category_id?: string | null;
   status: 'draft' | 'published' | 'scheduled';
-  disclaimer_type: 'none' | 'general' | 'legal';
+  disclaimer_type?: 'none' | 'general' | 'legal';
   published_at?: string;
   author_id?: string;
   created_at?: string;
