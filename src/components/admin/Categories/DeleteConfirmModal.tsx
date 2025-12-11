@@ -25,7 +25,7 @@ export function DeleteConfirmModal({
         <div>
           <h2 className="text-xl font-bold text-secondary">Delete Category?</h2>
           <p className="text-sm text-text/60 mt-2">
-            Are you sure you want to delete "<strong>{category.name}</strong>"?
+           Are you sure you want to delete &quot;<strong>{category.name}</strong>&quot;?
           </p>
         </div>
 

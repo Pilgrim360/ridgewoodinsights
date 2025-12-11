@@ -67,9 +67,10 @@ export function Insights({
             }
         };
 
-        carouselRef.current?.addEventListener('keydown', handleKeyDown);
+        const currentRef = carouselRef.current;
+        currentRef?.addEventListener('keydown', handleKeyDown);
         return () =>
-            carouselRef.current?.removeEventListener('keydown', handleKeyDown);
+            currentRef?.removeEventListener('keydown', handleKeyDown);
     }, [layout, maxSlides]);
 
     const nextSlide = () => {

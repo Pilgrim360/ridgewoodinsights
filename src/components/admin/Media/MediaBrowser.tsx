@@ -1,25 +1,23 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
 import { Heading } from '@/components/ui/Heading';
 import { Text } from '@/components/ui/Text';
 import { Badge } from '@/components/ui/Badge';
-import { getMediaItems, searchMedia } from '@/lib/admin/media';
-import { formatFileSize, formatDate } from '@/lib/admin/dates';
+import { getMediaItems, searchMedia, MediaItem } from '@/lib/admin/media';
+import { formatFileSize } from '@/lib/admin/dates';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 
 interface MediaBrowserProps {
-  onSelect?: (media: any) => void;
+  onSelect?: (media: MediaItem) => void;
   selectedMedia?: string[];
-  showUpload?: boolean;
 }
 
-export function MediaBrowser({ onSelect, selectedMedia = [], showUpload = true }: MediaBrowserProps) {
+export function MediaBrowser({ onSelect, selectedMedia = [] }: MediaBrowserProps) {
   const { user } = useAdminAuth();
-  const [mediaItems, setMediaItems] = useState<any[]>([]);
+  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
@@ -56,7 +54,7 @@ export function MediaBrowser({ onSelect, selectedMedia = [], showUpload = true }
     }
   };
 
-  const handleSelect = (item: any) => {
+  const handleSelect = (item: MediaItem) => {
     if (onSelect) {
       onSelect(item);
     }

@@ -13,11 +13,19 @@ import { useAdminAuth } from '@/contexts/AdminAuthContext';
 import { useAdminMutation } from '@/hooks/useAdminMutation';
 import { formatFileSize, formatDate } from '@/lib/admin/dates';
 import { ErrorBoundary } from '@/components/admin/ErrorBoundary';
+import { AdminError } from '@/types/admin';
 
 export default function MediaPage() {
   const { user } = useAdminAuth();
   const router = useRouter();
-  const [mediaItems, setMediaItems] = useState<any[]>([]);
+  const [mediaItems, setMediaItems] = useState<Array<{
+    path: string;
+    name: string;
+    type: string;
+    size: number;
+    url: string;
+    created_at: string;
+  }>>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -40,7 +48,7 @@ export default function MediaPage() {
         setMediaItems(mediaItems.filter(item => !selectedMedia.includes(item.path)));
         setSelectedMedia([]);
       },
-      onError: (error: any) => {
+      onError: (error: AdminError) => {
         console.error('Delete failed:', error);
       }
     }

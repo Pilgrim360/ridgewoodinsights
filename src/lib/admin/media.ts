@@ -21,21 +21,24 @@ export async function getMediaItems(userId: string): Promise<MediaItem[]> {
 
   if (error) throw error;
 
-  return data.map((item: any) => ({
-    name: item.name,
-    path: `${userId}/${item.name}`,
-    url: getImageUrl(`${userId}/${item.name}`),
-    created_at: item.created_at,
-    size: item.metadata?.size || 0,
-    type: getMediaType(item.name),
-    used_in_posts: 0 // TODO: Implement usage tracking
-  }));
+  return data.map((item) => {
+    const size = (item.metadata as unknown as { size?: number })?.size || 0;
+    return {
+      name: item.name,
+      path: `${userId}/${item.name}`,
+      url: getImageUrl(`${userId}/${item.name}`),
+      created_at: item.created_at,
+      size,
+      type: getMediaType(item.name),
+      used_in_posts: 0 // TODO: Implement usage tracking
+    };
+  });
 }
 
 export async function uploadMedia(file: File, userId: string): Promise<MediaItem> {
   const filePath = `${userId}/${Date.now()}-${file.name}`;
 
-  const { data, error } = await supabase.storage
+  const { error } = await supabase.storage
     .from('blog-images')
     .upload(filePath, file, {
       cacheControl: '3600',

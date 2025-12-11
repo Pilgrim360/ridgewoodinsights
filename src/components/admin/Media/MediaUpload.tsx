@@ -4,11 +4,11 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Text } from '@/components/ui/Text';
-import { uploadMedia } from '@/lib/admin/media';
+import { uploadMedia, MediaItem } from '@/lib/admin/media';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 
 interface MediaUploadProps {
-  onUploadComplete?: (mediaItems: any[]) => void;
+  onUploadComplete?: (mediaItems: MediaItem[]) => void;
   multiple?: boolean;
   accept?: string;
 }

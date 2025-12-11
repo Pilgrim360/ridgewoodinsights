@@ -5,9 +5,10 @@ import { Text } from '@/components/ui/Text';
 import { Badge } from '@/components/ui/Badge';
 import { formatFileSize, formatDate } from '@/lib/admin/dates';
 import { Button } from '@/components/ui/Button';
+import { MediaItem as MediaItemType } from '@/lib/admin/media';
 
 interface MediaItemProps {
-  item: any;
+  item: MediaItemType;
   isSelected?: boolean;
   onSelect?: (path: string) => void;
   onDelete?: (path: string) => void;

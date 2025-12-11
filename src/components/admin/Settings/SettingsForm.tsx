@@ -24,7 +24,6 @@ export function SettingsForm({
 }: SettingsFormProps) {
   const [settings, setSettings] = useState<SiteSettings>(initialSettings);
   const [errors, setErrors] = useState<FormErrors>({});
-  const [isFocused, setIsFocused] = useState<string | null>(null);
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -93,8 +92,6 @@ export function SettingsForm({
             type="text"
             value={settings.site_title}
             onChange={(e) => handleChange('site_title', e.target.value)}
-            onFocus={() => setIsFocused('site_title')}
-            onBlur={() => setIsFocused(null)}
             disabled={isSaving}
             placeholder="e.g., Ridgewood Insights"
             maxLength={100}
@@ -123,8 +120,6 @@ export function SettingsForm({
             type="text"
             value={settings.site_tagline}
             onChange={(e) => handleChange('site_tagline', e.target.value)}
-            onFocus={() => setIsFocused('site_tagline')}
-            onBlur={() => setIsFocused(null)}
             disabled={isSaving}
             placeholder="e.g., Financial insights for accountants"
             maxLength={200}
@@ -158,8 +153,6 @@ export function SettingsForm({
             type="email"
             value={settings.contact_email}
             onChange={(e) => handleChange('contact_email', e.target.value)}
-            onFocus={() => setIsFocused('contact_email')}
-            onBlur={() => setIsFocused(null)}
             disabled={isSaving}
             placeholder="e.g., hello@ridgewood.com"
             className={cn(

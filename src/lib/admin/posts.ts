@@ -241,10 +241,23 @@ export async function saveDraft(id: string, updates: Partial<PostData>): Promise
   });
 }
 
+interface PostRevision {
+  id: string;
+  post_id: string;
+  title: string;
+  content: string;
+  excerpt?: string;
+  category_id?: string;
+  cover_image?: string;
+  status: string;
+  created_at: string;
+  created_by: string;
+}
+
 /**
  * Get post revisions
  */
-export async function getPostRevisions(postId: string): Promise<any[]> {
+export async function getPostRevisions(postId: string): Promise<PostRevision[]> {
   try {
     const { data, error } = await supabase
       .from('posts')
@@ -270,7 +283,7 @@ export async function getPostRevisions(postId: string): Promise<any[]> {
 /**
  * Add a revision to post history
  */
-export async function addPostRevision(postId: string, revisionData: any): Promise<void> {
+export async function addPostRevision(postId: string, revisionData: Omit<PostRevision, 'id' | 'created_at'>): Promise<void> {
   try {
     // Get current revision history
     const currentRevisions = await getPostRevisions(postId);
@@ -303,7 +316,7 @@ export async function addPostRevision(postId: string, revisionData: any): Promis
 /**
  * Restore a post from revision
  */
-export async function restorePostRevision(postId: string, revision: any): Promise<void> {
+export async function restorePostRevision(postId: string, revision: PostRevision): Promise<void> {
   try {
     // Update post with revision data
     const { error } = await supabase

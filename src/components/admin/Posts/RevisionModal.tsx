@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Heading } from '@/components/ui/Heading';
@@ -8,11 +8,21 @@ import { Text } from '@/components/ui/Text';
 import { Badge } from '@/components/ui/Badge';
 import { formatDateTime } from '@/lib/admin/dates';
 
+interface PostRevision {
+  id: string;
+  post_id: string;
+  title: string;
+  content: string;
+  status: string;
+  created_at: string;
+  created_by: string;
+}
+
 interface RevisionModalProps {
   isOpen: boolean;
-  revision: any;
+  revision: PostRevision | null;
   onClose: () => void;
-  onRestore: (revision: any) => void;
+  onRestore: (revision: PostRevision) => void;
 }
 
 export function RevisionModal({ isOpen, revision, onClose, onRestore }: RevisionModalProps) {

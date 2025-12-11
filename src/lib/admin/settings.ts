@@ -5,7 +5,7 @@
  * MVP scope: Site Title, Tagline, Contact Email (simple key-value pairs)
  */
 
-import { supabase, withErrorHandling, getErrorMessage } from './supabase';
+import { supabase, getErrorMessage } from './supabase';
 import { SiteSettings } from '@/types/admin';
 
 /**

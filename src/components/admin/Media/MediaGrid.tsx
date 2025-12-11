@@ -4,21 +4,20 @@ import { Card } from '@/components/ui/Card';
 import { Text } from '@/components/ui/Text';
 import { Badge } from '@/components/ui/Badge';
 import { formatFileSize, formatDate } from '@/lib/admin/dates';
+import { MediaItem } from '@/lib/admin/media';
 
 interface MediaGridProps {
-  items: any[];
+  items: MediaItem[];
   selectedItems?: string[];
-  onItemClick?: (item: any) => void;
+  onItemClick?: (item: MediaItem) => void;
   onItemSelect?: (path: string) => void;
-  showSelection?: boolean;
 }
 
 export function MediaGrid({
   items,
   selectedItems = [],
   onItemClick,
-  onItemSelect,
-  showSelection = false
+  onItemSelect
 }: MediaGridProps) {
   const getMediaTypeIcon = (type: string) => {
     switch (type) {
@@ -28,7 +27,7 @@ export function MediaGrid({
     }
   };
 
-  const handleClick = (item: any) => {
+  const handleClick = (item: MediaItem) => {
     if (onItemClick) {
       onItemClick(item);
     }

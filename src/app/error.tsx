@@ -43,7 +43,7 @@ export default function RootError({ error, reset }: ErrorProps) {
 
         {/* Description */}
         <p className="mb-8 text-text">
-          We encountered an unexpected error. Our team has been notified and we're
+          We encountered an unexpected error. Our team has been notified and we&apos;re
           working to fix the issue.
         </p>
 
