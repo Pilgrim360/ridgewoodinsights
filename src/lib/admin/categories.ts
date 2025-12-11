@@ -6,6 +6,10 @@
 import { supabase } from './supabase';
 import { CategoryData, CategoryWithPostCount } from '@/types/admin';
 
+interface CategoryWithPosts extends CategoryData {
+  posts?: Array<{ count: number }>;
+}
+
 /**
  * Get all categories
  */
@@ -36,9 +40,9 @@ export async function getCategoriesWithCount(): Promise<CategoryWithPostCount[]>
 
     if (error) throw error;
 
-    return (data || []).map((cat) => ({
+    return (data || []).map((cat: CategoryWithPosts) => ({
       ...cat,
-      post_count: (cat as Record<string, unknown>).posts?.[0]?.count || 0,
+      post_count: cat.posts?.[0]?.count || 0,
     }));
   } catch (error) {
     console.error('Error fetching categories with count:', error);

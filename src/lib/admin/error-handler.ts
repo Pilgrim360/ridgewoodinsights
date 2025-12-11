@@ -44,7 +44,7 @@ export class AdminErrorHandler {
       }
 
       // Network or server errors
-      if (status >= 500 || !status) {
+      if (!status || status >= 500) {
         return {
           type: 'NETWORK_ERROR',
           message:

@@ -47,9 +47,14 @@ export async function getSettings(): Promise<SiteSettings> {
  */
 export async function getSetting(key: string): Promise<string | null> {
   try {
-    return await withErrorHandling(async () =>
-      supabase.from('settings').select('value').eq('key', key).single()
-    );
+    const { data, error } = await supabase
+      .from('settings')
+      .select('value')
+      .eq('key', key)
+      .single<{ value: string | null }>();
+
+    if (error) throw error;
+    return data?.value || null;
   } catch (error) {
     console.warn(`Failed to load setting ${key}:`, getErrorMessage(error));
     return null;
@@ -61,11 +66,11 @@ export async function getSetting(key: string): Promise<string | null> {
  */
 export async function updateSetting(key: string, value: string): Promise<void> {
   try {
-    await withErrorHandling(async () =>
-      supabase
-        .from('settings')
-        .upsert({ key, value, updated_at: new Date().toISOString() })
-    );
+    const { error } = await supabase
+      .from('settings')
+      .upsert({ key, value, updated_at: new Date().toISOString() });
+
+    if (error) throw error;
   } catch (error) {
     throw new Error(`Failed to update setting: ${getErrorMessage(error)}`);
   }

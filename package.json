@@ -23,7 +23,7 @@
     "clsx": "^2.1.1",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.556.0",
-    "next": "^15.0.5",
+    "next": "^15.5.7",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
     "react-hook-form": "^7.68.0",
@@ -41,7 +41,7 @@
     "@types/sanitize-html": "^2.16.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^8",
-    "eslint-config-next": "^15.0.5",
+    "eslint-config-next": "^15.5.7",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
     "typescript": "^5"

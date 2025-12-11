@@ -21,7 +21,7 @@ export default function CategoriesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<CategoryData | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<CategoryWithPostCount | null>(null);
-  const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
+  const [isDeletingId, setIsDeletingId] = useState<string | undefined>();
 
   // Load categories
   useEffect(() => {
@@ -71,7 +71,7 @@ export default function CategoriesPage() {
       showError(errorMessage);
     } finally {
       setDeleteTarget(null);
-      setIsDeletingId(null);
+      setIsDeletingId(undefined);
     }
   };
 
