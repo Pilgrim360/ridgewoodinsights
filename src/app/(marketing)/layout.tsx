@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { ClientLayout } from '@/app/ClientLayout';
 
 export const metadata: Metadata = {
   title: {
@@ -28,5 +29,5 @@ export default function MarketingLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return <ClientLayout>{children}</ClientLayout>;
 }
