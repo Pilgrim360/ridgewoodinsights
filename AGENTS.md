@@ -51,6 +51,7 @@ The color palette consists of 5 Core Colors plus White, each assigned specific r
 - **Accounting firm specifics:** Prioritize trust signals (professional design, credentials), clear CTAs (contact/schedule), service clarity (what, who, how), and social proof (testimonials, certifications). Focus on content and conversion paths over flashy features.
 - **Work in vertical slices:** Don't fully complete one page before others—build basics across pages first, then polish.
 - **Content before features:** Use real/near-real content early; don't build extras (e.g., blog) until content is ready.
+- **Avoid bloating the codebase. Don't just create files or code without understanding the project structure and verifying that it isn't duplicating other files or code. 
 
 ## Project Structure
 
