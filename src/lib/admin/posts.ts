@@ -19,9 +19,12 @@ export async function getPostStats(): Promise<DashboardStats> {
     if (error) throw error;
 
     // Count by status
-    const published_count = posts?.filter((p) => p.status === 'published').length || 0;
-    const draft_count = posts?.filter((p) => p.status === 'draft').length || 0;
-    const scheduled_count = posts?.filter((p) => p.status === 'scheduled').length || 0;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const published_count = posts?.filter((p: any) => p.status === 'published').length || 0;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const draft_count = posts?.filter((p: any) => p.status === 'draft').length || 0;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const scheduled_count = posts?.filter((p: any) => p.status === 'scheduled').length || 0;
     const total_posts = posts?.length || 0;
 
     // For now, return placeholder for page views (can integrate analytics later)
@@ -57,7 +60,8 @@ export async function getRecentActivity(limit: number = 10): Promise<RecentActiv
     if (!data) return [];
 
     // Map to RecentActivity format
-    return data.map((post) => ({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return data.map((post: any) => ({
       id: post.id,
       type:
         post.status === 'published'

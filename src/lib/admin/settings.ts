@@ -51,7 +51,7 @@ export async function getSetting(key: string): Promise<string | null> {
       .from('settings')
       .select('value')
       .eq('key', key)
-      .single<{ value: string | null }>();
+      .single();
 
     if (error) throw error;
     return data?.value || null;
