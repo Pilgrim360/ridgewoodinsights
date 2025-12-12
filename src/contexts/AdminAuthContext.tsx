@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
 import { getSupabaseClient } from '@/lib/supabase/client';
 import { AdminUser, AdminContextType } from '@/types/admin';
 
@@ -41,6 +42,7 @@ interface AdminAuthProviderProps {
 export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<AdminUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     // Initialize user from Supabase on mount
@@ -122,6 +124,7 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
       const supabase = getSupabaseClient();
       await supabase.auth.signOut();
       setUser(null);
+      router.push('/admin/login');
     } catch (error) {
       console.error('Error signing out:', error);
       throw error;
