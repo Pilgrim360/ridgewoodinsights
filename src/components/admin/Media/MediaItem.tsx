@@ -10,8 +10,8 @@ import { MediaItem as MediaItemType } from '@/lib/admin/media';
 interface MediaItemProps {
   item: MediaItemType;
   isSelected?: boolean;
-  onSelect?: (path: string) => void;
-  onDelete?: (path: string) => void;
+  onSelect?: (path: string) => void | undefined;
+  onDelete?: (path: string) => void | undefined;
   showActions?: boolean;
 }
 

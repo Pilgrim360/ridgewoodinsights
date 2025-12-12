@@ -36,7 +36,7 @@ export default function NotFound() {
 
         {/* Description */}
         <p className="mb-8 text-text">
-          The page you&apos;re looking for doesn&apos;t exist or has been moved. Let&apos;s get
+          The page you are looking for does not exist or has been moved. Let us get
           you back on track.
         </p>
 

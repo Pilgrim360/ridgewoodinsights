@@ -9,8 +9,8 @@ import { MediaItem } from '@/lib/admin/media';
 interface MediaGridProps {
   items: MediaItem[];
   selectedItems?: string[];
-  onItemClick?: (item: MediaItem) => void;
-  onItemSelect?: (path: string) => void;
+  onItemClick?: (item: MediaItem) => void | undefined;
+  onItemSelect?: (path: string) => void | undefined;
 }
 
 export function MediaGrid({
@@ -27,7 +27,7 @@ export function MediaGrid({
     }
   };
 
-  const handleClick = (item: MediaItem) => {
+  const handleClick = (item: MediaItem): void => {
     if (onItemClick) {
       onItemClick(item);
     }

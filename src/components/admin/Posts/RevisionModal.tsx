@@ -21,8 +21,8 @@ interface PostRevision {
 interface RevisionModalProps {
   isOpen: boolean;
   revision: PostRevision | null;
-  onClose: () => void;
-  onRestore: (revision: PostRevision) => void;
+  onClose: () => void | undefined;
+  onRestore: (revision: PostRevision) => void | undefined;
 }
 
 export function RevisionModal({ isOpen, revision, onClose, onRestore }: RevisionModalProps) {

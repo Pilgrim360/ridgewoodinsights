@@ -11,7 +11,7 @@ import { getPostRevisions } from '@/lib/admin/posts';
 
 interface RevisionHistoryProps {
   postId: string;
-  onRestore?: (revision: PostRevision) => void;
+  onRestore?: (revision: PostRevision) => void | undefined;
 }
 
 interface PostRevision {

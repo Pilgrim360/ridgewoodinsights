@@ -36,7 +36,7 @@ export default function AdminNotFound() {
 
         {/* Description */}
         <p className="mb-8 text-text">
-          The admin page you&apos;re looking for doesn&apos;t exist or you may not have access to it.
+          The admin page you are looking for does not exist or you may not have access to it.
         </p>
 
         {/* Action Buttons */}

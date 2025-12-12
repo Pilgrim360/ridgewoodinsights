@@ -44,11 +44,11 @@ export default function MediaPage() {
       return selectedMedia;
     },
     {
-      onSuccess: () => {
+      onSuccess: (): void => {
         setMediaItems(mediaItems.filter(item => !selectedMedia.includes(item.path)));
         setSelectedMedia([]);
       },
-      onError: (error: AdminError) => {
+      onError: (error: AdminError): void => {
         console.error('Delete failed:', error);
       }
     }

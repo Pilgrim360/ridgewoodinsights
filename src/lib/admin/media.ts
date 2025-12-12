@@ -22,7 +22,8 @@ export async function getMediaItems(userId: string): Promise<MediaItem[]> {
   if (error) throw error;
 
   return data.map((item) => {
-    const size = (item.metadata as unknown as { size?: number })?.size || 0;
+    const metadata = item.metadata as { size?: number } | null | undefined;
+    const size = metadata?.size || 0;
     return {
       name: item.name,
       path: `${userId}/${item.name}`,

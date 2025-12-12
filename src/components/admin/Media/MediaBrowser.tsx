@@ -24,7 +24,7 @@ export function MediaBrowser({ onSelect, selectedMedia = [] }: MediaBrowserProps
   useEffect(() => {
     if (!user) return;
 
-    async function loadMedia() {
+    async function loadMedia(): Promise<void> {
       try {
         setIsLoading(true);
         if (user) {
@@ -41,7 +41,7 @@ export function MediaBrowser({ onSelect, selectedMedia = [] }: MediaBrowserProps
     loadMedia();
   }, [user]);
 
-  const handleSearch = async (term: string) => {
+  const handleSearch = async (term: string): Promise<void> => {
     setSearchTerm(term);
     if (!user) return;
 
