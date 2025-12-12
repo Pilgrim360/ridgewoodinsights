@@ -21,13 +21,14 @@ export async function getMediaItems(userId: string): Promise<MediaItem[]> {
 
   if (error) throw error;
 
-  return data.map((item) => {
-    const size = (item.metadata as unknown as { size?: number })?.size || 0;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return data.map((item: any) => {
+    const size = (item.metadata as { size?: number })?.size || 0;
     return {
       name: item.name,
       path: `${userId}/${item.name}`,
       url: getImageUrl(`${userId}/${item.name}`),
-      created_at: item.created_at,
+      created_at: item.created_at || new Date().toISOString(),
       size,
       type: getMediaType(item.name),
       used_in_posts: 0 // TODO: Implement usage tracking
