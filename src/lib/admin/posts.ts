@@ -170,9 +170,15 @@ export async function createPost(
   post: Omit<PostData, 'id' | 'created_at' | 'updated_at'>
 ): Promise<PostData> {
   try {
+    // Map content to content_html for database compatibility
+    const postData = {
+      ...post,
+      content_html: post.content || post.content_html || '',
+    };
+
     const { data, error } = await supabase
       .from('posts')
-      .insert([post])
+      .insert([postData])
       .select()
       .single();
 
@@ -193,9 +199,15 @@ export async function updatePost(
   updates: Partial<PostData>
 ): Promise<PostData> {
   try {
+    // Map content to content_html for database compatibility
+    const updateData = {
+      ...updates,
+      content_html: updates.content || updates.content_html,
+    };
+
     const { data, error } = await supabase
       .from('posts')
-      .update(updates)
+      .update(updateData)
       .eq('id', id)
       .select()
       .single();
@@ -322,12 +334,12 @@ export async function addPostRevision(postId: string, revisionData: Omit<PostRev
  */
 export async function restorePostRevision(postId: string, revision: PostRevision): Promise<void> {
   try {
-    // Update post with revision data
+    // Update post with revision data (map content to content_html)
     const { error } = await supabase
       .from('posts')
       .update({
         title: revision.title,
-        content: revision.content,
+        content_html: revision.content,
         status: revision.status,
         excerpt: revision.excerpt,
         category_id: revision.category_id,
