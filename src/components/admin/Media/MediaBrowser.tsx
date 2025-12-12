@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
 import { Heading } from '@/components/ui/Heading';
@@ -25,7 +24,7 @@ export function MediaBrowser({ onSelect, selectedMedia = [] }: MediaBrowserProps
   useEffect(() => {
     if (!user) return;
 
-    async function loadMedia(): Promise<void> {
+    async function loadMedia() {
       try {
         setIsLoading(true);
         if (user) {
@@ -42,7 +41,7 @@ export function MediaBrowser({ onSelect, selectedMedia = [] }: MediaBrowserProps
     loadMedia();
   }, [user]);
 
-  const handleSearch = async (term: string): Promise<void> => {
+  const handleSearch = async (term: string) => {
     setSearchTerm(term);
     if (!user) return;
 
@@ -107,13 +106,12 @@ export function MediaBrowser({ onSelect, selectedMedia = [] }: MediaBrowserProps
               }`}
               onClick={() => handleSelect(item)}
             >
-              <div className="aspect-square bg-gray-100 flex items-center justify-center overflow-hidden relative">
+              <div className="aspect-square bg-gray-100 flex items-center justify-center overflow-hidden">
                 {item.type === 'image' ? (
-                  <Image
+                  <img
                     src={item.url}
                     alt={item.name}
-                    fill
-                    className="object-cover"
+                    className="w-full h-full object-cover"
                   />
                 ) : (
                   <div className="text-3xl">{getMediaTypeIcon(item.type)}</div>

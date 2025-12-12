@@ -57,7 +57,7 @@ export async function getRecentActivity(limit: number = 10): Promise<RecentActiv
     if (!data) return [];
 
     // Map to RecentActivity format
-    return data.map((post: { id: string; title: string; status: string; updated_at: string; created_at: string }) => ({
+    return data.map((post) => ({
       id: post.id,
       type:
         post.status === 'published'
@@ -269,9 +269,8 @@ export async function getPostRevisions(postId: string): Promise<PostRevision[]> 
     if (!data) return [];
 
     // Parse revision history if it exists
-    const revisionData = data as { revision_history?: PostRevision[] };
-    if (revisionData.revision_history && Array.isArray(revisionData.revision_history)) {
-      return revisionData.revision_history;
+    if (data.revision_history && Array.isArray(data.revision_history)) {
+      return data.revision_history;
     }
 
     return [];
@@ -300,13 +299,12 @@ export async function addPostRevision(postId: string, revisionData: Omit<PostRev
     ];
 
     // Update post with new revision history
-     const updateData: { revision_history: Array<{ id: string; created_at: string; created_by: string; title: string; content: string; status: string; excerpt?: string; category_id?: string; cover_image?: string }> } = {
-       revision_history: updatedRevisions
-     };
-     const { error } = await supabase
-       .from('posts')
-       .update(updateData)
-       .eq('id', postId);
+    const { error } = await supabase
+      .from('posts')
+      .update({
+        revision_history: updatedRevisions
+      })
+      .eq('id', postId);
 
     if (error) throw error;
   } catch (error) {

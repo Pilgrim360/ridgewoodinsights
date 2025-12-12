@@ -8,7 +8,7 @@ import { uploadMedia, MediaItem } from '@/lib/admin/media';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 
 interface MediaUploadProps {
-  onUploadComplete?: (mediaItems: MediaItem[]) => void | undefined;
+  onUploadComplete?: (mediaItems: MediaItem[]) => void;
   multiple?: boolean;
   accept?: string;
 }

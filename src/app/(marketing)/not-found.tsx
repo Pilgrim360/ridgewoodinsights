@@ -36,7 +36,7 @@ export default function MarketingNotFound() {
 
         {/* Description */}
         <p className="mb-8 text-text">
-          We cannot find the page you are looking for. It may have been moved or deleted.
+          We can&apos;t find the page you&apos;re looking for. It may have been moved or deleted.
         </p>
 
         {/* Action Buttons */}

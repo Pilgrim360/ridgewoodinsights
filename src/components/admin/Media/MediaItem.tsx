@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { Card } from '@/components/ui/Card';
 import { Text } from '@/components/ui/Text';
 import { Badge } from '@/components/ui/Badge';
@@ -11,8 +10,8 @@ import { MediaItem as MediaItemType } from '@/lib/admin/media';
 interface MediaItemProps {
   item: MediaItemType;
   isSelected?: boolean;
-  onSelect?: (path: string) => void | undefined;
-  onDelete?: (path: string) => void | undefined;
+  onSelect?: (path: string) => void;
+  onDelete?: (path: string) => void;
   showActions?: boolean;
 }
 
@@ -45,13 +44,12 @@ export function MediaItem({ item, isSelected = false, onSelect, onDelete, showAc
       }`}
       onClick={handleSelect}
     >
-      <div className="aspect-square bg-gray-100 flex items-center justify-center overflow-hidden relative">
+      <div className="aspect-square bg-gray-100 flex items-center justify-center overflow-hidden">
         {item.type === 'image' ? (
-          <Image
+          <img
             src={item.url}
             alt={item.name}
-            fill
-            className="object-cover"
+            className="w-full h-full object-cover"
           />
         ) : (
           <div className="text-3xl">{getMediaTypeIcon(item.type)}</div>
