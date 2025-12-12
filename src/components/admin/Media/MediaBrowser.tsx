@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
 import { Heading } from '@/components/ui/Heading';
@@ -106,12 +107,13 @@ export function MediaBrowser({ onSelect, selectedMedia = [] }: MediaBrowserProps
               }`}
               onClick={() => handleSelect(item)}
             >
-              <div className="aspect-square bg-gray-100 flex items-center justify-center overflow-hidden">
+              <div className="aspect-square bg-gray-100 flex items-center justify-center overflow-hidden relative">
                 {item.type === 'image' ? (
-                  <img
+                  <Image
                     src={item.url}
                     alt={item.name}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
                   />
                 ) : (
                   <div className="text-3xl">{getMediaTypeIcon(item.type)}</div>

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { Card } from '@/components/ui/Card';
 import { Text } from '@/components/ui/Text';
 import { Badge } from '@/components/ui/Badge';
@@ -48,23 +49,24 @@ export function MediaGrid({
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
       {items.map((item) => (
         <Card
-          key={item.path}
-          className={`relative cursor-pointer hover:shadow-md transition-shadow ${
-            selectedItems.includes(item.path) ? 'ring-2 ring-primary' : ''
-          }`}
-          onClick={() => handleClick(item)}
-        >
-          <div className="aspect-square bg-gray-100 flex items-center justify-center overflow-hidden">
-            {item.type === 'image' ? (
-              <img
-                src={item.url}
-                alt={item.name}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="text-3xl">{getMediaTypeIcon(item.type)}</div>
-            )}
-          </div>
+           key={item.path}
+           className={`relative cursor-pointer hover:shadow-md transition-shadow ${
+             selectedItems.includes(item.path) ? 'ring-2 ring-primary' : ''
+           }`}
+           onClick={() => handleClick(item)}
+         >
+           <div className="aspect-square bg-gray-100 flex items-center justify-center overflow-hidden relative">
+             {item.type === 'image' ? (
+               <Image
+                 src={item.url}
+                 alt={item.name}
+                 fill
+                 className="object-cover"
+               />
+             ) : (
+               <div className="text-3xl">{getMediaTypeIcon(item.type)}</div>
+             )}
+           </div>
           <div className="p-2">
             <div className="flex justify-between items-start">
               <div className="truncate text-xs">

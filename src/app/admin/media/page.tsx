@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
@@ -194,12 +195,13 @@ export default function MediaPage() {
                 }`}
                 onClick={() => toggleSelect(item.path)}
               >
-                <div className="aspect-square bg-gray-100 flex items-center justify-center overflow-hidden">
+                <div className="aspect-square bg-gray-100 flex items-center justify-center overflow-hidden relative">
                   {item.type === 'image' ? (
-                    <img
+                    <Image
                       src={item.url}
                       alt={item.name}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
                     />
                   ) : (
                     <div className="text-4xl">{getMediaTypeIcon(item.type)}</div>
