@@ -5,13 +5,14 @@
  * Pattern: All queries return data OR throw error with user-friendly message.
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { AdminError } from '@/types/admin';
+import { Database } from '../supabase/database.types';
 
 // Lazy-initialize Supabase client to avoid build-time instantiation issues
-let supabaseClient: ReturnType<typeof createClient> | null = null;
+let supabaseClient: SupabaseClient<Database> | null = null;
 
-function getSupabaseClient() {
+function getSupabaseClient(): SupabaseClient<Database> {
   if (!supabaseClient) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -22,17 +23,20 @@ function getSupabaseClient() {
       );
     }
 
-    supabaseClient = createClient(supabaseUrl, supabaseKey);
+    supabaseClient = createClient<Database>(supabaseUrl, supabaseKey);
   }
 
   return supabaseClient;
 }
 
-export const supabase = new Proxy({} as ReturnType<typeof createClient>, {
-  get(target, prop) {
-    return getSupabaseClient()[prop as keyof typeof supabaseClient];
-  },
-});
+export const supabase: SupabaseClient<Database> = new Proxy(
+  {} as SupabaseClient<Database>,
+  {
+    get(target, prop) {
+      return getSupabaseClient()[prop as keyof SupabaseClient<Database>];
+    },
+  }
+);
 
 /**
  * Format Supabase errors into user-friendly messages
