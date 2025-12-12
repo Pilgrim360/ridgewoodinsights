@@ -5,14 +5,12 @@
  * Pattern: All queries return data OR throw error with user-friendly message.
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { getSupabaseClient } from '@/lib/supabase/client';
 import { AdminError } from '@/types/admin';
 
 // Initialize Supabase client
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-
-export const supabase = createClient(supabaseUrl, supabaseKey);
+// Use the shared browser client to ensure cookie consistency with middleware
+export const supabase = getSupabaseClient();
 
 /**
  * Format Supabase errors into user-friendly messages
