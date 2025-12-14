@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { Hero } from '@/components/sections/Hero';
 import { InsightsGrid } from '@/components/sections/InsightsGrid';
 import { CTA } from '@/components/sections/CTA';
-import { INSIGHTS } from '@/constants';
+import { getPublishedPosts } from '@/lib/blog';
 
 export const metadata: Metadata = {
   title: 'Insights',
@@ -18,7 +18,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function InsightsPage() {
+export default async function InsightsPage() {
+  const insights = await getPublishedPosts();
+
   return (
     <>
       {/* Hero Section */}
@@ -42,7 +44,7 @@ export default function InsightsPage() {
       />
 
       {/* Insights Grid */}
-      <InsightsGrid insights={INSIGHTS} backgroundVariant="white" />
+      <InsightsGrid insights={insights} backgroundVariant="white" />
 
       {/* CTA Section */}
       <CTA

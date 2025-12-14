@@ -5,11 +5,11 @@ import { AboutTrust } from '@/components/sections/AboutTrust';
 import { CTA } from '@/components/sections/CTA';
 import { Testimonials } from '@/components/sections/Testimonials';
 import { Insights } from '@/components/sections/Insights';
+import { getPublishedPosts } from '@/lib/blog';
 import {
   SERVICES,
   TRUST_SIGNALS,
   TESTIMONIALS,
-  INSIGHTS,
   SITE_NAME,
   SITE_DESCRIPTION,
 } from '@/constants';
@@ -23,7 +23,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const latestInsights = await getPublishedPosts(6);
+
   return (
     <>
       {/* Hero Section */}
@@ -96,7 +98,7 @@ export default function HomePage() {
       <Insights
         title="Latest Insights"
         subtitle="Financial Tips & News"
-        insights={INSIGHTS}
+        insights={latestInsights}
         layout="carousel"
         maxDisplay={6}
         itemsPerView={3}
