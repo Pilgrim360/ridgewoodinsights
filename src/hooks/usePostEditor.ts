@@ -14,6 +14,8 @@ export interface EditorState {
   status: 'draft' | 'published' | 'scheduled';
   excerpt: string;
   published_at?: string;
+  author_id?: string;
+  disclaimer_type?: 'none' | 'general' | 'legal';
 }
 
 export interface UsePostEditorOptions {
@@ -40,32 +42,56 @@ export function usePostEditor({
   // Auto-save function
   const performSave = useCallback(
     async (stateToSave: EditorState) => {
-      if (!postId) return;
+      // If no postId and no title, don't create ghost draft
+      if (!postId && !stateToSave.title) return;
 
       try {
         setIsSaving(true);
         setSaveError(null);
 
-        // Validate content
-        if (!isContentValid(stateToSave.content)) {
-          throw new Error('Content cannot be empty');
+        // Validate content if we have an ID (strict mode) or if user is trying to publish
+        if (stateToSave.status === 'published' && !isContentValid(stateToSave.content)) {
+          throw new Error('Content cannot be empty for published posts');
         }
 
-        // Update post via API
-        await updatePost(postId, {
-          title: stateToSave.title,
-          slug: stateToSave.slug,
-          content: stateToSave.content,
-          category_id: stateToSave.category_id,
-          cover_image: stateToSave.cover_image,
-          excerpt: stateToSave.excerpt,
-          status: stateToSave.status,
-          published_at: stateToSave.published_at,
-        });
+        let savedPost;
+        
+        if (postId) {
+          // Update existing post
+          savedPost = await updatePost(postId, {
+            title: stateToSave.title,
+            slug: stateToSave.slug,
+            content: stateToSave.content,
+            category_id: stateToSave.category_id,
+            cover_image: stateToSave.cover_image,
+            excerpt: stateToSave.excerpt,
+            status: stateToSave.status,
+            published_at: stateToSave.published_at,
+            disclaimer_type: stateToSave.disclaimer_type,
+          });
+        } else {
+          // Create new post (first save)
+          // Dynamically import createPost to avoid circular dependency if possible, or assume it's available
+          const { createPost } = await import('@/lib/admin/posts');
+          
+          savedPost = await createPost({
+            title: stateToSave.title || 'Untitled Post',
+            slug: stateToSave.slug || `post-${Date.now()}`,
+            content: stateToSave.content,
+            category_id: stateToSave.category_id,
+            cover_image: stateToSave.cover_image,
+            excerpt: stateToSave.excerpt,
+            status: 'draft', // Always start as draft
+            author_id: stateToSave.author_id,
+            disclaimer_type: stateToSave.disclaimer_type,
+          });
+        }
 
         setLastSaved(new Date());
         setIsDirty(false);
-        onSuccess?.('Post saved successfully');
+        onSuccess?.(postId ? 'Post saved successfully' : 'Draft created');
+        
+        return savedPost;
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : 'Failed to save post';
@@ -139,6 +165,7 @@ export function usePostEditor({
     lastSaved,
     saveError,
     explicitSave,
-    performSave: performSave as (stateToSave: EditorState) => Promise<void>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    performSave: performSave as (stateToSave: EditorState) => Promise<any>,
   };
 }

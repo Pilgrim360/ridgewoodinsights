@@ -3,6 +3,8 @@
  * Generates URL-friendly slugs from titles and handles duplicates.
  */
 
+import { supabase } from './supabase';
+
 /**
  * Convert a title to a slug
  * Converts to lowercase, removes special characters, replaces spaces with hyphens
@@ -20,22 +22,35 @@ export function titleToSlug(title: string): string {
 /**
  * Check if slug is unique in database and generate a new one if needed
  * Appends -2, -3, etc. if slug already exists
- * Note: This is a stub. In real implementation, query the posts table.
  */
 export async function generateUniqueSlug(
   baseSlug: string,
-  existingSlugs: string[]
+  _existingSlugs?: string[] // Kept for signature compatibility, but unused
 ): Promise<string> {
-  if (!existingSlugs.includes(baseSlug)) {
+  // Check if base slug exists
+  const { count } = await supabase
+    .from('posts')
+    .select('*', { count: 'exact', head: true })
+    .eq('slug', baseSlug);
+
+  if (count === 0) {
     return baseSlug;
   }
 
+  // If exists, try appending numbers until unique
   let counter = 2;
-  while (existingSlugs.includes(`${baseSlug}-${counter}`)) {
+  while (true) {
+    const newSlug = `${baseSlug}-${counter}`;
+    const { count: newCount } = await supabase
+      .from('posts')
+      .select('*', { count: 'exact', head: true })
+      .eq('slug', newSlug);
+
+    if (newCount === 0) {
+      return newSlug;
+    }
     counter++;
   }
-
-  return `${baseSlug}-${counter}`;
 }
 
 /**

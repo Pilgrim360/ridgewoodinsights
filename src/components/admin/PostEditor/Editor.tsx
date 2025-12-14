@@ -22,6 +22,7 @@ const DEFAULT_STATE: EditorState = {
   cover_image: null,
   status: 'draft',
   excerpt: '',
+  disclaimer_type: 'none',
 };
 
 export function Editor({ postId, initialData }: EditorProps) {
@@ -41,6 +42,7 @@ export function Editor({ postId, initialData }: EditorProps) {
     lastSaved,
     saveError,
     explicitSave,
+    performSave,
   } = usePostEditor({
     postId,
     initialState,
@@ -49,13 +51,25 @@ export function Editor({ postId, initialData }: EditorProps) {
   });
 
   const handlePublish = useCallback(async () => {
-    if (!postId || !state.title || !state.slug) {
+    if (!state.title || !state.slug) {
       showError('Title and slug are required');
       return;
     }
 
     try {
-      await updatePost(postId, {
+      // If we don't have a postId yet, save first then publish
+      let currentPostId = postId;
+      
+      if (!currentPostId) {
+        const savedPost = await performSave(state);
+        if (savedPost && savedPost.id) {
+          currentPostId = savedPost.id;
+        } else {
+           throw new Error('Failed to create post before publishing');
+        }
+      }
+
+      await updatePost(currentPostId!, {
         ...state,
         status: 'published',
       });

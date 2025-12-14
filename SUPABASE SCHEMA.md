@@ -121,6 +121,13 @@
     "column_default": "now()"
   },
   {
+    "table_name": "posts",
+    "column_name": "revision_history",
+    "data_type": "jsonb",
+    "is_nullable": "YES",
+    "column_default": "'[]'::jsonb"
+  },
+  {
     "table_name": "profiles",
     "column_name": "id",
     "data_type": "uuid",

@@ -114,14 +114,17 @@ export async function getPosts(
       per_page = 10,
     } = filters;
 
-    let query = supabase.from('posts').select('*', { count: 'exact' });
+    // Base query
+    let query = supabase
+      .from('posts')
+      .select('*', { count: 'exact' });
 
     // Apply filters
     if (search) {
       query = query.ilike('title', `%${search}%`);
     }
 
-    if (status !== 'all') {
+    if (status && status !== 'all') {
       query = query.eq('status', status);
     }
 
@@ -129,27 +132,28 @@ export async function getPosts(
       query = query.eq('category_id', category_id);
     }
 
-    // Get total count before pagination
-    const countResult = await query;
-    const count = countResult.count || 0;
-
-    // Apply pagination
+    // Apply pagination and sorting
     const offset = (page - 1) * per_page;
-    const { data, error } = await supabase
-      .from('posts')
-      .select('*')
-      .ilike('title', `%${search}%`)
-      .eq(status !== 'all' ? 'status' : 'status', status !== 'all' ? status : undefined)
-      .eq(category_id ? 'category_id' : 'id', category_id || undefined)
+    query = query
       .order('updated_at', { ascending: false })
       .range(offset, offset + per_page - 1);
+
+    // Execute single query
+    const { data, error, count } = await query;
 
     if (error) throw error;
 
     const total_pages = Math.ceil((count || 0) / per_page);
 
+    // Map content_html to content for frontend compatibility
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const mappedData = (data || []).map((post: any) => ({
+      ...post,
+      content: post.content_html || post.content,
+    }));
+
     return {
-      data: data || [],
+      data: mappedData,
       meta: {
         total: count || 0,
         page,
@@ -159,6 +163,14 @@ export async function getPosts(
     };
   } catch (error) {
     console.error('Error fetching posts:', error);
+    if (error) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const err = error as any;
+        if (err.code) console.error(`PG Error Code: ${err.code} - ${err.message}`);
+        if (err.details) console.error(`Error Details: ${err.details}`);
+        if (err.hint) console.error(`Hint: ${err.hint}`);
+        console.error('Full Error Object:', JSON.stringify(err, null, 2));
+    }
     throw error;
   }
 }
@@ -171,9 +183,11 @@ export async function createPost(
 ): Promise<PostData> {
   try {
     // Map content to content_html for database compatibility
+    // IMPORTANT: Exclude 'content' from the payload as it's not in the DB schema
+    const { content, ...rest } = post;
     const postData = {
-      ...post,
-      content_html: post.content || post.content_html || '',
+      ...rest,
+      content_html: content || post.content_html || '',
     };
 
     const { data, error } = await supabase
@@ -186,7 +200,14 @@ export async function createPost(
     if (!data) throw new Error('Failed to create post');
     return data;
   } catch (error) {
-    console.error('Error creating post:', error);
+    console.error('Error creating post:', error || 'No data returned');
+    if (error) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const err = error as any;
+        if (err.code) console.error(`PG Error Code: ${err.code} - ${err.message}`);
+        if (err.details) console.error(`Error Details: ${err.details}`);
+        if (err.hint) console.error(`Hint: ${err.hint}`);
+    }
     throw error;
   }
 }
@@ -200,10 +221,17 @@ export async function updatePost(
 ): Promise<PostData> {
   try {
     // Map content to content_html for database compatibility
+    // IMPORTANT: Exclude 'content' from the payload as it's not in the DB schema
+    const { content, ...rest } = updates;
     const updateData = {
-      ...updates,
-      content_html: updates.content || updates.content_html,
+      ...rest,
+      ...(content !== undefined && { content_html: content }), // Only update if content is provided
     };
+
+    // If content_html was explicitly passed in updates, it takes precedence (or just exists)
+    if (updates.content_html) {
+        updateData.content_html = updates.content_html;
+    }
 
     const { data, error } = await supabase
       .from('posts')
@@ -335,6 +363,7 @@ export async function addPostRevision(postId: string, revisionData: Omit<PostRev
 export async function restorePostRevision(postId: string, revision: PostRevision): Promise<void> {
   try {
     // Update post with revision data (map content to content_html)
+    // Note: We deliberately don't restore id, created_at, etc.
     const { error } = await supabase
       .from('posts')
       .update({

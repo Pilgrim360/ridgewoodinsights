@@ -61,6 +61,28 @@ export function EditorSidebar({
         </select>
       </div>
 
+      {/* Disclaimer Type */}
+      <div>
+        <label className="block text-sm font-medium text-secondary mb-2">
+          Disclaimer
+        </label>
+        <select
+          value={state.disclaimer_type || 'none'}
+          onChange={(e) =>
+            updateField('disclaimer_type', e.target.value as 'none' | 'general' | 'legal')
+          }
+          disabled={disabled}
+          className="w-full px-3 py-2 border border-surface rounded-lg text-sm bg-white text-text focus:outline-none focus:ring-2 focus:ring-primary disabled:bg-background disabled:text-text/50"
+        >
+          <option value="none">None</option>
+          <option value="general">General Disclaimer</option>
+          <option value="legal">Legal Disclaimer</option>
+        </select>
+        <p className="text-xs text-text/60 mt-1">
+          Appends standard legal text to footer
+        </p>
+      </div>
+
       {/* Scheduled Date - only show if status is scheduled */}
       {state.status === 'scheduled' && (
         <div>
