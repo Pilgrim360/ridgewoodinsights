@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import debounce from 'lodash.debounce';
 import { updatePost } from '@/lib/admin/posts';
 import { isContentValid } from '@/lib/admin/html';
+import { AUTO_SAVE } from '@/lib/admin/constants';
 
 export interface EditorState {
   title: string;
@@ -78,13 +79,13 @@ export function usePostEditor({
     [postId, onError, onSuccess]
   );
 
-  // Create debounced auto-save (2 second delay)
+  // Create debounced auto-save
   useEffect(() => {
     debouncedSaveRef.current = debounce(
       (stateToSave: EditorState) => {
         performSave(stateToSave);
       },
-      2000,
+      AUTO_SAVE.DEBOUNCE_DELAY_MS,
       { leading: false, trailing: true }
     );
 

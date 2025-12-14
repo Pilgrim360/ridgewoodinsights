@@ -8,6 +8,7 @@ import { Text } from '@/components/ui/Text';
 import { Badge } from '@/components/ui/Badge';
 import { formatDateTime } from '@/lib/admin/dates';
 import { getPostRevisions } from '@/lib/admin/posts';
+import { ERROR_MESSAGES } from '@/lib/admin/constants';
 
 interface RevisionHistoryProps {
   postId: string;
@@ -26,28 +27,15 @@ interface PostRevision {
 
 export function RevisionHistory({ postId, onRestore }: RevisionHistoryProps) {
   const [revisions, setRevisions] = useState<PostRevision[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedRevision, setSelectedRevision] = useState<PostRevision | null>(null);
 
+  // Note: Revision functionality is temporarily disabled
   useEffect(() => {
-    async function loadRevisions() {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const data = await getPostRevisions(postId);
-        setRevisions(data);
-      } catch (err) {
-        console.error('Failed to load revisions:', err);
-        setError('Failed to load revision history');
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    if (postId) {
-      loadRevisions();
-    }
+    // Set immediate feedback about disabled functionality
+    setIsLoading(false);
+    setError(ERROR_MESSAGES.REVISION_DISABLED);
   }, [postId]);
 
   const handleRestore = (revision: PostRevision) => {

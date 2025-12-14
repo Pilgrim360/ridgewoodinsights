@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { FILE_LIMITS } from './constants';
 
 export interface MediaItem {
   name: string;
@@ -10,20 +11,28 @@ export interface MediaItem {
   used_in_posts?: number;
 }
 
+interface StorageItem {
+  name: string;
+  created_at: string;
+  metadata?: {
+    size?: number;
+  };
+  [key: string]: unknown;
+}
+
 export async function getMediaItems(userId: string): Promise<MediaItem[]> {
   const { data, error } = await supabase.storage
     .from('blog-images')
     .list(`${userId}/`, {
-      limit: 100,
+      limit: FILE_LIMITS.MEDIA_LIST_LIMIT,
       offset: 0,
       sortBy: { column: 'created_at', order: 'desc' }
     });
 
   if (error) throw error;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return data.map((item: any) => {
-    const size = (item.metadata as { size?: number })?.size || 0;
+  return (data || []).map((item: StorageItem) => {
+    const size = item.metadata?.size || 0;
     return {
       name: item.name,
       path: `${userId}/${item.name}`,
@@ -31,7 +40,7 @@ export async function getMediaItems(userId: string): Promise<MediaItem[]> {
       created_at: item.created_at || new Date().toISOString(),
       size,
       type: getMediaType(item.name),
-      used_in_posts: 0 // TODO: Implement usage tracking
+      used_in_posts: 0 // TODO: Implement usage tracking when post_media table is available
     };
   });
 }

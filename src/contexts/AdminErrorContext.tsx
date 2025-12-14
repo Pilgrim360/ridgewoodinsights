@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { AdminErrorContextType } from '@/types/admin';
+import { ERROR_MESSAGES, AUTO_SAVE } from '@/lib/admin/constants';
 
 /**
  * AdminErrorContext
@@ -33,12 +34,12 @@ export const AdminErrorProvider: React.FC<AdminErrorProviderProps> = ({
 
   const showError = useCallback((message: string) => {
     setError(message);
-    setTimeout(() => setError(null), 5000);
+    setTimeout(() => setError(null), AUTO_SAVE.TOAST_DURATION_MS);
   }, []);
 
   const showSuccess = useCallback((message: string) => {
     setSuccess(message);
-    setTimeout(() => setSuccess(null), 5000);
+    setTimeout(() => setSuccess(null), AUTO_SAVE.TOAST_DURATION_MS);
   }, []);
 
   const clearMessages = useCallback(() => {
