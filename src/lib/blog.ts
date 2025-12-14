@@ -65,7 +65,7 @@ export async function getPublishedPosts(limit?: number): Promise<Insight[]> {
   }));
 }
 
-export async function getPostBySlug(slug: string): Promise<Insight | null> {
+export async function getPostBySlug(slug: string): Promise<(Insight & { content: string }) | null> {
   const supabase = await createClient();
   
   const { data: post, error } = await supabase
@@ -100,5 +100,6 @@ export async function getPostBySlug(slug: string): Promise<Insight | null> {
     author: p.profiles?.email?.split('@')[0] || 'Ridgewood Team',
     image: p.cover_image || undefined,
     link: `/insights/${p.slug}`,
+    content: p.content_html || '',
   };
 }
