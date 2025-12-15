@@ -5,9 +5,10 @@ import Link from 'next/link';
 import { getPostBySlug } from '@/lib/blog';
 import { Container } from '@/components/ui/Container';
 import { Heading } from '@/components/ui/Heading';
-import { Text } from '@/components/ui/Text';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { ReadingProgress } from '@/components/ui/ReadingProgress';
+import { ShareButtons } from '@/components/ShareButtons';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -54,46 +55,43 @@ export default async function BlogPostPage({ params }: PageProps) {
   };
 
   return (
-    <article className="min-h-screen pb-24">
-      {/* Hero Section */}
-      <div className="bg-secondary text-white pt-32 pb-16 md:pt-40 md:pb-24">
-        <Container maxWidth="lg">
-          <div className="max-w-4xl mx-auto">
-            <div className="flex flex-wrap items-center gap-4 mb-6">
-              <Badge className="bg-primary text-white border-transparent">
-                {post.category}
-              </Badge>
-              <span className="text-white/60 text-sm">
-                {formatDate(post.date)}
-              </span>
-              {post.readTime && (
-                <span className="text-white/60 text-sm">
-                  • {post.readTime}
+    <>
+      <ReadingProgress />
+      
+      <article className="min-h-screen pb-24 bg-white">
+        {/* Minimalist Hero Section */}
+        <div className="pt-8 pb-8 md:pt-12 md:pb-12">
+          <Container maxWidth="lg">
+            <div className="max-w-3xl mx-auto text-center">
+              <div className="flex justify-center mb-6">
+                <Badge className="bg-primary/10 text-primary hover:bg-primary/20 transition-colors border-transparent px-3 py-1">
+                  {post.category}
+                </Badge>
+              </div>
+
+              <Heading as={1} className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-secondary mb-6 leading-tight tracking-tight">
+                {post.title}
+              </Heading>
+
+              <div className="flex flex-wrap items-center justify-center gap-3 text-secondary/40 text-sm font-medium">
+                <span>
+                  {formatDate(post.date)}
                 </span>
-              )}
-            </div>
-
-            <Heading as={1} className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8">
-              {post.title}
-            </Heading>
-
-            <div className="flex items-center gap-3 border-t border-white/10 pt-8">
-              <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
-                {post.author.charAt(0)}
-              </div>
-              <div>
-                <div className="font-medium">{post.author}</div>
-                <div className="text-sm text-white/60">Author</div>
+                {post.readTime && (
+                  <>
+                    <span>•</span>
+                    <span>{post.readTime}</span>
+                  </>
+                )}
               </div>
             </div>
-          </div>
-        </Container>
-      </div>
+          </Container>
+        </div>
 
-      <Container maxWidth="lg" className="mt-[-4rem] relative z-10">
-        <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-xl overflow-hidden">
-          {post.image && (
-            <div className="relative aspect-[21/9] w-full">
+        {/* Featured Image */}
+        {post.image && (
+          <Container maxWidth="xl" className="mb-16 md:mb-24">
+            <div className="relative aspect-[21/9] w-full overflow-hidden rounded-lg">
               <Image
                 src={post.image}
                 alt={post.title}
@@ -102,33 +100,50 @@ export default async function BlogPostPage({ params }: PageProps) {
                 priority
               />
             </div>
-          )}
+          </Container>
+        )}
 
-          <div className="p-8 md:p-12 lg:p-16">
-            {/* Content */}
-            <div 
-              className="prose prose-lg prose-slate max-w-none 
-                prose-headings:text-secondary prose-headings:font-bold
-                prose-a:text-primary prose-a:no-underline hover:prose-a:underline
-                prose-img:rounded-xl"
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
+        <Container maxWidth="lg">
+          <div className="flex flex-col md:flex-row gap-12 lg:gap-24 relative">
+            
+            {/* Sidebar / Share Buttons - Sticky on Desktop */}
+            <div className="hidden md:block w-12 flex-shrink-0">
+              <div className="sticky top-32">
+                 <ShareButtons title={post.title} />
+              </div>
+            </div>
 
-            {/* Footer / Share / Back */}
-            <div className="mt-16 pt-8 border-t border-surface flex flex-col md:flex-row justify-between items-center gap-6">
-              <div>
+            {/* Main Content */}
+            <div className="flex-1 max-w-3xl mx-auto md:mx-0">
+              <div 
+                className="prose prose-lg md:prose-xl prose-slate max-w-none 
+                  prose-headings:text-secondary prose-headings:font-bold prose-headings:tracking-tight
+                  prose-p:text-text prose-p:leading-8 prose-p:font-light
+                  prose-strong:text-secondary prose-strong:font-semibold
+                  prose-a:text-primary prose-a:no-underline prose-a:border-b prose-a:border-primary/30 hover:prose-a:border-primary transition-colors
+                  prose-blockquote:border-l-primary prose-blockquote:text-secondary/80 prose-blockquote:italic
+                  prose-img:rounded-lg prose-img:shadow-sm"
+                dangerouslySetInnerHTML={{ __html: post.content }}
+              />
+
+              {/* Mobile Share Buttons */}
+              <div className="md:hidden mt-12 pt-8 border-t border-surface">
+                <p className="text-sm text-secondary/60 mb-4 font-medium uppercase tracking-wider">Share this article</p>
+                <ShareButtons title={post.title} />
+              </div>
+
+              {/* Navigation Footer */}
+              <div className="mt-20 pt-10 border-t border-surface">
                 <Link href="/insights">
-                  <Button variant="outline">
-                    ← Back to Insights
+                  <Button variant="ghost" className="pl-0 text-secondary hover:text-primary hover:bg-transparent -ml-4 group">
+                    <span className="mr-2 group-hover:-translate-x-1 transition-transform">←</span> Back to Insights
                   </Button>
                 </Link>
               </div>
-              
-              {/* Add share buttons here if needed */}
             </div>
           </div>
-        </div>
-      </Container>
-    </article>
+        </Container>
+      </article>
+    </>
   );
 }
