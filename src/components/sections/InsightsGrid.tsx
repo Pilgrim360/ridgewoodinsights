@@ -116,7 +116,7 @@ function ViewIcon({ mode }: { mode: LayoutMode }) {
 
 function CategoryBadge({ category }: { category: string }) {
   return (
-    <Badge variant="info" className="bg-primary/10 text-primary">
+    <Badge variant="info" className="self-start w-fit bg-primary/10 text-primary">
       {category}
     </Badge>
   );
