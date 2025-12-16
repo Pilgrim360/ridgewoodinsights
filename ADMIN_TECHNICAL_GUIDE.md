@@ -3,7 +3,7 @@
 ## Architecture Overview
 
 ### System Components
-- **Frontend**: Next.js 14+ with App Router
+- **Frontend**: Next.js 15+ with App Router
 - **Database**: Supabase PostgreSQL
 - **Storage**: Supabase Storage for media files
 - **Authentication**: Supabase Auth with email/password
