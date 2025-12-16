@@ -120,3 +120,50 @@ export async function uploadPostImage(file: File): Promise<string> {
     throw new Error(parsedError.message);
   }
 }
+
+/**
+ * Upload a non-image asset (audio, PDF, etc.) to the same bucket.
+ * This intentionally skips image-specific validation.
+ */
+export async function uploadPostAsset(file: File): Promise<string> {
+  try {
+    const supabase = getSupabaseClient();
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const MAX_SIZE_MB = 25;
+    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+      throw new Error(`File too large (max ${MAX_SIZE_MB}MB)`);
+    }
+
+    const timestamp = Date.now();
+    const fileName = `${timestamp}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '')}`;
+    const storagePath = `${user.id}/${fileName}`;
+
+    const { error } = await supabase.storage
+      .from(BUCKET_NAME)
+      .upload(storagePath, file, {
+        cacheControl: '3600',
+        upsert: false,
+      });
+
+    if (error) {
+      throw error;
+    }
+
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from(BUCKET_NAME).getPublicUrl(storagePath);
+
+    return publicUrl;
+  } catch (error) {
+    const parsedError = AdminErrorHandler.parse(error);
+    throw new Error(parsedError.message);
+  }
+}

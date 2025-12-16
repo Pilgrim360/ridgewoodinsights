@@ -11,3 +11,57 @@
     color: #415161;
   }
 }
+
+@layer components {
+  .ProseMirror {
+    @apply text-text;
+  }
+
+  .ProseMirror > * + * {
+    @apply mt-4;
+  }
+
+  .ProseMirror .tableWrapper {
+    @apply overflow-x-auto;
+  }
+
+  .ProseMirror table {
+    @apply w-full border-collapse;
+  }
+
+  .ProseMirror th,
+  .ProseMirror td {
+    @apply border border-surface px-3 py-2 align-top;
+  }
+
+  .ProseMirror th {
+    @apply bg-surface text-secondary;
+  }
+
+  .ProseMirror .page-break {
+    @apply my-6 border-t border-surface;
+  }
+
+  @media print {
+    .ProseMirror .page-break {
+      break-after: page;
+      page-break-after: always;
+      border: 0;
+      margin: 0;
+      height: 0;
+    }
+  }
+
+  .ProseMirror .embed-wrapper {
+    @apply relative w-full overflow-hidden rounded-md border border-surface bg-background;
+    padding-top: 56.25%;
+  }
+
+  .ProseMirror .embed-iframe {
+    @apply absolute inset-0 h-full w-full;
+  }
+
+  .ProseMirror audio {
+    @apply w-full;
+  }
+}

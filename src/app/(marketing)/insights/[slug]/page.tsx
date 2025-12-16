@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getPostBySlug } from '@/lib/blog';
+import { sanitizeContent } from '@/lib/admin/html';
 import { Container } from '@/components/ui/Container';
 import { Heading } from '@/components/ui/Heading';
 import { Badge } from '@/components/ui/Badge';
@@ -53,6 +54,8 @@ export default async function BlogPostPage({ params }: PageProps) {
       day: 'numeric',
     });
   };
+
+  const cleanContent = sanitizeContent(post.content);
 
   return (
     <>
@@ -123,7 +126,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                   prose-a:text-primary prose-a:no-underline prose-a:border-b prose-a:border-primary/30 hover:prose-a:border-primary transition-colors
                   prose-blockquote:border-l-primary prose-blockquote:text-secondary/80 prose-blockquote:italic
                   prose-img:rounded-lg prose-img:shadow-sm"
-                dangerouslySetInnerHTML={{ __html: post.content }}
+                dangerouslySetInnerHTML={{ __html: cleanContent }}
               />
 
               {/* Mobile Share Buttons */}

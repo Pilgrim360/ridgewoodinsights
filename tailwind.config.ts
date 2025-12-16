@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import typography from '@tailwindcss/typography';
 
 const config: Config = {
   content: [
@@ -18,7 +19,7 @@ const config: Config = {
       colors: {
         primary: {
           DEFAULT: '#006466',
-          dark: '#004d4f', // 10% darker
+          dark: '#004d4f',
         },
         secondary: '#2C3E50',
         text: '#415161',
@@ -28,7 +29,7 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [typography],
 };
 
 export default config;
