@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { useAdminError } from '@/contexts/AdminErrorContext';
 import { usePostEditor, EditorState } from '@/hooks/usePostEditor';
 import { updatePost } from '@/lib/admin/posts';
-import { EditorTopBar } from './EditorTopBar';
 import { EditorSidebar } from './EditorSidebar';
 import { TipTapEditor } from './TipTapEditor';
 
@@ -93,36 +92,34 @@ export function Editor({ postId, initialData }: EditorProps) {
 
   return (
     <div className="h-full flex flex-col bg-background">
-      {/* Top bar with title and actions */}
-      <EditorTopBar
-        state={state}
-        updateField={(field: keyof EditorState, value: EditorState[typeof field]) =>
-          updateField(field, value)
-        }
-        isDirty={isDirty}
-        isSaving={isSaving}
-        lastSaved={lastSaved}
-        saveError={saveError}
-        onSave={explicitSave}
-        onPublish={handlePublish}
-        disabled={isSaving}
-      />
-
       {/* Main content area */}
-      <div className="flex-1 overflow-y-auto flex gap-6 p-6">
+      <div className="flex-1 overflow-y-auto flex gap-4 p-4">
         {/* Editor (main) */}
         <div className="flex-1 min-w-0">
           <TipTapEditor
+            title={state.title}
+            onTitleChange={(value) => updateField('title', value)}
             content={state.content}
-            onChange={(content) => updateField('content', content)}
+            onChange={(value) => updateField('content', value)}
             disabled={isSaving}
             onError={showError}
+            isDirty={isDirty}
+            isSaving={isSaving}
+            lastSaved={lastSaved}
+            saveError={saveError}
+            postStatus={state.status}
+            onSave={explicitSave}
+            onPublish={handlePublish}
+            canPublish={Boolean(state.title.trim()) && Boolean(state.slug.trim())}
+            publishDisabledReason={
+              !state.title.trim() || !state.slug.trim() ? 'Title and slug are required' : undefined
+            }
           />
         </div>
 
         {/* Sidebar (metadata) */}
         <div className="w-80 flex-shrink-0">
-          <div className="sticky top-24 space-y-6">
+          <div className="sticky top-4 space-y-6">
             <div className="bg-white border border-surface rounded-lg p-4">
               <EditorSidebar
                 state={state}

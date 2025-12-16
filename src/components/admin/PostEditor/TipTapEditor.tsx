@@ -1,35 +1,58 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { EditorContent, useEditor, type Editor } from '@tiptap/react';
 
+import { uploadPostImage } from '@/lib/admin/storage';
+import { cn } from '@/lib/utils';
 import { createPostEditorExtensions } from '@/lib/tiptap/editorExtensions';
 import { sanitizePastedHtml } from '@/lib/tiptap/sanitize';
 import { getTocHeadings, type TocHeading } from '@/lib/tiptap/toc';
-import { uploadPostImage } from '@/lib/admin/storage';
-import { cn } from '@/lib/utils';
 
-import { EditorToolbar } from './EditorToolbar';
 import { EditorTableBubbleMenu } from './EditorTableBubbleMenu';
-import { EditorToc } from './EditorToc';
+import { EditorToolbar } from './EditorToolbar';
 
 export interface TipTapEditorProps {
+  title: string;
+  onTitleChange: (title: string) => void;
   content: string;
   onChange: (content: string) => void;
   disabled?: boolean;
   characterLimit?: number;
   onError?: (message: string) => void;
+
+  isDirty: boolean;
+  isSaving: boolean;
+  lastSaved: Date | null;
+  saveError: string | null;
+  postStatus: 'draft' | 'published' | 'scheduled';
+  onSave: () => Promise<void>;
+  onPublish: () => Promise<void>;
+  canPublish: boolean;
+  publishDisabledReason?: string;
 }
 
 export function TipTapEditor({
+  title,
+  onTitleChange,
   content,
   onChange,
   disabled,
   characterLimit = 50000,
   onError,
+  isDirty,
+  isSaving,
+  lastSaved,
+  saveError,
+  postStatus,
+  onSave,
+  onPublish,
+  canPublish,
+  publishDisabledReason,
 }: TipTapEditorProps) {
-  const [toc, setToc] = useState<TocHeading[]>([]);
-  const [isUploading, setIsUploading] = useState(false);
+  const [headings, setHeadings] = useState<TocHeading[]>([]);
+  const [isPastingUpload, setIsPastingUpload] = useState(false);
   const editorRef = useRef<Editor | null>(null);
 
   const editor = useEditor({
@@ -41,14 +64,14 @@ export function TipTapEditor({
     editable: !disabled,
     onCreate: ({ editor: ed }) => {
       editorRef.current = ed;
-      setToc(getTocHeadings(ed));
+      setHeadings(getTocHeadings(ed));
     },
     onDestroy: () => {
       editorRef.current = null;
     },
     onUpdate: ({ editor: ed }) => {
       onChange(ed.getHTML());
-      setToc(getTocHeadings(ed));
+      setHeadings(getTocHeadings(ed));
     },
     editorProps: {
       attributes: {
@@ -56,7 +79,7 @@ export function TipTapEditor({
           'prose prose-sm max-w-none',
           'prose-headings:text-secondary prose-p:text-text',
           'prose-a:text-primary',
-          'min-h-[26rem] p-4 outline-none'
+          'min-h-[28rem] px-4 py-4 outline-none'
         ),
       },
       transformPastedHTML: sanitizePastedHtml,
@@ -67,7 +90,7 @@ export function TipTapEditor({
         if (imageFiles.length === 0) return false;
 
         void (async () => {
-          setIsUploading(true);
+          setIsPastingUpload(true);
           try {
             for (const file of imageFiles) {
               const url = await uploadPostImage(file);
@@ -83,7 +106,7 @@ export function TipTapEditor({
           } catch (error) {
             onError?.(error instanceof Error ? error.message : 'Paste upload failed');
           } finally {
-            setIsUploading(false);
+            setIsPastingUpload(false);
           }
         })();
 
@@ -99,7 +122,7 @@ export function TipTapEditor({
         if (imageFiles.length === 0) return false;
 
         void (async () => {
-          setIsUploading(true);
+          setIsPastingUpload(true);
           try {
             for (const file of imageFiles) {
               const url = await uploadPostImage(file);
@@ -115,7 +138,7 @@ export function TipTapEditor({
           } catch (error) {
             onError?.(error instanceof Error ? error.message : 'Drop upload failed');
           } finally {
-            setIsUploading(false);
+            setIsPastingUpload(false);
           }
         })();
 
@@ -126,7 +149,7 @@ export function TipTapEditor({
 
   useEffect(() => {
     if (!editor) return;
-    setToc(getTocHeadings(editor));
+    setHeadings(getTocHeadings(editor));
   }, [editor]);
 
   useEffect(() => {
@@ -137,72 +160,162 @@ export function TipTapEditor({
   const stats = useMemo(() => {
     if (!editor) {
       return {
-        characters: 0,
         words: 0,
       };
     }
 
-    const characters = editor.storage.characterCount.characters();
-    const words = editor.storage.characterCount.words();
-
     return {
-      characters,
-      words,
+      words: editor.storage.characterCount.words(),
     };
   }, [editor, editor?.state]);
 
   if (!editor) return null;
 
+  const publishDisabled = isSaving || !canPublish;
+  const publishTitle = publishDisabledReason;
+
   return (
-    <div className="space-y-4">
-      <EditorToolbar editor={editor} headings={toc} disabled={disabled} onError={onError} />
+    <div className="space-y-3">
+      <div className="sticky top-0 z-20 border-b border-surface bg-background/95 backdrop-blur">
+        <div className="px-4 py-2">
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/admin/posts"
+              className="text-sm text-primary hover:text-primary/80 transition-colors"
+            >
+              ← Posts
+            </Link>
+
+            <SaveStatus
+              isDirty={isDirty}
+              isSaving={isSaving}
+              lastSaved={lastSaved}
+              saveError={saveError}
+            />
+
+            <div className="ml-auto flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => void onSave()}
+                disabled={disabled || !isDirty || isSaving}
+                className={cn(
+                  'h-9 px-3 rounded-md text-sm font-medium transition-colors border',
+                  disabled || !isDirty || isSaving
+                    ? 'bg-surface text-text/50 border-surface cursor-not-allowed'
+                    : 'bg-white text-secondary border-surface hover:bg-surface'
+                )}
+              >
+                {isSaving ? 'Saving…' : 'Save'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => void onPublish()}
+                disabled={disabled || publishDisabled}
+                className={cn(
+                  'h-9 px-3 rounded-md text-sm font-medium text-white transition-colors',
+                  disabled || publishDisabled
+                    ? 'bg-primary/50 cursor-not-allowed'
+                    : 'bg-primary hover:bg-primary/90'
+                )}
+                title={publishTitle}
+              >
+                {postStatus === 'published' ? 'Update' : 'Publish'}
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-2">
+            <EditorToolbar editor={editor} headings={headings} disabled={disabled} onError={onError} />
+          </div>
+        </div>
+      </div>
 
       <EditorTableBubbleMenu editor={editor} disabled={disabled} />
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_260px]">
-        <div className="min-w-0">
-          <div className="overflow-hidden rounded-lg border border-surface bg-white">
-            <EditorContent editor={editor} />
-          </div>
-
-          {isUploading && (
-            <div className="mt-2 text-sm text-text/70">
-              Uploading pasted media…
-            </div>
-          )}
+      <div className="overflow-hidden rounded-lg border border-surface bg-white">
+        <div className="px-4 pt-4 pb-3">
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => onTitleChange(e.target.value)}
+            disabled={disabled}
+            placeholder="Post title…"
+            className={cn(
+              'w-full bg-transparent text-3xl font-bold text-secondary',
+              'placeholder:text-text/30 focus:outline-none',
+              disabled && 'text-text/50'
+            )}
+          />
         </div>
 
-        <aside className="space-y-4">
-          <div className="rounded-lg border border-surface bg-white p-4">
-            <p className="text-sm font-semibold text-secondary mb-3">Outline</p>
-            <EditorToc editor={editor} headings={toc} />
-          </div>
+        <div className="border-t border-surface">
+          <EditorContent editor={editor} />
+        </div>
 
-          <div className="rounded-lg border border-surface bg-white p-4">
-            <p className="text-sm font-semibold text-secondary mb-2">Counts</p>
-            <div className="space-y-1 text-sm text-text">
-              <div className="flex items-center justify-between">
-                <span>Words</span>
-                <span className="font-medium text-secondary">{stats.words.toLocaleString()}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>Characters</span>
-                <span
-                  className={cn(
-                    'font-medium',
-                    characterLimit && stats.characters > characterLimit
-                      ? 'text-red-600'
-                      : 'text-secondary'
-                  )}
-                >
-                  {stats.characters.toLocaleString()}
-                  {characterLimit ? ` / ${characterLimit.toLocaleString()}` : ''}
-                </span>
-              </div>
-            </div>
-          </div>
-        </aside>
+        <div className="flex items-center justify-between border-t border-surface bg-background px-4 py-2 text-xs text-text/70">
+          <span>
+            Words:{' '}
+            <span className="font-medium text-secondary">{stats.words.toLocaleString()}</span>
+          </span>
+
+          {isPastingUpload ? (
+            <span className="inline-flex items-center gap-2">
+              <span className="h-3 w-3 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+              Uploading…
+            </span>
+          ) : null}
+        </div>
       </div>
     </div>
   );
+}
+
+interface SaveStatusProps {
+  isDirty: boolean;
+  isSaving: boolean;
+  lastSaved: Date | null;
+  saveError: string | null;
+}
+
+function SaveStatus({ isDirty, isSaving, lastSaved, saveError }: SaveStatusProps) {
+  if (saveError) {
+    return (
+      <span className="text-sm text-red-600" role="alert">
+        {saveError}
+      </span>
+    );
+  }
+
+  if (isSaving) {
+    return (
+      <span className="text-sm text-text/60 inline-flex items-center gap-2">
+        <span className="h-3 w-3 animate-spin rounded-full border border-text/30 border-t-text" />
+        Saving…
+      </span>
+    );
+  }
+
+  if (isDirty) {
+    return <span className="text-sm text-amber-600">Unsaved changes</span>;
+  }
+
+  if (lastSaved) {
+    return <span className="text-sm text-text/60">Saved {formatRelativeTime(lastSaved)}</span>;
+  }
+
+  return null;
+}
+
+function formatRelativeTime(date: Date): string {
+  const now = new Date();
+  const diff = now.getTime() - date.getTime();
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+
+  if (minutes < 1) return 'just now';
+  if (minutes < 60) return `${minutes}m ago`;
+  if (hours < 24) return `${hours}h ago`;
+  return `${days}d ago`;
 }

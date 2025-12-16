@@ -59,9 +59,16 @@ export interface EditorToolbarProps {
   headings: TocHeading[];
   disabled?: boolean;
   onError?: (message: string) => void;
+  className?: string;
 }
 
-export function EditorToolbar({ editor, headings, disabled, onError }: EditorToolbarProps) {
+export function EditorToolbar({
+  editor,
+  headings,
+  disabled,
+  onError,
+  className,
+}: EditorToolbarProps) {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const csvInputRef = useRef<HTMLInputElement>(null);
   const audioInputRef = useRef<HTMLInputElement>(null);
@@ -192,8 +199,12 @@ export function EditorToolbar({ editor, headings, disabled, onError }: EditorToo
   );
 
   return (
-    <div className="space-y-2">
-      <div className="flex flex-wrap items-center gap-2 rounded-lg border border-surface bg-white p-2">
+    <div
+      className={cn(
+        'flex flex-wrap items-center gap-2 rounded-lg border border-surface bg-white p-2',
+        className
+      )}
+    >
         {/* Undo/redo */}
         <ToolbarButton
           title="Undo"
@@ -683,13 +694,6 @@ export function EditorToolbar({ editor, headings, disabled, onError }: EditorToo
             </span>
           )}
         </div>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="rounded-md border border-surface bg-white px-3 py-2 text-xs text-text/70">
-          Tip: paste images directly into the editor (they’ll upload automatically).
-        </div>
-      </div>
     </div>
   );
 }
