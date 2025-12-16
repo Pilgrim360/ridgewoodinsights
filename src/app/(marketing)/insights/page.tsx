@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { Hero } from '@/components/sections/Hero';
-import { InsightsGrid } from '@/components/sections/InsightsGrid';
+import { NewInsights } from '@/components/sections/NewInsights';
 import { CTA } from '@/components/sections/CTA';
 import { getPublishedPosts } from '@/lib/blog';
 
@@ -43,8 +43,8 @@ export default async function InsightsPage() {
         alignment="center"
       />
 
-      {/* Insights Grid */}
-      <InsightsGrid insights={insights} backgroundVariant="white" />
+      {/* New Insights Section */}
+      <NewInsights insights={insights} />
 
       {/* CTA Section */}
       <CTA
