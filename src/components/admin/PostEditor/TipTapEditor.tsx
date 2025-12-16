@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { EditorContent, useEditor, type Editor } from '@tiptap/react';
 
@@ -8,7 +7,7 @@ import { uploadPostImage } from '@/lib/admin/storage';
 import { cn } from '@/lib/utils';
 import { createPostEditorExtensions } from '@/lib/tiptap/editorExtensions';
 import { sanitizePastedHtml } from '@/lib/tiptap/sanitize';
-import { getTocHeadings, type TocHeading } from '@/lib/tiptap/toc';
+import { useAdminHeaderSlots } from '@/contexts/AdminHeaderSlotsContext';
 
 import { EditorTableBubbleMenu } from './EditorTableBubbleMenu';
 import { EditorToolbar } from './EditorToolbar';
@@ -21,16 +20,6 @@ export interface TipTapEditorProps {
   disabled?: boolean;
   characterLimit?: number;
   onError?: (message: string) => void;
-
-  isDirty: boolean;
-  isSaving: boolean;
-  lastSaved: Date | null;
-  saveError: string | null;
-  postStatus: 'draft' | 'published' | 'scheduled';
-  onSave: () => Promise<void>;
-  onPublish: () => Promise<void>;
-  canPublish: boolean;
-  publishDisabledReason?: string;
 }
 
 export function TipTapEditor({
@@ -41,17 +30,9 @@ export function TipTapEditor({
   disabled,
   characterLimit = 50000,
   onError,
-  isDirty,
-  isSaving,
-  lastSaved,
-  saveError,
-  postStatus,
-  onSave,
-  onPublish,
-  canPublish,
-  publishDisabledReason,
 }: TipTapEditorProps) {
-  const [headings, setHeadings] = useState<TocHeading[]>([]);
+  const { setSubHeader } = useAdminHeaderSlots();
+
   const [isPastingUpload, setIsPastingUpload] = useState(false);
   const editorRef = useRef<Editor | null>(null);
 
@@ -64,14 +45,12 @@ export function TipTapEditor({
     editable: !disabled,
     onCreate: ({ editor: ed }) => {
       editorRef.current = ed;
-      setHeadings(getTocHeadings(ed));
     },
     onDestroy: () => {
       editorRef.current = null;
     },
     onUpdate: ({ editor: ed }) => {
       onChange(ed.getHTML());
-      setHeadings(getTocHeadings(ed));
     },
     editorProps: {
       attributes: {
@@ -149,13 +128,25 @@ export function TipTapEditor({
 
   useEffect(() => {
     if (!editor) return;
-    setHeadings(getTocHeadings(editor));
-  }, [editor]);
+    editor.setEditable(!disabled);
+  }, [editor, disabled]);
 
   useEffect(() => {
     if (!editor) return;
-    editor.setEditable(!disabled);
-  }, [editor, disabled]);
+
+    setSubHeader(
+      <EditorToolbar
+        editor={editor}
+        disabled={disabled}
+        onError={onError}
+        className="w-full border-0 rounded-none bg-transparent p-0"
+      />
+    );
+
+    return () => {
+      setSubHeader(null);
+    };
+  }, [editor, disabled, onError, setSubHeader]);
 
   const stats = useMemo(() => {
     if (!editor) {
@@ -171,66 +162,8 @@ export function TipTapEditor({
 
   if (!editor) return null;
 
-  const publishDisabled = isSaving || !canPublish;
-  const publishTitle = publishDisabledReason;
-
   return (
     <div className="space-y-3">
-      <div className="sticky top-0 z-20 border-b border-surface bg-background/95 backdrop-blur">
-        <div className="px-4 py-2">
-          <div className="flex flex-wrap items-center gap-3">
-            <Link
-              href="/admin/posts"
-              className="text-sm text-primary hover:text-primary/80 transition-colors"
-            >
-              ← Posts
-            </Link>
-
-            <SaveStatus
-              isDirty={isDirty}
-              isSaving={isSaving}
-              lastSaved={lastSaved}
-              saveError={saveError}
-            />
-
-            <div className="ml-auto flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => void onSave()}
-                disabled={disabled || !isDirty || isSaving}
-                className={cn(
-                  'h-9 px-3 rounded-md text-sm font-medium transition-colors border',
-                  disabled || !isDirty || isSaving
-                    ? 'bg-surface text-text/50 border-surface cursor-not-allowed'
-                    : 'bg-white text-secondary border-surface hover:bg-surface'
-                )}
-              >
-                {isSaving ? 'Saving…' : 'Save'}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => void onPublish()}
-                disabled={disabled || publishDisabled}
-                className={cn(
-                  'h-9 px-3 rounded-md text-sm font-medium text-white transition-colors',
-                  disabled || publishDisabled
-                    ? 'bg-primary/50 cursor-not-allowed'
-                    : 'bg-primary hover:bg-primary/90'
-                )}
-                title={publishTitle}
-              >
-                {postStatus === 'published' ? 'Update' : 'Publish'}
-              </button>
-            </div>
-          </div>
-
-          <div className="mt-2">
-            <EditorToolbar editor={editor} headings={headings} disabled={disabled} onError={onError} />
-          </div>
-        </div>
-      </div>
-
       <EditorTableBubbleMenu editor={editor} disabled={disabled} />
 
       <div className="overflow-hidden rounded-lg border border-surface bg-white">
@@ -269,53 +202,4 @@ export function TipTapEditor({
       </div>
     </div>
   );
-}
-
-interface SaveStatusProps {
-  isDirty: boolean;
-  isSaving: boolean;
-  lastSaved: Date | null;
-  saveError: string | null;
-}
-
-function SaveStatus({ isDirty, isSaving, lastSaved, saveError }: SaveStatusProps) {
-  if (saveError) {
-    return (
-      <span className="text-sm text-red-600" role="alert">
-        {saveError}
-      </span>
-    );
-  }
-
-  if (isSaving) {
-    return (
-      <span className="text-sm text-text/60 inline-flex items-center gap-2">
-        <span className="h-3 w-3 animate-spin rounded-full border border-text/30 border-t-text" />
-        Saving…
-      </span>
-    );
-  }
-
-  if (isDirty) {
-    return <span className="text-sm text-amber-600">Unsaved changes</span>;
-  }
-
-  if (lastSaved) {
-    return <span className="text-sm text-text/60">Saved {formatRelativeTime(lastSaved)}</span>;
-  }
-
-  return null;
-}
-
-function formatRelativeTime(date: Date): string {
-  const now = new Date();
-  const diff = now.getTime() - date.getTime();
-  const minutes = Math.floor(diff / 60000);
-  const hours = Math.floor(diff / 3600000);
-  const days = Math.floor(diff / 86400000);
-
-  if (minutes < 1) return 'just now';
-  if (minutes < 60) return `${minutes}m ago`;
-  if (hours < 24) return `${hours}h ago`;
-  return `${days}d ago`;
 }

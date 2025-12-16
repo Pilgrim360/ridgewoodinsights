@@ -1,7 +1,7 @@
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
-import type { Editor } from '@tiptap/react';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import { useEditorState, type Editor } from '@tiptap/react';
 import {
   Bold,
   Italic,
@@ -34,7 +34,7 @@ import {
 import { uploadPostAsset, uploadPostImage } from '@/lib/admin/storage';
 import { cn } from '@/lib/utils';
 import { parseCsv } from '@/lib/tiptap/utils';
-import type { TocHeading } from '@/lib/tiptap/toc';
+import { getTocHeadings } from '@/lib/tiptap/toc';
 
 import { ToolbarButton } from './ToolbarButton';
 import { ToolbarSelect } from './ToolbarSelect';
@@ -56,7 +56,6 @@ const HIGHLIGHT_PRESETS = ['#FEF3C7', '#DCFCE7', '#DBEAFE', '#FCE7F3'];
 
 export interface EditorToolbarProps {
   editor: Editor;
-  headings: TocHeading[];
   disabled?: boolean;
   onError?: (message: string) => void;
   className?: string;
@@ -64,7 +63,6 @@ export interface EditorToolbarProps {
 
 export function EditorToolbar({
   editor,
-  headings,
   disabled,
   onError,
   className,
@@ -74,6 +72,20 @@ export function EditorToolbar({
   const audioInputRef = useRef<HTMLInputElement>(null);
 
   const [isUploading, setIsUploading] = useState(false);
+
+  const editorSnapshot = useEditorState({
+    editor,
+    selector: ({ editor: ed }) => ({
+      from: ed.state.selection.from,
+      to: ed.state.selection.to,
+      docSize: ed.state.doc.content.size,
+    }),
+  });
+
+  const headings = useMemo(
+    () => getTocHeadings(editor),
+    [editor, editorSnapshot.docSize]
+  );
 
   const activeHeadingLevel = (() => {
     for (let level = 1; level <= 6; level += 1) {
