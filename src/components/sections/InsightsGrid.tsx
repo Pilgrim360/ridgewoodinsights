@@ -1,95 +1,196 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Insight } from '@/constants';
-import { Card } from '../ui/Card';
-import { Heading } from '../ui/Heading';
-import { Text } from '../ui/Text';
+import { cn } from '@/lib/utils';
 import { Badge } from '../ui/Badge';
-import { Container } from '../ui/Container';
-import { Section } from '../ui/Section';
 import { Button } from '../ui/Button';
+import { Card } from '../ui/Card';
+import { Container } from '../ui/Container';
+import { Heading } from '../ui/Heading';
+import { Section } from '../ui/Section';
+import { Text } from '../ui/Text';
+
+type LayoutMode = 'featured' | 'grid' | 'masonry' | 'list' | 'carousel';
+
+type PostsApiResponse = {
+  insights: Insight[];
+  total: number;
+  offset: number;
+  limit: number;
+  nextOffset: number;
+  hasMore: boolean;
+};
 
 export interface InsightsGridProps {
   title?: string;
   subtitle?: string;
+  description?: string;
   insights: Insight[];
-  initialDisplayCount?: number;
-  loadMoreIncrement?: number;
+  totalCount?: number;
+  pageSize?: number;
+  initialLayout?: LayoutMode;
   backgroundVariant?: 'default' | 'muted' | 'white';
 }
 
-const formatDate = (dateString: string) => {
+const BLUR_DATA_URL =
+  'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=';
+
+function formatDate(dateString: string) {
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
+  if (Number.isNaN(date.getTime())) return '';
+
+  return new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-  });
-};
+  }).format(date);
+}
+
+function Spinner({ className }: { className?: string }) {
+  return (
+    <svg
+      className={cn('h-5 w-5 animate-spin text-primary', className)}
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <circle
+        className="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="4"
+      />
+      <path
+        className="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+      />
+    </svg>
+  );
+}
+
+function ViewIcon({ mode }: { mode: LayoutMode }) {
+  switch (mode) {
+    case 'featured':
+      return (
+        <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+          <path d="M10 1.5l2.6 5.27 5.82.85-4.21 4.1 1 5.8L10 14.9l-5.21 2.74 1-5.8-4.21-4.1 5.82-.85L10 1.5z" />
+        </svg>
+      );
+    case 'grid':
+      return (
+        <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+          <path d="M3 3h6v6H3V3zm8 0h6v6h-6V3zM3 11h6v6H3v-6zm8 0h6v6h-6v-6z" />
+        </svg>
+      );
+    case 'masonry':
+      return (
+        <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+          <path d="M3 3h6v14H3V3zm8 0h6v8h-6V3zm0 10h6v4h-6v-4z" />
+        </svg>
+      );
+    case 'list':
+      return (
+        <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+          <path d="M4 5h12v2H4V5zm0 4h12v2H4V9zm0 4h12v2H4v-2z" />
+        </svg>
+      );
+    case 'carousel':
+      return (
+        <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+          <path d="M7 5l-5 5 5 5V5zm6 10l5-5-5-5v10z" />
+        </svg>
+      );
+    default:
+      return null;
+  }
+}
+
+function MetaLine({ insight }: { insight: Insight }) {
+  const date = formatDate(insight.date);
+
+  return (
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+      <Badge variant="info" className="bg-primary/10 text-primary">
+        {insight.category}
+      </Badge>
+      {date ? <span className="text-text/70">{date}</span> : null}
+      {insight.readTime ? <span className="text-text/70">{insight.readTime}</span> : null}
+    </div>
+  );
+}
 
 function InsightCard({ insight }: { insight: Insight }) {
   return (
     <Card
-      variant="default"
-      className="group h-full overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+      variant="outlined"
+      padding="sm"
+      interactive
+      className={cn(
+        'group p-0 overflow-hidden',
+        'transition-all duration-300 motion-reduce:transition-none',
+        'focus-within:ring-2 focus-within:ring-primary/30 focus-within:ring-offset-2'
+      )}
       asChild
     >
-      <Link
-        href={insight.link}
-        className="block h-full"
-        aria-labelledby={`insight-${insight.id}-title`}
-      >
-        {insight.image && (
-          <div className="relative aspect-[16/9] overflow-hidden">
-            <Image
-              src={insight.image}
-              alt={insight.title}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              placeholder="blur"
-              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
-            />
-          </div>
-        )}
-
-        <div className="p-6 flex flex-col h-full">
-          <div className="flex items-center gap-3 mb-3">
-            <Badge variant="neutral" className="text-xs">
-              {insight.category}
-            </Badge>
-            <Text as="span" className="text-text/70 text-xs">
-              {formatDate(insight.date)}
-            </Text>
-            {insight.readTime && (
-              <Text as="span" className="text-text/70 text-xs">
-                {insight.readTime}
-              </Text>
+      <Link href={insight.link} aria-label={insight.title} className="block h-full">
+        <div className="flex h-full flex-col">
+          <div className="relative aspect-[16/10] overflow-hidden bg-surface/30">
+            {insight.image ? (
+              <Image
+                src={insight.image}
+                alt={insight.title}
+                fill
+                className="object-cover transition-transform duration-500 motion-reduce:transition-none group-hover:scale-[1.03]"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                placeholder="blur"
+                blurDataURL={BLUR_DATA_URL}
+              />
+            ) : (
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-white" />
             )}
+
+            <div className="absolute inset-0 bg-gradient-to-t from-secondary/30 via-secondary/0 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
           </div>
 
-          <Heading
-            as={3}
-            id={`insight-${insight.id}-title`}
-            className="text-xl font-semibold text-secondary mb-3 group-hover:text-primary transition-colors duration-300 line-clamp-2"
-          >
-            {insight.title}
-          </Heading>
+          <div className="p-6 flex flex-col gap-3">
+            <MetaLine insight={insight} />
 
-          <Text
-            as="p"
-            className="text-text flex-grow leading-relaxed mb-4 line-clamp-3"
-          >
-            {insight.excerpt}
-          </Text>
+            <Heading
+              as={3}
+              className={cn(
+                'text-xl md:text-[1.35rem] leading-snug',
+                'transition-colors duration-200 motion-reduce:transition-none',
+                'group-hover:text-primary line-clamp-2'
+              )}
+            >
+              {insight.title}
+            </Heading>
 
-          <div className="border-t border-surface pt-4 mt-auto">
-            <Text as="p" className="text-text/80 text-sm">
-              By <span className="font-medium">{insight.author}</span>
+            <Text className="text-text/90 leading-relaxed line-clamp-3">
+              {insight.excerpt}
             </Text>
+
+            <div className="mt-2 pt-4 border-t border-surface/60 flex items-center justify-between gap-4">
+              <Text as="span" size="sm" muted className="truncate">
+                By <span className="text-secondary/80 font-medium">{insight.author}</span>
+              </Text>
+              <span
+                className={cn(
+                  'inline-flex items-center gap-1 text-sm font-semibold text-primary',
+                  'opacity-0 translate-x-1 transition-all duration-200 motion-reduce:transition-none',
+                  'group-hover:opacity-100 group-hover:translate-x-0'
+                )}
+              >
+                Read <span aria-hidden>→</span>
+              </span>
+            </div>
           </div>
         </div>
       </Link>
@@ -97,67 +198,478 @@ function InsightCard({ insight }: { insight: Insight }) {
   );
 }
 
+function InsightListRow({ insight }: { insight: Insight }) {
+  return (
+    <Card
+      variant="outlined"
+      padding="sm"
+      interactive
+      className={cn(
+        'group p-0 overflow-hidden',
+        'transition-all duration-300 motion-reduce:transition-none',
+        'focus-within:ring-2 focus-within:ring-primary/30 focus-within:ring-offset-2'
+      )}
+      asChild
+    >
+      <Link href={insight.link} aria-label={insight.title} className="block">
+        <div className="grid md:grid-cols-[260px_1fr]">
+          <div className="relative aspect-[16/10] md:aspect-auto md:min-h-[220px] overflow-hidden bg-surface/30">
+            {insight.image ? (
+              <Image
+                src={insight.image}
+                alt={insight.title}
+                fill
+                className="object-cover transition-transform duration-500 motion-reduce:transition-none group-hover:scale-[1.03]"
+                sizes="(max-width: 768px) 100vw, 320px"
+                placeholder="blur"
+                blurDataURL={BLUR_DATA_URL}
+              />
+            ) : (
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-white" />
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-secondary/25 via-secondary/0 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+          </div>
+
+          <div className="p-6 md:p-8 flex flex-col justify-center gap-3">
+            <MetaLine insight={insight} />
+
+            <Heading
+              as={3}
+              className={cn(
+                'text-2xl leading-tight',
+                'transition-colors duration-200 motion-reduce:transition-none',
+                'group-hover:text-primary'
+              )}
+            >
+              {insight.title}
+            </Heading>
+
+            <Text className="text-text/90 leading-relaxed line-clamp-3">
+              {insight.excerpt}
+            </Text>
+
+            <div className="pt-4 flex items-center justify-between gap-4">
+              <Text as="span" size="sm" muted className="truncate">
+                By <span className="text-secondary/80 font-medium">{insight.author}</span>
+              </Text>
+              <span className="text-sm font-semibold text-primary">
+                Read <span aria-hidden>→</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </Link>
+    </Card>
+  );
+}
+
+function FeaturedInsightCard({ insight }: { insight: Insight }) {
+  return (
+    <Card
+      variant="elevated"
+      padding="sm"
+      interactive
+      className={cn(
+        'group p-0 overflow-hidden',
+        'focus-within:ring-2 focus-within:ring-primary/30 focus-within:ring-offset-2'
+      )}
+      asChild
+    >
+      <Link href={insight.link} aria-label={insight.title} className="block">
+        <div className="grid md:grid-cols-12">
+          <div className="relative aspect-[16/10] md:aspect-auto md:col-span-5 md:min-h-[320px] overflow-hidden bg-surface/30">
+            {insight.image ? (
+              <Image
+                src={insight.image}
+                alt={insight.title}
+                fill
+                priority
+                className="object-cover transition-transform duration-700 motion-reduce:transition-none group-hover:scale-[1.03]"
+                sizes="(max-width: 768px) 100vw, 50vw"
+                placeholder="blur"
+                blurDataURL={BLUR_DATA_URL}
+              />
+            ) : (
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-white" />
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-secondary/35 via-secondary/0 to-transparent" />
+          </div>
+
+          <div className="p-8 md:p-10 md:col-span-7 flex flex-col gap-4">
+            <MetaLine insight={insight} />
+
+            <Heading as={2} className="text-3xl md:text-4xl leading-tight">
+              {insight.title}
+            </Heading>
+
+            <Text className="text-text/90 leading-relaxed line-clamp-4">
+              {insight.excerpt}
+            </Text>
+
+            <div className="mt-4 pt-6 border-t border-surface/60 flex items-center justify-between gap-6">
+              <Text as="span" size="sm" muted className="truncate">
+                By <span className="text-secondary/80 font-medium">{insight.author}</span>
+              </Text>
+              <span
+                className={cn(
+                  'inline-flex items-center gap-1 text-sm font-semibold text-primary',
+                  'transition-transform duration-200 motion-reduce:transition-none',
+                  'group-hover:translate-x-0.5'
+                )}
+              >
+                Read the full article <span aria-hidden>→</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </Link>
+    </Card>
+  );
+}
+
+function InsightCardSkeleton() {
+  return (
+    <div className="rounded-xl border border-surface/50 bg-white overflow-hidden">
+      <div className="aspect-[16/10] bg-surface/40 animate-pulse" />
+      <div className="p-6 space-y-4">
+        <div className="h-4 w-40 bg-surface/40 rounded animate-pulse" />
+        <div className="h-6 w-3/4 bg-surface/40 rounded animate-pulse" />
+        <div className="space-y-2">
+          <div className="h-4 w-full bg-surface/40 rounded animate-pulse" />
+          <div className="h-4 w-5/6 bg-surface/40 rounded animate-pulse" />
+        </div>
+        <div className="h-4 w-32 bg-surface/40 rounded animate-pulse" />
+      </div>
+    </div>
+  );
+}
+
 export function InsightsGrid({
-  title,
-  subtitle,
+  title = 'All Insights',
+  subtitle = 'Ridgewood Insights',
+  description = 'Explore tax guidance, business strategy, and financial planning—updated regularly.',
   insights,
-  initialDisplayCount = 6,
-  loadMoreIncrement = 6,
+  totalCount,
+  pageSize = 12,
+  initialLayout = 'featured',
   backgroundVariant = 'white',
 }: InsightsGridProps) {
-  const [displayCount, setDisplayCount] = useState(initialDisplayCount);
-  const displayedInsights = insights.slice(0, displayCount);
-  const hasMore = displayCount < insights.length;
+  const [layout, setLayout] = useState<LayoutMode>(initialLayout);
 
-  const handleLoadMore = () => {
-    setDisplayCount((prev) => Math.min(prev + loadMoreIncrement, insights.length));
-  };
+  const [items, setItems] = useState<Insight[]>(insights);
+  const [total, setTotal] = useState<number>(totalCount ?? 0);
+  const [offset, setOffset] = useState<number>(insights.length);
+  const [hasMore, setHasMore] = useState<boolean>(
+    typeof totalCount === 'number' ? insights.length < totalCount : true
+  );
+
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const inflightRef = useRef(false);
+
+  const visibleCountLabel = useMemo(() => {
+    if (!total) return `${items.length}`;
+    return `${items.length} of ${total}`;
+  }, [items.length, total]);
+
+  const loadMore = useCallback(async () => {
+    if (!hasMore || inflightRef.current) return;
+
+    inflightRef.current = true;
+    setIsLoadingMore(true);
+    setError(null);
+
+    try {
+      const res = await fetch(`/api/insights/posts?offset=${offset}&limit=${pageSize}`);
+      if (!res.ok) {
+        throw new Error(`Request failed (${res.status})`);
+      }
+
+      const data = (await res.json()) as PostsApiResponse;
+
+      setItems((prev) => {
+        const next = [...prev, ...(data.insights ?? [])];
+        const seen = new Set<string>();
+        return next.filter((p) => {
+          const key = String(p.id);
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+      });
+
+      setTotal((prev) => (typeof data.total === 'number' ? data.total : prev));
+      setOffset((prev) =>
+        typeof data.nextOffset === 'number' ? data.nextOffset : prev
+      );
+      setHasMore((prev) => (typeof data.hasMore === 'boolean' ? data.hasMore : prev));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Unable to load more posts');
+    } finally {
+      inflightRef.current = false;
+      setIsLoadingMore(false);
+    }
+  }, [hasMore, offset, pageSize]);
+
+  useEffect(() => {
+    if (!sentinelRef.current) return;
+    if (!hasMore) return;
+
+    const el = sentinelRef.current;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (!entry?.isIntersecting) return;
+        void loadMore();
+      },
+      {
+        rootMargin: '900px 0px',
+      }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [hasMore, loadMore]);
+
+  const featured = items[0];
+  const remaining = items.slice(1);
+
+  const viewOptions: Array<{ mode: LayoutMode; label: string }> = useMemo(
+    () => [
+      { mode: 'featured', label: 'Featured' },
+      { mode: 'grid', label: 'Grid' },
+      { mode: 'masonry', label: 'Masonry' },
+      { mode: 'list', label: 'List' },
+      { mode: 'carousel', label: 'Carousel' },
+    ],
+    []
+  );
+
+  const carouselRef = useRef<HTMLDivElement | null>(null);
+  const scrollCarousel = useCallback((direction: 'prev' | 'next') => {
+    const el = carouselRef.current;
+    if (!el) return;
+
+    const amount = Math.round(el.clientWidth * 0.9);
+    el.scrollBy({
+      left: direction === 'next' ? amount : -amount,
+      behavior: 'smooth',
+    });
+  }, []);
 
   return (
-    <Section
-      bg={backgroundVariant}
-      className="py-16 md:py-24"
-      aria-labelledby={title ? 'insights-grid-title' : undefined}
-    >
+    <Section bg={backgroundVariant} aria-labelledby="insights-explorer-title">
       <Container maxWidth="xl">
-        {(title || subtitle) && (
-          <div className="text-center mb-12">
-            {subtitle && (
+        <div className="mb-10 md:mb-14 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div className="max-w-2xl">
+            {subtitle ? (
               <Text
                 as="p"
-                className="text-primary font-semibold uppercase tracking-wide text-sm md:text-base mb-4"
+                className="text-primary font-semibold uppercase tracking-wide text-sm md:text-base mb-3"
               >
                 {subtitle}
               </Text>
-            )}
-            {title && (
-              <Heading
-                as={2}
-                id="insights-grid-title"
-                className="text-2xl md:text-3xl font-bold text-secondary"
-              >
-                {title}
-              </Heading>
-            )}
-          </div>
-        )}
+            ) : null}
 
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {displayedInsights.map((insight) => (
-            <InsightCard key={insight.id} insight={insight} />
-          ))}
+            <Heading as={2} id="insights-explorer-title" className="text-2xl md:text-3xl">
+              {title}
+            </Heading>
+
+            {description ? (
+              <Text className="mt-4" muted>
+                {description}
+              </Text>
+            ) : null}
+
+            <Text className="mt-3" muted>
+              Showing {visibleCountLabel} posts
+            </Text>
+          </div>
+
+          <div className="w-full md:w-auto">
+            <div className="flex items-center gap-2 rounded-xl border border-surface/70 bg-white p-1 overflow-x-auto">
+              {viewOptions.map((opt) => {
+                const isActive = opt.mode === layout;
+                return (
+                  <button
+                    key={opt.mode}
+                    type="button"
+                    onClick={() => setLayout(opt.mode)}
+                    aria-pressed={isActive}
+                    className={cn(
+                      'inline-flex items-center gap-2 whitespace-nowrap px-3 py-2 text-sm font-semibold rounded-lg',
+                      'transition-colors duration-200 motion-reduce:transition-none',
+                      'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
+                      isActive
+                        ? 'bg-primary/10 text-primary'
+                        : 'text-secondary hover:bg-background'
+                    )}
+                  >
+                    <ViewIcon mode={opt.mode} />
+                    <span className="sr-only sm:not-sr-only">{opt.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
 
-        {hasMore && (
-          <div className="text-center mt-12">
-            <Button
-              onClick={handleLoadMore}
-              variant="outline"
-              size="lg"
-              className="px-8 py-3"
+        {items.length === 0 ? (
+          <div className="rounded-2xl border border-surface bg-background p-10 text-center">
+            <Heading as={3} className="text-xl">
+              No insights yet
+            </Heading>
+            <Text className="mt-3" muted>
+              Check back soon—new articles are published regularly.
+            </Text>
+          </div>
+        ) : null}
+
+        {items.length > 0 && layout === 'featured' ? (
+          <div className="space-y-10">
+            {featured ? <FeaturedInsightCard insight={featured} /> : null}
+
+            {remaining.length > 0 ? (
+              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                {remaining.map((insight) => (
+                  <InsightCard key={insight.id} insight={insight} />
+                ))}
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+
+        {items.length > 0 && layout === 'grid' ? (
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {items.map((insight) => (
+              <InsightCard key={insight.id} insight={insight} />
+            ))}
+          </div>
+        ) : null}
+
+        {items.length > 0 && layout === 'masonry' ? (
+          <div className="columns-1 sm:columns-2 lg:columns-3 gap-8 [column-fill:_balance]">
+            {items.map((insight) => (
+              <div key={insight.id} className="break-inside-avoid mb-8">
+                <InsightCard insight={insight} />
+              </div>
+            ))}
+          </div>
+        ) : null}
+
+        {items.length > 0 && layout === 'list' ? (
+          <div className="space-y-6">
+            {items.map((insight) => (
+              <InsightListRow key={insight.id} insight={insight} />
+            ))}
+          </div>
+        ) : null}
+
+        {items.length > 0 && layout === 'carousel' ? (
+          <div className="relative">
+            <div className="flex items-center justify-between gap-4 mb-6">
+              <Text muted className="hidden md:block">
+                Tip: use trackpad / swipe to browse.
+              </Text>
+              <div className="flex items-center gap-2 ml-auto">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="border border-surface bg-white text-secondary hover:bg-background"
+                  onClick={() => scrollCarousel('prev')}
+                >
+                  <span aria-hidden>←</span>
+                  <span className="sr-only">Previous</span>
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="border border-surface bg-white text-secondary hover:bg-background"
+                  onClick={() => scrollCarousel('next')}
+                >
+                  <span aria-hidden>→</span>
+                  <span className="sr-only">Next</span>
+                </Button>
+              </div>
+            </div>
+
+            <div
+              ref={carouselRef}
+              className={cn(
+                'relative overflow-x-auto scroll-smooth',
+                'snap-x snap-mandatory',
+                'pb-2 -mx-4 px-4',
+                '[scrollbar-width:thin]'
+              )}
+              role="region"
+              aria-label="Insights carousel"
             >
-              Load More Insights
-            </Button>
+              <div className="grid grid-flow-col auto-cols-[88%] sm:auto-cols-[62%] lg:auto-cols-[38%] gap-6">
+                {items.map((insight) => (
+                  <div key={insight.id} className="snap-start">
+                    <InsightCard insight={insight} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {error ? (
+          <div
+            className="mt-10 rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-900"
+            role="alert"
+          >
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <span>
+                We couldn’t load more posts. <span className="font-medium">{error}</span>
+              </span>
+              <Button
+                type="button"
+                variant="ghost"
+                className="border border-red-200 bg-white text-red-900 hover:bg-red-100"
+                onClick={() => void loadMore()}
+              >
+                Try again
+              </Button>
+            </div>
+          </div>
+        ) : null}
+
+        {hasMore ? (
+          <div className="mt-12 md:mt-16 flex flex-col items-center gap-4">
+            {isLoadingMore ? (
+              <div className="flex items-center gap-3 text-sm text-text/80" aria-live="polite">
+                <Spinner />
+                Loading more insights…
+              </div>
+            ) : (
+              <Button
+                type="button"
+                variant="ghost"
+                className="border border-surface bg-white text-secondary hover:bg-background"
+                onClick={() => void loadMore()}
+              >
+                Load more
+              </Button>
+            )}
+
+            <div ref={sentinelRef} className="h-1 w-full" aria-hidden />
+
+            {isLoadingMore ? (
+              <div className="grid w-full gap-8 md:grid-cols-2 lg:grid-cols-3">
+                {Array.from({ length: 3 }).map((_, idx) => (
+                  <InsightCardSkeleton key={idx} />
+                ))}
+              </div>
+            ) : null}
+          </div>
+        ) : (
+          <div className="mt-12 md:mt-16 text-center">
+            <Text muted>That’s everything we’ve published so far.</Text>
           </div>
         )}
       </Container>

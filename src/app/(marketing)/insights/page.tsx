@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { Hero } from '@/components/sections/Hero';
 import { InsightsGrid } from '@/components/sections/InsightsGrid';
 import { CTA } from '@/components/sections/CTA';
-import { getPublishedPosts } from '@/lib/blog';
+import { getPublishedPostsPage } from '@/lib/blog';
 
 export const metadata: Metadata = {
   title: 'Insights',
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 };
 
 export default async function InsightsPage() {
-  const insights = await getPublishedPosts();
+  const { insights, total } = await getPublishedPostsPage({ offset: 0, limit: 12 });
 
   return (
     <>
@@ -44,7 +44,12 @@ export default async function InsightsPage() {
       />
 
       {/* Insights Grid */}
-      <InsightsGrid insights={insights} backgroundVariant="white" />
+      <InsightsGrid
+        insights={insights}
+        totalCount={total}
+        pageSize={12}
+        backgroundVariant="white"
+      />
 
       {/* CTA Section */}
       <CTA
