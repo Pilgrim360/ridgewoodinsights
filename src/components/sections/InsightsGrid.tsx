@@ -15,6 +15,8 @@ import { Text } from '../ui/Text';
 
 type LayoutMode = 'featured' | 'grid' | 'masonry' | 'list' | 'carousel';
 
+const DEFAULT_MARKETING_LAYOUTS: LayoutMode[] = ['grid', 'list'];
+
 type PostsApiResponse = {
   insights: Insight[];
   total: number;
@@ -25,14 +27,14 @@ type PostsApiResponse = {
 };
 
 export interface InsightsGridProps {
-  title?: string;
-  subtitle?: string;
-  description?: string;
   insights: Insight[];
   totalCount?: number;
   pageSize?: number;
   initialLayout?: LayoutMode;
   backgroundVariant?: 'default' | 'muted' | 'white';
+
+  availableLayouts?: LayoutMode[];
+  showLayoutSwitcher?: boolean;
 }
 
 const BLUR_DATA_URL =
@@ -360,19 +362,21 @@ function InsightCardSkeleton() {
 }
 
 export function InsightsGrid({
-  title = 'All Insights',
-  subtitle = 'Ridgewood Insights',
-  description = 'Explore tax guidance, business strategy, and financial planning—updated regularly.',
   insights,
   totalCount,
   pageSize = 12,
-  initialLayout = 'featured',
+  initialLayout = 'grid',
   backgroundVariant = 'white',
+  availableLayouts = DEFAULT_MARKETING_LAYOUTS,
+  showLayoutSwitcher = true,
 }: InsightsGridProps) {
-  const [layout, setLayout] = useState<LayoutMode>(initialLayout);
+  const [layout, setLayout] = useState<LayoutMode>(() => {
+    const preferred = initialLayout;
+    if (availableLayouts.includes(preferred)) return preferred;
+    return availableLayouts[0] ?? 'grid';
+  });
 
   const [items, setItems] = useState<Insight[]>(insights);
-  const [total, setTotal] = useState<number>(totalCount ?? 0);
   const [offset, setOffset] = useState<number>(insights.length);
   const [hasMore, setHasMore] = useState<boolean>(
     typeof totalCount === 'number' ? insights.length < totalCount : true
@@ -383,11 +387,6 @@ export function InsightsGrid({
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const inflightRef = useRef(false);
-
-  const visibleCountLabel = useMemo(() => {
-    if (!total) return `${items.length}`;
-    return `${items.length} of ${total}`;
-  }, [items.length, total]);
 
   const loadMore = useCallback(async () => {
     if (!hasMore || inflightRef.current) return;
@@ -415,7 +414,6 @@ export function InsightsGrid({
         });
       });
 
-      setTotal((prev) => (typeof data.total === 'number' ? data.total : prev));
       setOffset((prev) =>
         typeof data.nextOffset === 'number' ? data.nextOffset : prev
       );
@@ -452,16 +450,23 @@ export function InsightsGrid({
   const featured = items[0];
   const remaining = items.slice(1);
 
-  const viewOptions: Array<{ mode: LayoutMode; label: string }> = useMemo(
-    () => [
-      { mode: 'featured', label: 'Featured' },
-      { mode: 'grid', label: 'Grid' },
-      { mode: 'masonry', label: 'Masonry' },
-      { mode: 'list', label: 'List' },
-      { mode: 'carousel', label: 'Carousel' },
-    ],
-    []
-  );
+  const viewOptions: Array<{ mode: LayoutMode; label: string }> = useMemo(() => {
+    const labelByMode: Record<LayoutMode, string> = {
+      featured: 'Featured',
+      grid: 'Grid',
+      masonry: 'Masonry',
+      list: 'List',
+      carousel: 'Carousel',
+    };
+
+    const modes = Array.from(new Set<LayoutMode>(availableLayouts));
+    return modes.map((mode) => ({ mode, label: labelByMode[mode] }));
+  }, [availableLayouts]);
+
+  useEffect(() => {
+    if (availableLayouts.includes(layout)) return;
+    setLayout(availableLayouts[0] ?? 'grid');
+  }, [availableLayouts, layout]);
 
   const carouselRef = useRef<HTMLDivElement | null>(null);
   const scrollCarousel = useCallback((direction: 'prev' | 'next') => {
@@ -476,35 +481,10 @@ export function InsightsGrid({
   }, []);
 
   return (
-    <Section bg={backgroundVariant} aria-labelledby="insights-explorer-title">
+    <Section bg={backgroundVariant} aria-label="Insights">
       <Container maxWidth="xl">
-        <div className="mb-10 md:mb-14 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div className="max-w-2xl">
-            {subtitle ? (
-              <Text
-                as="p"
-                className="text-primary font-semibold uppercase tracking-wide text-sm md:text-base mb-3"
-              >
-                {subtitle}
-              </Text>
-            ) : null}
-
-            <Heading as={2} id="insights-explorer-title" className="text-2xl md:text-3xl">
-              {title}
-            </Heading>
-
-            {description ? (
-              <Text className="mt-4" muted>
-                {description}
-              </Text>
-            ) : null}
-
-            <Text className="mt-3" muted>
-              Showing {visibleCountLabel} posts
-            </Text>
-          </div>
-
-          <div className="w-full md:w-auto">
+        {showLayoutSwitcher && viewOptions.length > 1 ? (
+          <div className="mb-8 flex justify-end">
             <div className="flex items-center gap-2 rounded-xl border border-surface/70 bg-white p-1 overflow-x-auto">
               {viewOptions.map((opt) => {
                 const isActive = opt.mode === layout;
@@ -530,7 +510,7 @@ export function InsightsGrid({
               })}
             </div>
           </div>
-        </div>
+        ) : null}
 
         {items.length === 0 ? (
           <div className="rounded-2xl border border-surface bg-background p-10 text-center">
