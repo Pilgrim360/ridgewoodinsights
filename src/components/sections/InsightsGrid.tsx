@@ -112,16 +112,25 @@ function ViewIcon({ mode }: { mode: LayoutMode }) {
   }
 }
 
-function MetaLine({ insight }: { insight: Insight }) {
+function CategoryBadge({ category }: { category: string }) {
+  return (
+    <Badge variant="info" className="bg-primary/10 text-primary">
+      {category}
+    </Badge>
+  );
+}
+
+function DateReadTimeLine({ insight }: { insight: Insight }) {
   const date = formatDate(insight.date);
+  const readTime = insight.readTime;
+
+  if (!date && !readTime) return null;
 
   return (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
-      <Badge variant="info" className="bg-primary/10 text-primary">
-        {insight.category}
-      </Badge>
-      {date ? <span className="text-text/70">{date}</span> : null}
-      {insight.readTime ? <span className="text-text/70">{insight.readTime}</span> : null}
+    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-text/70">
+      {date ? <span>{date}</span> : null}
+      {date && readTime ? <span aria-hidden>•</span> : null}
+      {readTime ? <span>{readTime}</span> : null}
     </div>
   );
 }
@@ -160,7 +169,7 @@ function InsightCard({ insight }: { insight: Insight }) {
           </div>
 
           <div className="p-6 flex flex-col gap-3">
-            <MetaLine insight={insight} />
+            <CategoryBadge category={insight.category} />
 
             <Heading
               as={3}
@@ -172,6 +181,8 @@ function InsightCard({ insight }: { insight: Insight }) {
             >
               {insight.title}
             </Heading>
+
+            <DateReadTimeLine insight={insight} />
 
             <Text className="text-text/90 leading-relaxed line-clamp-3">
               {insight.excerpt}
@@ -231,7 +242,7 @@ function InsightListRow({ insight }: { insight: Insight }) {
           </div>
 
           <div className="p-6 md:p-8 flex flex-col justify-center gap-3">
-            <MetaLine insight={insight} />
+            <CategoryBadge category={insight.category} />
 
             <Heading
               as={3}
@@ -243,6 +254,8 @@ function InsightListRow({ insight }: { insight: Insight }) {
             >
               {insight.title}
             </Heading>
+
+            <DateReadTimeLine insight={insight} />
 
             <Text className="text-text/90 leading-relaxed line-clamp-3">
               {insight.excerpt}
@@ -296,11 +309,13 @@ function FeaturedInsightCard({ insight }: { insight: Insight }) {
           </div>
 
           <div className="p-8 md:p-10 md:col-span-7 flex flex-col gap-4">
-            <MetaLine insight={insight} />
+            <CategoryBadge category={insight.category} />
 
             <Heading as={2} className="text-3xl md:text-4xl leading-tight">
               {insight.title}
             </Heading>
+
+            <DateReadTimeLine insight={insight} />
 
             <Text className="text-text/90 leading-relaxed line-clamp-4">
               {insight.excerpt}
