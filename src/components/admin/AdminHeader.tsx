@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { useAdminHeaderSlots } from '@/contexts/AdminHeaderSlotsContext';
 
 interface AdminHeaderProps {
   onMenuToggle: () => void;
@@ -15,6 +16,8 @@ interface AdminHeaderProps {
  */
 export const AdminHeader = React.forwardRef<HTMLElement, AdminHeaderProps>(
   ({ onMenuToggle, isMobileMenuOpen }, ref) => {
+    const { slots } = useAdminHeaderSlots();
+
     return (
       <header
         ref={ref}
@@ -70,14 +73,18 @@ export const AdminHeader = React.forwardRef<HTMLElement, AdminHeaderProps>(
           )}
         </button>
 
-        {/* Title/Breadcrumbs area - future expansion */}
-        <div className="flex-1 flex items-center gap-2">
-          <h1 className="text-lg font-semibold text-secondary">Admin</h1>
+        {/* Title/Breadcrumbs area */}
+        <div className="flex-1 flex items-center gap-2 min-w-0">
+          {slots.title ? (
+            <div className="truncate">{slots.title}</div>
+          ) : (
+            <h1 className="text-lg font-semibold text-secondary">Admin</h1>
+          )}
         </div>
 
-        {/* Right side actions - future expansion */}
+        {/* Right side actions */}
         <div className="flex items-center gap-2">
-          {/* Placeholder for notifications, theme toggle, etc. */}
+          {slots.actions}
         </div>
       </header>
     );

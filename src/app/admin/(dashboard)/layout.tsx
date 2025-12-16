@@ -3,6 +3,10 @@
 import React from 'react';
 import { Sidebar } from '@/components/admin/Sidebar';
 import { AdminHeader } from '@/components/admin/AdminHeader';
+import {
+  AdminHeaderSlotsProvider,
+  useAdminHeaderSlots,
+} from '@/contexts/AdminHeaderSlotsContext';
 import { useSidebarState } from '@/hooks/useSidebarState';
 
 /**
@@ -11,27 +15,43 @@ import { useSidebarState } from '@/hooks/useSidebarState';
  * Includes responsive navigation with mobile hamburger menu
  */
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const sidebarState = useSidebarState();
 
   return (
-    <div className="flex h-screen bg-background">
-      {/* Sidebar - Desktop (md+) and Mobile Overlay */}
-      <Sidebar state={sidebarState} />
+    <AdminHeaderSlotsProvider>
+      <div className="flex h-screen bg-background">
+        <Sidebar state={sidebarState} />
 
-      {/* Main content area */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top navigation bar */}
-        <AdminHeader
-          onMenuToggle={sidebarState.toggleMobileMenu}
-          isMobileMenuOpen={sidebarState.isMobileOpen}
-        />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <AdminHeader
+            onMenuToggle={sidebarState.toggleMobileMenu}
+            isMobileMenuOpen={sidebarState.isMobileOpen}
+          />
 
-        {/* Page content */}
-        <main className="flex-1 overflow-auto">
-          <div className="container mx-auto px-4 py-8">{children}</div>
-        </main>
+          <AdminSubHeader />
+
+          <main className="flex-1 overflow-auto">
+            <div className="px-4 py-3 md:px-6">{children}</div>
+          </main>
+        </div>
       </div>
+    </AdminHeaderSlotsProvider>
+  );
+}
+
+function AdminSubHeader() {
+  const { slots } = useAdminHeaderSlots();
+
+  if (!slots.subHeader) return null;
+
+  return (
+    <div className="border-b border-surface bg-white px-4 py-2 md:px-6">
+      {slots.subHeader}
     </div>
   );
 }

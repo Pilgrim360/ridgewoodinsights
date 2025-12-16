@@ -1,240 +1,205 @@
 'use client';
 
-import { useCallback } from 'react';
-import { useEditor, EditorContent, Editor } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import Link from '@tiptap/extension-link';
-import Image from '@tiptap/extension-image';
-import { ImageUpload } from './ImageUpload';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { EditorContent, useEditor, type Editor } from '@tiptap/react';
 
-interface TipTapEditorProps {
+import { uploadPostImage } from '@/lib/admin/storage';
+import { cn } from '@/lib/utils';
+import { createPostEditorExtensions } from '@/lib/tiptap/editorExtensions';
+import { sanitizePastedHtml } from '@/lib/tiptap/sanitize';
+import { useAdminHeaderSlots } from '@/contexts/AdminHeaderSlotsContext';
+
+import { EditorTableBubbleMenu } from './EditorTableBubbleMenu';
+import { EditorToolbar } from './EditorToolbar';
+
+export interface TipTapEditorProps {
+  title: string;
+  onTitleChange: (title: string) => void;
   content: string;
   onChange: (content: string) => void;
   disabled?: boolean;
+  characterLimit?: number;
+  onError?: (message: string) => void;
 }
 
 export function TipTapEditor({
+  title,
+  onTitleChange,
   content,
   onChange,
   disabled,
+  characterLimit = 50000,
+  onError,
 }: TipTapEditorProps) {
+  const { setSubHeader } = useAdminHeaderSlots();
+
+  const [isPastingUpload, setIsPastingUpload] = useState(false);
+  const editorRef = useRef<Editor | null>(null);
+
   const editor = useEditor({
-    extensions: [
-      StarterKit.configure({
-        heading: {
-          levels: [1, 2, 3],
-        },
-      }),
-      Link.configure({
-        openOnClick: false,
-        autolink: true,
-      }),
-      Image.configure({
-        allowBase64: false,
-      }),
-    ],
+    extensions: createPostEditorExtensions({
+      placeholder: 'Write your post…',
+      characterLimit,
+    }),
     content,
-    onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
-    },
     editable: !disabled,
+    onCreate: ({ editor: ed }) => {
+      editorRef.current = ed;
+    },
+    onDestroy: () => {
+      editorRef.current = null;
+    },
+    onUpdate: ({ editor: ed }) => {
+      onChange(ed.getHTML());
+    },
+    editorProps: {
+      attributes: {
+        class: cn(
+          'prose prose-sm max-w-none',
+          'prose-headings:text-secondary prose-p:text-text',
+          'prose-a:text-primary',
+          'min-h-[28rem] px-4 py-4 outline-none'
+        ),
+      },
+      transformPastedHTML: sanitizePastedHtml,
+      handlePaste: (_view, event) => {
+        const files = Array.from(event.clipboardData?.files ?? []);
+        const imageFiles = files.filter((file) => file.type.startsWith('image/'));
+
+        if (imageFiles.length === 0) return false;
+
+        void (async () => {
+          setIsPastingUpload(true);
+          try {
+            for (const file of imageFiles) {
+              const url = await uploadPostImage(file);
+              editorRef.current
+                ?.chain()
+                .focus()
+                .setImage({
+                  src: url,
+                  alt: file.name,
+                })
+                .run();
+            }
+          } catch (error) {
+            onError?.(error instanceof Error ? error.message : 'Paste upload failed');
+          } finally {
+            setIsPastingUpload(false);
+          }
+        })();
+
+        return true;
+      },
+      handleDrop: (_view, event) => {
+        const dt = event.dataTransfer;
+        if (!dt) return false;
+
+        const files = Array.from(dt.files ?? []);
+        const imageFiles = files.filter((file) => file.type.startsWith('image/'));
+
+        if (imageFiles.length === 0) return false;
+
+        void (async () => {
+          setIsPastingUpload(true);
+          try {
+            for (const file of imageFiles) {
+              const url = await uploadPostImage(file);
+              editorRef.current
+                ?.chain()
+                .focus()
+                .setImage({
+                  src: url,
+                  alt: file.name,
+                })
+                .run();
+            }
+          } catch (error) {
+            onError?.(error instanceof Error ? error.message : 'Drop upload failed');
+          } finally {
+            setIsPastingUpload(false);
+          }
+        })();
+
+        return true;
+      },
+    },
   });
 
-  const handleImageUpload = useCallback(
-    (url: string) => {
-      if (editor) {
-        editor.chain().focus().setImage({ src: url }).run();
-      }
-    },
-    [editor]
-  );
+  useEffect(() => {
+    if (!editor) return;
+    editor.setEditable(!disabled);
+  }, [editor, disabled]);
 
-  const applyFormat = (format: string) => {
+  useEffect(() => {
     if (!editor) return;
 
-    switch (format) {
-      case 'bold':
-        editor.chain().focus().toggleBold().run();
-        break;
-      case 'italic':
-        editor.chain().focus().toggleItalic().run();
-        break;
-      case 'strike':
-        editor.chain().focus().toggleStrike().run();
-        break;
-      case 'h1':
-        editor.chain().focus().toggleHeading({ level: 1 }).run();
-        break;
-      case 'h2':
-        editor.chain().focus().toggleHeading({ level: 2 }).run();
-        break;
-      case 'h3':
-        editor.chain().focus().toggleHeading({ level: 3 }).run();
-        break;
-      case 'ul':
-        editor.chain().focus().toggleBulletList().run();
-        break;
-      case 'ol':
-        editor.chain().focus().toggleOrderedList().run();
-        break;
-      case 'blockquote':
-        editor.chain().focus().toggleBlockquote().run();
-        break;
-      case 'code':
-        editor.chain().focus().toggleCodeBlock().run();
-        break;
-      case 'link':
-        insertLink(editor);
-        break;
-    }
-  };
+    setSubHeader(
+      <EditorToolbar
+        editor={editor}
+        disabled={disabled}
+        onError={onError}
+        className="w-full border-0 rounded-none bg-transparent p-0"
+      />
+    );
 
-  const insertLink = (ed: Editor) => {
-    const url = window.prompt('Enter URL');
-    if (url) {
-      ed.chain()
-        .focus()
-        .extendMarkRange('link')
-        .setLink({ href: url })
-        .run();
+    return () => {
+      setSubHeader(null);
+    };
+  }, [editor, disabled, onError, setSubHeader]);
+
+  const stats = useMemo(() => {
+    if (!editor) {
+      return {
+        words: 0,
+      };
     }
-  };
+
+    return {
+      words: editor.storage.characterCount.words(),
+    };
+  }, [editor, editor?.state]);
 
   if (!editor) return null;
 
   return (
-    <div className="space-y-4">
-      {/* Toolbar */}
-      <div className="flex flex-wrap gap-2 p-3 bg-surface rounded-lg border border-surface">
-        <ToolbarButton
-          onClick={() => applyFormat('bold')}
-          isActive={editor.isActive('bold')}
-          title="Bold (Ctrl+B)"
-        >
-          <strong>B</strong>
-        </ToolbarButton>
-        <ToolbarButton
-          onClick={() => applyFormat('italic')}
-          isActive={editor.isActive('italic')}
-          title="Italic (Ctrl+I)"
-        >
-          <em>I</em>
-        </ToolbarButton>
-        <ToolbarButton
-          onClick={() => applyFormat('strike')}
-          isActive={editor.isActive('strike')}
-          title="Strikethrough"
-        >
-          <s>S</s>
-        </ToolbarButton>
+    <div className="space-y-3">
+      <EditorTableBubbleMenu editor={editor} disabled={disabled} />
 
-        <div className="w-px bg-white/20" />
+      <div className="overflow-hidden rounded-lg border border-surface bg-white">
+        <div className="px-4 pt-4 pb-3">
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => onTitleChange(e.target.value)}
+            disabled={disabled}
+            placeholder="Post title…"
+            className={cn(
+              'w-full bg-transparent text-3xl font-bold text-secondary',
+              'placeholder:text-text/30 focus:outline-none',
+              disabled && 'text-text/50'
+            )}
+          />
+        </div>
 
-        <ToolbarButton
-          onClick={() => applyFormat('h1')}
-          isActive={editor.isActive('heading', { level: 1 })}
-          title="Heading 1"
-        >
-          H1
-        </ToolbarButton>
-        <ToolbarButton
-          onClick={() => applyFormat('h2')}
-          isActive={editor.isActive('heading', { level: 2 })}
-          title="Heading 2"
-        >
-          H2
-        </ToolbarButton>
-        <ToolbarButton
-          onClick={() => applyFormat('h3')}
-          isActive={editor.isActive('heading', { level: 3 })}
-          title="Heading 3"
-        >
-          H3
-        </ToolbarButton>
+        <div className="border-t border-surface">
+          <EditorContent editor={editor} />
+        </div>
 
-        <div className="w-px bg-white/20" />
+        <div className="flex items-center justify-between border-t border-surface bg-background px-4 py-2 text-xs text-text/70">
+          <span>
+            Words:{' '}
+            <span className="font-medium text-secondary">{stats.words.toLocaleString()}</span>
+          </span>
 
-        <ToolbarButton
-          onClick={() => applyFormat('ul')}
-          isActive={editor.isActive('bulletList')}
-          title="Bullet List"
-        >
-          •
-        </ToolbarButton>
-        <ToolbarButton
-          onClick={() => applyFormat('ol')}
-          isActive={editor.isActive('orderedList')}
-          title="Ordered List"
-        >
-          #
-        </ToolbarButton>
-        <ToolbarButton
-          onClick={() => applyFormat('blockquote')}
-          isActive={editor.isActive('blockquote')}
-          title="Blockquote"
-        >
-          ❝
-        </ToolbarButton>
-        <ToolbarButton
-          onClick={() => applyFormat('code')}
-          isActive={editor.isActive('codeBlock')}
-          title="Code Block"
-        >
-          {'<>'}
-        </ToolbarButton>
-        <ToolbarButton
-          onClick={() => applyFormat('link')}
-          isActive={editor.isActive('link')}
-          title="Insert Link"
-        >
-          🔗
-        </ToolbarButton>
-      </div>
-
-      {/* Editor */}
-      <div className="border border-surface rounded-lg overflow-hidden bg-white">
-        <EditorContent
-          editor={editor}
-          className="prose prose-sm max-w-none [&_.ProseMirror]:min-h-96 [&_.ProseMirror]:p-4 [&_.ProseMirror]:outline-none"
-        />
-      </div>
-
-      {/* Image Upload */}
-      <div className="pt-4 border-t border-surface">
-        <p className="text-sm font-medium text-secondary mb-3">
-          Insert Image
-        </p>
-        <ImageUpload onImageUpload={handleImageUpload} disabled={disabled} />
+          {isPastingUpload ? (
+            <span className="inline-flex items-center gap-2">
+              <span className="h-3 w-3 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+              Uploading…
+            </span>
+          ) : null}
+        </div>
       </div>
     </div>
-  );
-}
-
-interface ToolbarButtonProps {
-  onClick: () => void;
-  isActive: boolean;
-  title: string;
-  children: React.ReactNode;
-}
-
-function ToolbarButton({
-  onClick,
-  isActive,
-  title,
-  children,
-}: ToolbarButtonProps) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      title={title}
-      className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
-        isActive
-          ? 'bg-primary text-white'
-          : 'bg-white text-secondary hover:bg-primary/10'
-      }`}
-    >
-      {children}
-    </button>
   );
 }
