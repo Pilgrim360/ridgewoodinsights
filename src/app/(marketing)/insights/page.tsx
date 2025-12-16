@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { Hero } from '@/components/sections/Hero';
-import { InsightsGrid } from '@/components/sections/InsightsGrid';
+import { InsightsGrid } from '@/components/sections/InsightsGrid/InsightsGrid';
 import { CTA } from '@/components/sections/CTA';
 import { getPublishedPosts } from '@/lib/blog';
 
