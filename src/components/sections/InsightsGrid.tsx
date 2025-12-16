@@ -495,7 +495,7 @@ export function InsightsGrid({
                     onClick={() => setLayout(opt.mode)}
                     aria-pressed={isActive}
                     className={cn(
-                      'inline-flex items-center gap-2 whitespace-nowrap px-3 py-2 text-sm font-semibold rounded-lg',
+                      'inline-flex h-10 w-10 items-center justify-center rounded-lg',
                       'transition-colors duration-200 motion-reduce:transition-none',
                       'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
                       isActive
@@ -504,7 +504,7 @@ export function InsightsGrid({
                     )}
                   >
                     <ViewIcon mode={opt.mode} />
-                    <span className="sr-only sm:not-sr-only">{opt.label}</span>
+                    <span className="sr-only">{opt.label}</span>
                   </button>
                 );
               })}
