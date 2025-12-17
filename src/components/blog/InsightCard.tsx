@@ -54,6 +54,12 @@ export const InsightCard = ({ insight }: { insight: Insight }) => {
                     </Heading>
                     <Text as="span" className="text-text/70 text-xs mb-4">
                         {formatDate(insight.date)}
+                        {insight.readTime && (
+                            <>
+                                <span className="mx-2">&#8226;</span>
+                                <span>{insight.readTime}</span>
+                            </>
+                        )}
                     </Text>
                     <Text as="p" className="text-text/80 flex-grow leading-relaxed mb-4 line-clamp-3">
                         {insight.excerpt}

@@ -68,7 +68,7 @@ export function NewInsights({ title, subtitle, insights }: NewInsightsProps) {
                     </div>
                 </div>
 
-                <div className="overflow-hidden" ref={emblaRef}>
+                <div className="overflow-hidden py-4" ref={emblaRef}>
                     <div className="flex -ml-4">
                         {insights.map((insight) => (
                             <div key={insight.id} className="flex-grow-0 flex-shrink-0 w-full md:w-1/2 lg:w-1/3 pl-4">
