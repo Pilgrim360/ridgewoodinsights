@@ -9,6 +9,7 @@ import { createPostEditorExtensions } from '@/lib/tiptap/editorExtensions';
 import { sanitizePastedHtml } from '@/lib/tiptap/sanitize';
 import { useAdminHeaderSlots } from '@/contexts/AdminHeaderSlotsContext';
 
+import { EditorImageBubbleMenu } from './EditorImageBubbleMenu';
 import { EditorTableBubbleMenu } from './EditorTableBubbleMenu';
 import { EditorToolbar } from './EditorToolbar';
 
@@ -164,6 +165,7 @@ export function TipTapEditor({
 
   return (
     <div className="space-y-3">
+      <EditorImageBubbleMenu editor={editor} disabled={disabled} onError={onError} />
       <EditorTableBubbleMenu editor={editor} disabled={disabled} />
 
       <div className="overflow-hidden rounded-lg border border-surface bg-white">

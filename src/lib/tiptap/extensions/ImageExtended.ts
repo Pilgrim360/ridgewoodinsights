@@ -1,4 +1,7 @@
 import TiptapImage from '@tiptap/extension-image';
+import { ReactNodeViewRenderer } from '@tiptap/react';
+
+import { ResizableImageNodeView } from '../nodeViews/ResizableImageNodeView';
 
 export const ImageExtended = TiptapImage.extend({
   addAttributes() {
@@ -26,6 +29,18 @@ export const ImageExtended = TiptapImage.extend({
           return { height: attributes.height };
         },
       },
+      class: {
+        default: null,
+        parseHTML: (element) => (element as HTMLElement).getAttribute('class'),
+        renderHTML: (attributes) => {
+          if (!attributes.class) return {};
+          return { class: attributes.class };
+        },
+      },
     };
+  },
+
+  addNodeView() {
+    return ReactNodeViewRenderer(ResizableImageNodeView);
   },
 });
