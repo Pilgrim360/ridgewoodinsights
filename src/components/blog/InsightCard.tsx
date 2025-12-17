@@ -42,21 +42,19 @@ export const InsightCard = ({ insight }: { insight: Insight }) => {
                     </div>
                 )}
                 <div className="p-6 flex flex-col h-full">
-                    <div className="flex items-center gap-3 mb-4">
-                        <Badge variant="neutral" className="text-xs font-medium">
-                            {insight.category}
-                        </Badge>
-                        <Text as="span" className="text-text/70 text-xs">
-                            {formatDate(insight.date)}
-                        </Text>
-                    </div>
+                    <Badge variant="neutral" className="text-xs font-medium mb-4 w-fit">
+                        {insight.category}
+                    </Badge>
                     <Heading
                         as={3}
                         id={`insight-${insight.id}-title`}
-                        className="text-lg font-bold text-secondary mb-3 transition-colors duration-300 group-hover:text-primary line-clamp-2"
+                        className="text-lg font-bold text-secondary mb-2 transition-colors duration-300 group-hover:text-primary line-clamp-2"
                     >
                         {insight.title}
                     </Heading>
+                    <Text as="span" className="text-text/70 text-xs mb-4">
+                        {formatDate(insight.date)}
+                    </Text>
                     <Text as="p" className="text-text/80 flex-grow leading-relaxed mb-4 line-clamp-3">
                         {insight.excerpt}
                     </Text>

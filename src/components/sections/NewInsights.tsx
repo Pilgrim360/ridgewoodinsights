@@ -10,6 +10,7 @@ import { Heading } from '../ui/Heading';
 import { Text } from '../ui/Text';
 import { InsightCard } from '../blog/InsightCard';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 interface NewInsightsProps {
     title: string;
@@ -22,10 +23,7 @@ export function NewInsights({ title, subtitle, insights }: NewInsightsProps) {
         {
             loop: true,
             align: 'start',
-            breakpoints: {
-                '(min-width: 768px)': { slidesToScroll: 2 },
-                '(min-width: 1024px)': { slidesToScroll: 3 },
-            },
+            slidesToScroll: 1,
         },
         [Autoplay({ delay: 5000, stopOnInteraction: true })]
     );
@@ -39,7 +37,7 @@ export function NewInsights({ title, subtitle, insights }: NewInsightsProps) {
     }, [emblaApi]);
 
     return (
-        <Section id="new-insights" bg="default" aria-labelledby="new-insights-title" className="mt-16">
+        <Section id="new-insights" bg="default" aria-labelledby="new-insights-title" className="mt-16 py-8">
             <Container maxWidth="xl">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-12">
                     <div className="text-center md:text-left mb-8 md:mb-0">
@@ -80,6 +78,14 @@ export function NewInsights({ title, subtitle, insights }: NewInsightsProps) {
                             </div>
                         ))}
                     </div>
+                </div>
+                <div className="text-center mt-12">
+                    <Link
+                        href="/insights"
+                        className="inline-flex items-center px-6 py-3 border border-surface rounded-lg text-secondary font-medium hover:bg-surface hover:border-primary hover:text-primary transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                    >
+                        See More Insights
+                    </Link>
                 </div>
             </Container>
         </Section>
