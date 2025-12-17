@@ -64,4 +64,38 @@
   .ProseMirror audio {
     @apply w-full;
   }
+
+  /* Image alignment helpers (used for both editor + public rendering) */
+  img.rw-img-align-left {
+    @apply float-left mr-6 my-2;
+    max-width: min(50%, 28rem);
+  }
+
+  img.rw-img-align-right {
+    @apply float-right ml-6 my-2;
+    max-width: min(50%, 28rem);
+  }
+
+  img.rw-img-align-center {
+    @apply block mx-auto;
+  }
+
+  img.rw-img-align-full {
+    @apply block w-full;
+  }
+
+  /* TipTap image node view (resize handle + selected ring) */
+  .ProseMirror .rw-image-nodeview--selected img {
+    @apply ring-2 ring-primary/40;
+  }
+
+  .ProseMirror .rw-image-resize-handle {
+    @apply absolute -right-2 -bottom-2 h-4 w-4 rounded-sm border border-surface bg-white shadow;
+    cursor: nwse-resize;
+  }
+
+  .ProseMirror .rw-image-resize-handle--active {
+    @apply ring-2 ring-primary/30;
+  }
 }
+

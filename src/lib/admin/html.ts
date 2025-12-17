@@ -48,7 +48,7 @@ export function sanitizeContent(html: string): string {
     ],
     allowedAttributes: {
       a: ['href', 'title', 'target', 'rel'],
-      img: ['src', 'alt', 'width', 'height', 'title'],
+      img: ['src', 'alt', 'width', 'height', 'title', 'class'],
       span: ['style'],
       mark: ['style', 'data-color'],
       p: ['style'],
