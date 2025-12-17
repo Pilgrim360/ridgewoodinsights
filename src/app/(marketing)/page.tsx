@@ -42,7 +42,7 @@ export default async function HomePage() {
           href: '/services',
           variant: 'outline',
         }}
-        videoSrc="https://cdn.pixabay.com/video/2024/07/13/220941_large.mp4"
+        videoSrc="https://cdn.pixabay.com/video/2023/01/30/148596-794221551_tiny.mp4"
         backgroundVariant="default"
         alignment="left"
       />

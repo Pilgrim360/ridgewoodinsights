@@ -69,7 +69,7 @@ export function Hero({
           Your browser does not support the video tag.
         </video>
       )}
-      <div className="absolute inset-0 bg-black/40" />
+      <div className="absolute inset-0 bg-black/60" />
       <Container className="relative" maxWidth="xl">
         <div className={`grid items-center gap-8 ${alignmentClasses[alignment]}`}>
           {/* Content */}
