@@ -30,11 +30,6 @@ const ALIGN_CLASS_MAP: Record<Exclude<ImageAlign, 'none'>, string> = {
 
 const WIDTH_PRESETS: Array<{ label: string; value: string }> = [
   { label: 'Auto', value: '' },
-  { label: '25%', value: '25%' },
-  { label: '33%', value: '33%' },
-  { label: '50%', value: '50%' },
-  { label: '75%', value: '75%' },
-  { label: '100%', value: '100%' },
   { label: '320px', value: '320' },
   { label: '480px', value: '480' },
   { label: '640px', value: '640' },
@@ -187,7 +182,7 @@ export function EditorImageBubbleMenu({ editor, disabled, onError }: EditorImage
         title="Align center"
         aria-label="Align image center"
         disabled={isDisabled}
-        isActive={align === 'center' || align === 'none'}
+        isActive={align === 'center'}
         onClick={() => setAlign('center')}
       >
         <AlignCenter className="h-4 w-4" />

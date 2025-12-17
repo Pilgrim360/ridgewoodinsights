@@ -1,7 +1,14 @@
 'use client';
 
 import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type PointerEvent as ReactPointerEvent,
+} from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -121,7 +128,7 @@ export function ResizableImageNodeView({ node, selected, editor, updateAttribute
   }, [stopResize]);
 
   const startResize = useCallback(
-    (event: React.PointerEvent<HTMLButtonElement>) => {
+    (event: ReactPointerEvent<HTMLButtonElement>) => {
       if (!editor.isEditable) return;
 
       event.preventDefault();
@@ -153,6 +160,7 @@ export function ResizableImageNodeView({ node, selected, editor, updateAttribute
       className={cn(
         'rw-image-nodeview',
         'relative inline-block max-w-full select-none',
+        attrs.class,
         selected && 'rw-image-nodeview--selected'
       )}
     >
@@ -161,7 +169,7 @@ export function ResizableImageNodeView({ node, selected, editor, updateAttribute
         src={attrs.src}
         alt={attrs.alt ?? ''}
         title={attrs.title ?? ''}
-        className={cn('max-w-full h-auto', attrs.class)}
+        className="block max-w-full h-auto"
         style={imgStyle}
       />
 

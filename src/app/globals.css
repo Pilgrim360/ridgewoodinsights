@@ -84,6 +84,25 @@
     @apply block w-full;
   }
 
+  /* Editor node-view wrapper alignment (so text wraps inside the editor) */
+  .ProseMirror .rw-image-nodeview.rw-img-align-left {
+    @apply float-left mr-6 my-2;
+    max-width: min(50%, 28rem);
+  }
+
+  .ProseMirror .rw-image-nodeview.rw-img-align-right {
+    @apply float-right ml-6 my-2;
+    max-width: min(50%, 28rem);
+  }
+
+  .ProseMirror .rw-image-nodeview.rw-img-align-center {
+    @apply block mx-auto;
+  }
+
+  .ProseMirror .rw-image-nodeview.rw-img-align-full {
+    @apply block w-full;
+  }
+
   /* TipTap image node view (resize handle + selected ring) */
   .ProseMirror .rw-image-nodeview--selected img {
     @apply ring-2 ring-primary/40;
