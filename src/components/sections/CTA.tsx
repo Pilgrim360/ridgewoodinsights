@@ -92,28 +92,26 @@ export function CTA({
           
           {/* Actions */}
           <div className={buttonContainerClasses[variant]}>
-            <Button
-              asChild
-              variant={primaryAction.variant || 'primary'}
-              size="lg"
-              className="min-h-[44px]"
-            >
-              <Link href={primaryAction.href} aria-label={primaryAction.label}>
-                {primaryAction.label}
-              </Link>
-            </Button>
-            
-            {secondaryAction && (
+            <Link href={primaryAction.href} aria-label={primaryAction.label}>
               <Button
-                asChild
-                variant={secondaryAction.variant || 'outline'}
+                variant={primaryAction.variant || 'primary'}
                 size="lg"
                 className="min-h-[44px]"
               >
-                <Link href={secondaryAction.href} aria-label={secondaryAction.label}>
-                  {secondaryAction.label}
-                </Link>
+                {primaryAction.label}
               </Button>
+            </Link>
+            
+            {secondaryAction && (
+              <Link href={secondaryAction.href} aria-label={secondaryAction.label}>
+                <Button
+                  variant={secondaryAction.variant || 'outline'}
+                  size="lg"
+                  className="min-h-[44px]"
+                >
+                  {secondaryAction.label}
+                </Button>
+              </Link>
             )}
           </div>
         </div>

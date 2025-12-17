@@ -42,8 +42,7 @@ export default async function HomePage() {
           href: '/services',
           variant: 'outline',
         }}
-        imageSrc="https://images.unsplash.com/photo-1554224155-1696413565d3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80"
-        imageAlt="Professional financial planning and accounting services"
+        videoSrc="https://cdn.pixabay.com/video/2024/07/13/220941_large.mp4"
         backgroundVariant="default"
         alignment="left"
       />

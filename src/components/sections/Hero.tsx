@@ -22,6 +22,7 @@ export interface HeroProps {
   secondaryCTA?: HeroCTA;
   imageSrc?: string;
   imageAlt?: string;
+  videoSrc?: string;
   backgroundVariant?: 'default' | 'muted' | 'white';
   alignment?: 'left' | 'center';
   className?: string;
@@ -34,6 +35,7 @@ export function Hero({
   primaryCTA,
   secondaryCTA,
   imageSrc,
+  videoSrc,
   alignment = 'left',
   className = '',
 }: HeroProps) {
@@ -42,18 +44,31 @@ export function Hero({
     center: 'text-center',
   };
 
-  const sectionStyle = imageSrc ? { backgroundImage: `url(${imageSrc})` } : {};
+  const sectionStyle = imageSrc && !videoSrc ? { backgroundImage: `url(${imageSrc})` } : {};
 
   return (
     <Section
       id="hero"
       className={cn(
-        'relative flex min-h-screen items-center bg-cover bg-center py-20',
+        'relative flex min-h-screen items-center bg-cover bg-center py-20 overflow-hidden',
         className
       )}
       style={sectionStyle}
       aria-labelledby="hero-title"
     >
+      {videoSrc && (
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 h-full w-full object-cover"
+          aria-hidden="true"
+        >
+          <source src={videoSrc} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      )}
       <div className="absolute inset-0 bg-black/40" />
       <Container className="relative" maxWidth="xl">
         <div className={`grid items-center gap-8 ${alignmentClasses[alignment]}`}>
