@@ -1,13 +1,13 @@
 'use client';
 
 import React from 'react';
-import { Sidebar } from '@/components/admin/Sidebar';
 import { AdminHeader } from '@/components/admin/AdminHeader';
+import { AdminNav } from '@/components/admin/AdminNav';
 import {
   AdminHeaderSlotsProvider,
   useAdminHeaderSlots,
 } from '@/contexts/AdminHeaderSlotsContext';
-import { useSidebarState } from '@/hooks/useSidebarState';
+import { useAdminNavState } from '@/hooks/useAdminNavState';
 
 /**
  * Admin Dashboard Layout
@@ -20,17 +20,28 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const sidebarState = useSidebarState();
+  const {
+    isExpanded,
+    isMobileOpen,
+    toggleExpand,
+    toggleMobileMenu,
+    closeMobileMenu,
+  } = useAdminNavState();
 
   return (
     <AdminHeaderSlotsProvider>
       <div className="flex h-screen bg-background">
-        <Sidebar state={sidebarState} />
+        <AdminNav
+          isExpanded={isExpanded}
+          isMobileOpen={isMobileOpen}
+          toggleExpand={toggleExpand}
+          closeMobileMenu={closeMobileMenu}
+        />
 
         <div className="flex-1 flex flex-col overflow-hidden">
           <AdminHeader
-            onMenuToggle={sidebarState.toggleMobileMenu}
-            isMobileMenuOpen={sidebarState.isMobileOpen}
+            onMenuToggle={toggleMobileMenu}
+            isMobileMenuOpen={isMobileOpen}
           />
 
           <AdminSubHeader />
