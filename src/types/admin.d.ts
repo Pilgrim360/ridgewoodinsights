@@ -145,8 +145,10 @@ export interface ImageUploadResult {
 export interface SidebarState {
   isExpanded: boolean;
   isMobileOpen: boolean;
+  expandedGroups: Set<string>;
   toggleExpand: () => void;
   toggleMobileMenu: () => void;
+  toggleGroup: (groupId: string) => void;
   closeMobileMenu: () => void;
 }
 
@@ -154,7 +156,14 @@ export interface NavItem {
   href: string;
   label: string;
   icon: React.ReactNode;
-  badge?: number; // e.g., draft count
+  badge?: number;
+}
+
+export interface NavGroup {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+  items: NavItem[];
 }
 
 // ============================================================================

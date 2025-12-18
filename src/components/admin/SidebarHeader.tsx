@@ -3,19 +3,23 @@
 import React from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 interface SidebarHeaderProps {
   isExpanded: boolean;
-  onToggleExpand: () => void;
+  isMobile?: boolean;
+  onClose?: () => void;
 }
 
 /**
- * SidebarHeader - Logo and collapse toggle
- * Shows logo text when expanded, icon-only when collapsed
- * Toggle button always visible
+ * SidebarHeader - Logo and close button (mobile only)
+ * 
+ * Desktop: Shows only logo
+ * Mobile: Shows logo with close button (X icon)
+ * Smooth transitions for logo text visibility
  */
 export const SidebarHeader = React.forwardRef<HTMLDivElement, SidebarHeaderProps>(
-  ({ isExpanded, onToggleExpand }, ref) => {
+  ({ isExpanded, isMobile = false, onClose }, ref) => {
     return (
       <div
         ref={ref}
@@ -24,66 +28,33 @@ export const SidebarHeader = React.forwardRef<HTMLDivElement, SidebarHeaderProps
         {/* Logo */}
         <Link
           href="/admin"
-          className="flex items-center gap-2 hover:no-underline"
+          className="flex items-center gap-3 hover:no-underline group"
           title="Admin Dashboard"
         >
-          {/* Logo icon/mark - always visible */}
-          <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-primary text-white rounded-md font-bold">
+          {/* Logo icon - always visible */}
+          <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-primary text-white rounded-lg font-bold text-sm transition-transform group-hover:scale-105">
             R
           </div>
 
-          {/* Logo text - only visible when expanded */}
+          {/* Logo text - visible when expanded */}
           {isExpanded && (
-            <span className="text-sm font-semibold text-secondary whitespace-nowrap">
+            <span className="text-base font-semibold text-secondary whitespace-nowrap transition-opacity duration-200">
               Ridgewood
             </span>
           )}
         </Link>
 
-        {/* Collapse toggle button (desktop only) */}
-        <button
-          onClick={onToggleExpand}
-          className={cn(
-            'hidden md:flex flex-shrink-0 w-6 h-6 items-center justify-center rounded-md',
-            'text-secondary hover:bg-surface transition-colors',
-            'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2'
-          )}
-          aria-label={isExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
-          aria-pressed={isExpanded}
-          title={isExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
-        >
-          {isExpanded ? (
-            // Collapse icon (left arrow)
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          ) : (
-            // Expand icon (right arrow)
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          )}
-        </button>
+        {/* Close button - mobile only */}
+        {isMobile && onClose && (
+          <button
+            onClick={onClose}
+            className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-secondary hover:bg-surface/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            aria-label="Close menu"
+            title="Close menu"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
       </div>
     );
   }

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Sidebar } from '@/components/admin/Sidebar';
+import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import {
   AdminHeaderSlotsProvider,
@@ -25,7 +25,7 @@ export default function DashboardLayout({
   return (
     <AdminHeaderSlotsProvider>
       <div className="flex h-screen bg-background">
-        <Sidebar state={sidebarState} />
+        <AdminSidebar state={sidebarState} />
 
         <div className="flex-1 flex flex-col overflow-hidden">
           <AdminHeader
