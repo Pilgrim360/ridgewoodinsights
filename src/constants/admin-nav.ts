@@ -3,7 +3,7 @@ import {
   Newspaper,
   Folders,
   Settings,
-  User,
+  Image,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -30,6 +30,11 @@ export const NAV_ITEMS: NavItem[] = [
       { label: 'Drafts', href: '/admin/posts/drafts', icon: Newspaper },
       { label: 'Scheduled', href: '/admin/posts/scheduled', icon: Newspaper },
     ],
+  },
+  {
+    label: 'Media Library',
+    href: '/admin/media',
+    icon: Image,
   },
   {
     label: 'Categories',

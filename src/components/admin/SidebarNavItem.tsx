@@ -27,42 +27,46 @@ export function SidebarNavItem({
     ? pathname.startsWith(item.href)
     : pathname === item.href;
 
-  const handleItemClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (item.children) {
-      e.preventDefault();
-      setIsSubMenuOpen(!isSubMenuOpen);
-    } else if (onLinkClick) {
-      onLinkClick();
-    }
+  const handleChevronClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsSubMenuOpen(!isSubMenuOpen);
   };
 
   return (
     <>
-      <Link
-        href={item.href}
-        onClick={handleItemClick}
-        className={cn(
-          'flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors',
-          'hover:bg-slate-100',
-          isActive
-            ? 'text-slate-900 bg-slate-100'
-            : 'text-slate-600 hover:text-slate-900',
-          !isExpanded && 'justify-center'
-        )}
-      >
-        <item.icon className="h-5 w-5" />
-        <span className={cn('flex-1', !isExpanded && 'hidden')}>
-          {item.label}
-        </span>
+      <div className="relative">
+        <Link
+          href={item.href}
+          onClick={onLinkClick}
+          className={cn(
+            'flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors',
+            'hover:bg-slate-100',
+            isActive
+              ? 'text-slate-900 bg-slate-100'
+              : 'text-slate-600 hover:text-slate-900',
+            !isExpanded && 'justify-center'
+          )}
+        >
+          <item.icon className="h-5 w-5" />
+          <span className={cn('flex-1', !isExpanded && 'hidden')}>
+            {item.label}
+          </span>
+        </Link>
         {item.children && isExpanded && (
-          <ChevronDown
-            className={cn(
-              'h-4 w-4 transform transition-transform duration-200',
-              isSubMenuOpen && 'rotate-180'
-            )}
-          />
+          <button
+            onClick={handleChevronClick}
+            className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-slate-200"
+          >
+            <ChevronDown
+              className={cn(
+                'h-4 w-4 transform transition-transform duration-200',
+                isSubMenuOpen && 'rotate-180'
+              )}
+            />
+          </button>
         )}
-      </Link>
+      </div>
       {isSubMenuOpen && item.children && isExpanded && (
         <ul className="pl-6 pt-2 space-y-1">
           {item.children.map((child) => (
