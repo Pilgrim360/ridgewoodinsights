@@ -24,7 +24,7 @@ export default function DashboardLayout({
 
   return (
     <AdminHeaderSlotsProvider>
-      <div className="flex h-screen bg-background">
+      <div className="flex h-screen bg-slate-50">
         <Sidebar state={sidebarState} />
 
         <div className="flex-1 flex flex-col overflow-hidden">
