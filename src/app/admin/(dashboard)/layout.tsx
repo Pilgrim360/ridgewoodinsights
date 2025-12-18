@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Sidebar } from '@/components/admin/Sidebar';
+import { AdminSidebar } from '@/components/admin/sidebar';
 import { AdminHeader } from '@/components/admin/AdminHeader';
 import {
   AdminHeaderSlotsProvider,
@@ -11,8 +11,8 @@ import { useSidebarState } from '@/hooks/useSidebarState';
 
 /**
  * Admin Dashboard Layout
- * Provides two-panel structure (sidebar + content)
- * Includes responsive navigation with mobile hamburger menu
+ * Modern two-panel structure with fixed sidebar and responsive content area
+ * Sidebar is fixed on desktop, drawer on mobile
  */
 
 export default function DashboardLayout({
@@ -24,10 +24,16 @@ export default function DashboardLayout({
 
   return (
     <AdminHeaderSlotsProvider>
-      <div className="flex h-screen bg-background">
-        <Sidebar state={sidebarState} />
+      <div className="min-h-screen bg-background">
+        {/* Fixed Sidebar */}
+        <AdminSidebar />
 
-        <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Main Content Area - Offset by sidebar width on desktop */}
+        <div 
+          className={`flex flex-col min-h-screen transition-all duration-300 ${
+            sidebarState.isExpanded ? 'md:ml-64' : 'md:ml-20'
+          }`}
+        >
           <AdminHeader
             onMenuToggle={sidebarState.toggleMobileMenu}
             isMobileMenuOpen={sidebarState.isMobileOpen}
@@ -35,7 +41,7 @@ export default function DashboardLayout({
 
           <AdminSubHeader />
 
-          <main className="flex-1 overflow-auto">
+          <main className="flex-1">
             <div className="px-4 py-3 md:px-6">{children}</div>
           </main>
         </div>
