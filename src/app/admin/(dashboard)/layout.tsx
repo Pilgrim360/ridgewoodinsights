@@ -24,13 +24,13 @@ export default function DashboardLayout({
 
   return (
     <AdminHeaderSlotsProvider>
-      <div className="min-h-screen bg-background">
+      <div className="flex min-h-screen bg-background">
         {/* Fixed Sidebar */}
         <AdminSidebar />
 
-        {/* Main Content Area - Offset by sidebar width on desktop */}
+        {/* Main Content Area - Flexes to fill remaining space */}
         <div 
-          className={`flex flex-col min-h-screen transition-all duration-300 ${
+          className={`flex flex-col flex-1 min-h-screen transition-all duration-300 ease-in-out ${
             sidebarState.isExpanded ? 'md:ml-64' : 'md:ml-20'
           }`}
         >
@@ -41,7 +41,7 @@ export default function DashboardLayout({
 
           <AdminSubHeader />
 
-          <main className="flex-1">
+          <main className="flex-1 overflow-auto">
             <div className="px-4 py-3 md:px-6">{children}</div>
           </main>
         </div>

@@ -12,8 +12,10 @@ interface SidebarUserMenuProps {
 }
 
 /**
- * SidebarUserMenu - User info, collapse toggle, and logout
+ * SidebarUserMenu - User info, logout, and collapse toggle
  * Pinned to the bottom of the sidebar
+ * Layout: Logout on left, Collapse on right
+ * When collapsed: Only collapse icon visible
  */
 export const SidebarUserMenu: React.FC<SidebarUserMenuProps> = ({ state, isMobile }) => {
   const { user, logout, isLoading } = useAdminAuth();
@@ -71,15 +73,32 @@ export const SidebarUserMenu: React.FC<SidebarUserMenuProps> = ({ state, isMobil
 
       {/* Actions Row */}
       <div className={cn('flex items-center gap-2', !isExpanded && !isMobile && 'justify-center')}>
-        {/* Collapse Toggle (Desktop only, when expanded) */}
+        {/* Logout Button (Left side, hidden when collapsed) */}
+        {(isExpanded || isMobile) && (
+          <button
+            onClick={handleLogout}
+            disabled={isLoading}
+            className={cn(
+              'flex items-center gap-2 px-3 py-2 rounded-lg transition-colors flex-1',
+              'text-gray-600 hover:text-red-600 hover:bg-red-50',
+              'focus:outline-none focus:ring-2 focus:ring-red-500/20',
+              'disabled:opacity-50 disabled:cursor-not-allowed'
+            )}
+            title="Logout"
+          >
+            <LogOut className="w-4 h-4" />
+            <span className="text-sm font-medium">Logout</span>
+          </button>
+        )}
+
+        {/* Collapse Toggle (Right side, always visible on desktop) */}
         {!isMobile && isExpanded && (
           <button
             onClick={toggleExpand}
             className={cn(
-              'flex items-center gap-2 px-3 py-2 rounded-lg transition-colors',
+              'flex items-center gap-2 px-3 py-2 rounded-lg transition-colors flex-1',
               'text-gray-600 hover:text-gray-900 hover:bg-gray-100',
-              'focus:outline-none focus:ring-2 focus:ring-primary/20',
-              'flex-1'
+              'focus:outline-none focus:ring-2 focus:ring-primary/20'
             )}
             title="Collapse sidebar"
           >
@@ -88,7 +107,7 @@ export const SidebarUserMenu: React.FC<SidebarUserMenuProps> = ({ state, isMobil
           </button>
         )}
 
-        {/* Expand Toggle (Desktop only, when collapsed) */}
+        {/* Expand Toggle (Collapsed state - only icon, centered) */}
         {!isMobile && !isExpanded && (
           <button
             onClick={toggleExpand}
@@ -102,23 +121,6 @@ export const SidebarUserMenu: React.FC<SidebarUserMenuProps> = ({ state, isMobil
             <PanelLeft className="w-4 h-4" />
           </button>
         )}
-
-        {/* Logout Button */}
-        <button
-          onClick={handleLogout}
-          disabled={isLoading}
-          className={cn(
-            'flex items-center gap-2 px-3 py-2 rounded-lg transition-colors',
-            'text-gray-600 hover:text-red-600 hover:bg-red-50',
-            'focus:outline-none focus:ring-2 focus:ring-red-500/20',
-            'disabled:opacity-50 disabled:cursor-not-allowed',
-            isExpanded || isMobile ? 'flex-1' : 'w-full justify-center'
-          )}
-          title="Logout"
-        >
-          <LogOut className="w-4 h-4" />
-          {(isExpanded || isMobile) && <span className="text-sm font-medium">Logout</span>}
-        </button>
       </div>
     </div>
   );

@@ -24,6 +24,7 @@ interface SidebarNavItemProps {
  * - Hover states and smooth transitions
  * - Tooltip on collapsed state
  * - Badge support for counts (e.g., draft count)
+ * - Clickable parent with separate chevron toggle for submenus
  */
 export const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
   item,
@@ -40,7 +41,111 @@ export const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
     ? pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href))
     : hasSubmenu && item.submenu?.some((sub) => pathname === sub.href || pathname.startsWith(sub.href));
 
-  // Parent item content
+  // Render item with submenu - parent is clickable, chevron toggles submenu
+  if (hasSubmenu && item.href) {
+    return (
+      <div>
+        <div
+          className={cn(
+            'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group',
+            'relative',
+            isActive
+              ? 'bg-primary/10 text-primary'
+              : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900',
+            !isExpanded && 'justify-center'
+          )}
+          title={!isExpanded ? item.label : undefined}
+        >
+          {/* Clickable link area (icon + label) */}
+          <Link href={item.href} className="flex items-center gap-3 flex-1 min-w-0">
+            {/* Icon */}
+            <span className={cn('flex-shrink-0', isActive ? 'text-primary' : 'text-gray-500 group-hover:text-gray-700')}>
+              {item.icon}
+            </span>
+
+            {/* Label */}
+            {isExpanded && (
+              <span className="flex-1 text-sm font-medium truncate">{item.label}</span>
+            )}
+          </Link>
+
+          {/* Badge and Chevron (right side) */}
+          {isExpanded && (
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {/* Badge */}
+              {item.badge !== undefined && item.badge > 0 && (
+                <span className="px-2 py-0.5 text-xs font-medium bg-gray-200 text-gray-700 rounded-full">
+                  {item.badge}
+                </span>
+              )}
+
+              {/* Chevron toggle button */}
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onToggleSubmenu();
+                }}
+                className="p-1 rounded hover:bg-gray-200/50 transition-colors"
+                aria-label={isSubmenuExpanded ? 'Collapse submenu' : 'Expand submenu'}
+              >
+                <ChevronRight
+                  className={cn(
+                    'w-4 h-4 text-gray-400 transition-transform duration-200',
+                    isSubmenuExpanded && 'rotate-90'
+                  )}
+                />
+              </button>
+            </div>
+          )}
+
+          {/* Active indicator */}
+          {isActive && (
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-primary rounded-r-full" />
+          )}
+        </div>
+
+        {/* Submenu */}
+        {hasSubmenu && isExpanded && isSubmenuExpanded && (
+          <div className="mt-1 ml-3 pl-6 border-l-2 border-gray-200 space-y-1">
+            {item.submenu?.map((subItem) => {
+              const isSubActive = pathname === subItem.href || pathname.startsWith(subItem.href);
+
+              return (
+                <Link key={subItem.id} href={subItem.href} className="block">
+                  <div
+                    className={cn(
+                      'flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-200',
+                      isSubActive
+                        ? 'bg-primary/5 text-primary'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    )}
+                  >
+                    {/* Sub-item Icon (optional) */}
+                    {subItem.icon && (
+                      <span
+                        className={cn(
+                          'flex-shrink-0',
+                          isSubActive ? 'text-primary' : 'text-gray-400'
+                        )}
+                      >
+                        {subItem.icon}
+                      </span>
+                    )}
+
+                    {/* Sub-item Label */}
+                    <span className="flex-1 text-sm truncate">{subItem.label}</span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Render item without submenu OR submenu without parent href
   const ParentContent = (
     <div
       className={cn(
@@ -70,7 +175,7 @@ export const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
             </span>
           )}
 
-          {/* Chevron for submenu */}
+          {/* Chevron for submenu without parent href */}
           {hasSubmenu && (
             <ChevronRight
               className={cn(
@@ -98,7 +203,7 @@ export const SidebarNavItem: React.FC<SidebarNavItemProps> = ({
     );
   }
 
-  // If item has submenu, render as button
+  // If item has submenu but no href, render as button
   return (
     <div>
       <button onClick={onToggleSubmenu} className="w-full text-left">

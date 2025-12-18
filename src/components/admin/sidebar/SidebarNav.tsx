@@ -61,6 +61,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ state, isMobile }) => {
     },
     {
       id: 'posts',
+      href: '/admin/posts',
       label: 'Posts',
       icon: <FileText className="w-5 h-5" />,
       submenu: [
