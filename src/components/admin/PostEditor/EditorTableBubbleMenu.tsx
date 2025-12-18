@@ -24,7 +24,11 @@ export function EditorTableBubbleMenu({
   return (
     <BubbleMenu
       editor={editor}
-      tippyOptions={{ duration: 150 }}
+      tippyOptions={{
+        duration: 150,
+        placement: 'bottom',
+        maxWidth: 'calc(100vw - 400px)',
+      }}
       shouldShow={() => editor.isActive('table')}
       className="flex items-center gap-1 rounded-lg border border-surface bg-white p-1 shadow-sm"
     >

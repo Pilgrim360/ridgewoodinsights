@@ -132,10 +132,11 @@ export function ResizableImageNodeView({ node, selected, editor, updateAttribute
       if (!editor.isEditable) return;
 
       event.preventDefault();
-      event.stopPropagation();
-
+      // Only stop propagation if we're actually going to resize (image exists with valid dimensions)
       const rect = imgRef.current?.getBoundingClientRect();
       if (!rect || rect.width === 0 || rect.height === 0) return;
+
+      event.stopPropagation();
 
       const initial: ResizeDraft = {
         width: Math.round(rect.width),

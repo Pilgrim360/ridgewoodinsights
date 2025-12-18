@@ -35,8 +35,8 @@ export default function DashboardLayout({
 
           <AdminSubHeader />
 
-          <main className="flex-1 overflow-auto">
-            <div className="px-4 py-3 md:px-6">{children}</div>
+          <main className="flex-1 overflow-auto pointer-events-auto">
+            <div className="px-4 py-3 md:px-6 pointer-events-auto">{children}</div>
           </main>
         </div>
       </div>

@@ -165,7 +165,12 @@ export function EditorImageBubbleMenu({ editor, disabled, onError }: EditorImage
   return (
     <BubbleMenu
       editor={editor}
-      tippyOptions={{ duration: 150, interactive: true }}
+      tippyOptions={{
+        duration: 150,
+        interactive: true,
+        placement: 'bottom',
+        maxWidth: 'calc(100vw - 400px)',
+      }}
       shouldShow={() => editor.isActive('image')}
       className="flex items-center gap-1 rounded-lg border border-surface bg-white p-1 shadow-sm"
     >

@@ -115,23 +115,13 @@ export function Editor({ postId, initialData }: EditorProps) {
     return () => {
       setActions(null);
     };
-  }, [
-    setActions,
-    isDirty,
-    isSaving,
-    lastSaved,
-    saveError,
-    explicitSave,
-    handlePublish,
-    canPublish,
-    publishDisabledReason,
-    state.status,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDirty, isSaving, lastSaved, saveError, state.status]);
 
   return (
-    <div className="h-full flex flex-col bg-background">
-      <div className="flex-1 overflow-y-auto flex gap-4">
-        <div className="flex-1 min-w-0">
+    <div className="h-full flex flex-col bg-background pointer-events-auto">
+      <div className="flex-1 overflow-y-auto flex gap-4 pointer-events-auto">
+        <div className="flex-1 min-w-0 pointer-events-auto">
           <TipTapEditor
             title={state.title}
             onTitleChange={(value) => updateField('title', value)}
@@ -142,9 +132,9 @@ export function Editor({ postId, initialData }: EditorProps) {
           />
         </div>
 
-        <div className="w-80 flex-shrink-0">
+        <div className="w-80 flex-shrink-0 pointer-events-auto">
           <div className="sticky top-4 space-y-6">
-            <div className="bg-white border border-surface rounded-lg p-4">
+            <div className="bg-white border border-surface rounded-lg p-4 pointer-events-auto">
               <EditorSidebar
                 state={state}
                 updateField={updateFieldWithNull}

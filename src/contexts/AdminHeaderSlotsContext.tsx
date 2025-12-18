@@ -61,7 +61,7 @@ export function AdminHeaderSlotsProvider({
       setSubHeader,
       clear,
     }),
-    [slots, setTitle, setActions, setSubHeader, clear]
+    [slots]
   );
 
   return (
