@@ -150,11 +150,39 @@ export interface SidebarState {
   closeMobileMenu: () => void;
 }
 
+export interface ExtendedSidebarState extends SidebarState {
+  isHovered: boolean;
+  hasInteracted: boolean;
+  lastInteraction: number;
+  prefersCollapsed: boolean;
+  isOnMobile: boolean;
+  prefersReducedMotion: boolean;
+  expand?: () => void;
+  collapse?: () => void;
+  openMobileMenu?: () => void;
+}
+
 export interface NavItem {
   href: string;
   label: string;
   icon: React.ReactNode;
   badge?: number; // e.g., draft count
+}
+
+export interface NavigationItem {
+  id: string;
+  href: string;
+  label: string;
+  description?: string;
+  icon: {
+    regular: React.ReactNode;
+    active?: React.ReactNode;
+  };
+  badge?: {
+    count?: number;
+    variant?: 'default' | 'success' | 'warning' | 'error';
+  };
+  children?: NavigationItem[];
 }
 
 // ============================================================================
