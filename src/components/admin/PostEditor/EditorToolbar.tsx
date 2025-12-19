@@ -21,7 +21,7 @@ import {
   AlignCenter,
   AlignRight,
   AlignJustify,
-  Image as ImageIcon,
+  Images as MediaIcon,
   Table as TableIcon,
   Minus,
   FileSpreadsheet,
@@ -31,8 +31,9 @@ import {
   SeparatorHorizontal,
 } from 'lucide-react';
 
-import { uploadPostAsset, uploadPostImage } from '@/lib/admin/storage';
+import { uploadPostAsset } from '@/lib/admin/storage';
 import { cn } from '@/lib/utils';
+import { MediaModal, type ImageConfig } from '../Media/MediaModal';
 import { parseCsv } from '@/lib/tiptap/utils';
 import { getTocHeadings } from '@/lib/tiptap/toc';
 
@@ -67,11 +68,11 @@ export function EditorToolbar({
   onError,
   className,
 }: EditorToolbarProps) {
-  const imageInputRef = useRef<HTMLInputElement>(null);
   const csvInputRef = useRef<HTMLInputElement>(null);
   const audioInputRef = useRef<HTMLInputElement>(null);
 
   const [isUploading, setIsUploading] = useState(false);
+  const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
 
   const editorSnapshot = useEditorState({
     editor,
@@ -126,32 +127,44 @@ export function EditorToolbar({
     [editor]
   );
 
-  const handleImageSelected = useCallback(
-    async (file: File | null) => {
-      if (!file) return;
 
-      setIsUploading(true);
+  const handleMediaInsert = useCallback(
+    (config: ImageConfig) => {
+      const { url, alt, title, alignment, size } = config;
 
-      try {
-        const url = await uploadPostImage(file);
-        const alt = window.prompt('Alt text (optional)') ?? '';
+      // Map size to pixel widths (standard presets)
+      const sizeMap = {
+        thumbnail: 150,
+        medium: 300,
+        large: 1024,
+        full: null,
+      };
 
-        editor
-          .chain()
-          .focus()
-          .setImage({
-            src: url,
-            alt: alt || undefined,
-          })
-          .run();
-      } catch (error) {
-        onError?.(error instanceof Error ? error.message : 'Upload failed');
-      } finally {
-        setIsUploading(false);
-        if (imageInputRef.current) imageInputRef.current.value = '';
-      }
+      const width = sizeMap[size];
+
+      // Map alignment to Tailwind classes
+      const alignmentClasses = {
+        left: 'float-left mr-6 mb-4',
+        center: 'mx-auto block',
+        right: 'float-right ml-6 mb-4',
+        full: 'w-full block',
+      };
+
+      editor
+        .chain()
+        .focus()
+        .setImage({
+          src: url,
+          alt: alt || undefined,
+          title: title || undefined,
+          // @ts-expect-error - ImageExtended supports these attributes
+          width: width ? String(width) : undefined,
+          // @ts-expect-error - ImageExtended supports these attributes
+          class: alignmentClasses[alignment as keyof typeof alignmentClasses],
+        })
+        .run();
     },
-    [editor, onError]
+    [editor]
   );
 
   const handleCsvSelected = useCallback(
@@ -621,21 +634,20 @@ export function EditorToolbar({
         <Divider />
 
         {/* Media */}
-        <input
-          ref={imageInputRef}
-          type="file"
-          accept="image/jpeg,image/png,image/webp,image/gif"
-          className="hidden"
-          onChange={(e) => void handleImageSelected(e.target.files?.[0] ?? null)}
-        />
         <ToolbarButton
-          title="Upload image"
-          aria-label="Upload image"
-          disabled={disabled || isUploading}
-          onClick={() => imageInputRef.current?.click()}
+          title="Insert Image"
+          aria-label="Insert Image"
+          disabled={disabled}
+          onClick={() => setIsMediaModalOpen(true)}
         >
-          <ImageIcon className="h-4 w-4" />
+          <MediaIcon className="h-4 w-4" />
         </ToolbarButton>
+
+        <MediaModal
+          isOpen={isMediaModalOpen}
+          onClose={() => setIsMediaModalOpen(false)}
+          onInsert={handleMediaInsert}
+        />
         <ToolbarButton
           title="Embed YouTube"
           aria-label="Embed YouTube"

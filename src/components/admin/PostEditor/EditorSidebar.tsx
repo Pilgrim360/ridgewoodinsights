@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { EditorState } from '@/hooks/usePostEditor';
-import { ImageUpload } from './ImageUpload';
+import { MediaModal } from '../Media/MediaModal';
+import { Button } from '@/components/ui/Button';
+import { Image as ImageIcon } from 'lucide-react';
 import { getCategories } from '@/lib/admin/categories';
 
 import { CategoryData } from '@/types/admin';
@@ -23,6 +25,7 @@ export function EditorSidebar({
 }: EditorSidebarProps) {
   const [categories, setCategories] = useState<CategoryData[]>([]);
   const [loadingCategories, setLoadingCategories] = useState(true);
+  const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
 
   useEffect(() => {
     async function fetchCategories() {
@@ -188,9 +191,22 @@ export function EditorSidebar({
             </button>
           </div>
         )}
-        <ImageUpload
-          onImageUpload={(url) => updateField('cover_image', url)}
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full"
           disabled={disabled}
+          onClick={() => setIsMediaModalOpen(true)}
+          icon={<ImageIcon className="h-4 w-4" />}
+        >
+          Select Featured Image
+        </Button>
+
+        <MediaModal
+          isOpen={isMediaModalOpen}
+          onClose={() => setIsMediaModalOpen(false)}
+          onInsert={(config) => updateField('cover_image', config.url)}
+          title="Select Featured Image"
         />
       </div>
     </div>
