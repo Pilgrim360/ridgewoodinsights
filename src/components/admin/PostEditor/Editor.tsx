@@ -128,6 +128,7 @@ export function Editor({ postId, initialData }: EditorProps) {
             content={state.content}
             onChange={(value) => updateField('content', value)}
             disabled={isSaving}
+            isSaving={isSaving}
             onError={showError}
           />
         </div>

@@ -19,6 +19,7 @@ export interface TipTapEditorProps {
   content: string;
   onChange: (content: string) => void;
   disabled?: boolean;
+  isSaving?: boolean;
   characterLimit?: number;
   onError?: (message: string) => void;
 }
@@ -29,6 +30,7 @@ export function TipTapEditor({
   content,
   onChange,
   disabled,
+  isSaving,
   characterLimit = 50000,
   onError,
 }: TipTapEditorProps) {
@@ -164,7 +166,12 @@ export function TipTapEditor({
   if (!editor) return null;
 
   return (
-    <div className="space-y-3">
+    <div
+      className={cn(
+        'space-y-3 transition-opacity',
+        isSaving && 'opacity-70 pointer-events-none'
+      )}
+    >
       <EditorImageBubbleMenu editor={editor} disabled={disabled} onError={onError} />
       <EditorTableBubbleMenu editor={editor} disabled={disabled} />
 

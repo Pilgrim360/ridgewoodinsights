@@ -36,16 +36,19 @@ export function usePostEditor({
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const isSavingRef = useRef(false);
 
   const debouncedSaveRef = useRef<ReturnType<typeof debounce>>(null);
 
   // Auto-save function
   const performSave = useCallback(
     async (stateToSave: EditorState) => {
+      if (isSavingRef.current) return;
       // If no postId and no title, don't create ghost draft
       if (!postId && !stateToSave.title) return;
 
       try {
+        isSavingRef.current = true;
         setIsSaving(true);
         setSaveError(null);
 
@@ -99,6 +102,7 @@ export function usePostEditor({
         onError?.(errorMessage);
       } finally {
         setIsSaving(false);
+        isSavingRef.current = false;
       }
     },
     [postId, onError, onSuccess]
@@ -121,10 +125,10 @@ export function usePostEditor({
 
   // Trigger auto-save when state changes
   useEffect(() => {
-    if (!postId || !isDirty) return;
+    if (!postId || !isDirty || isSaving) return;
 
     debouncedSaveRef.current?.(state);
-  }, [state, isDirty, postId]);
+  }, [state, isDirty, postId, isSaving]);
 
   // Handle field changes
   const updateField = useCallback(
