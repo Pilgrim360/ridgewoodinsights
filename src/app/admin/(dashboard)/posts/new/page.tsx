@@ -1,12 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
 import { Editor } from '@/components/admin/PostEditor/Editor';
-import { useAdminError } from '@/contexts/AdminErrorContext';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 
 export default function NewPostPage() {
-  const { showError } = useAdminError();
   const { user, isLoading: authLoading } = useAdminAuth();
 
   // Show loading while authenticating

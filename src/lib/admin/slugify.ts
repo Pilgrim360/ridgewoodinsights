@@ -24,8 +24,7 @@ export function titleToSlug(title: string): string {
  * Appends -2, -3, etc. if slug already exists
  */
 export async function generateUniqueSlug(
-  baseSlug: string,
-  _existingSlugs?: string[] // Kept for signature compatibility, but unused
+  baseSlug: string
 ): Promise<string> {
   // Check if base slug exists
   const { count } = await supabase

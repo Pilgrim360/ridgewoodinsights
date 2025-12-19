@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { useEditorState, type Editor } from '@tiptap/react';
+import { type Editor } from '@tiptap/react';
 import {
   Bold,
   Italic,
@@ -74,18 +74,10 @@ export function EditorToolbar({
   const [isUploading, setIsUploading] = useState(false);
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
 
-  const editorSnapshot = useEditorState({
-    editor,
-    selector: ({ editor: ed }) => ({
-      from: ed.state.selection.from,
-      to: ed.state.selection.to,
-      docSize: ed.state.doc.content.size,
-    }),
-  });
 
   const headings = useMemo(
     () => getTocHeadings(editor),
-    [editor, editorSnapshot.docSize]
+    [editor]
   );
 
   const activeHeadingLevel = (() => {
@@ -157,10 +149,6 @@ export function EditorToolbar({
           src: url,
           alt: alt || undefined,
           title: title || undefined,
-          // @ts-expect-error - ImageExtended supports these attributes
-          width: width ? String(width) : undefined,
-          // @ts-expect-error - ImageExtended supports these attributes
-          class: alignmentClasses[alignment as keyof typeof alignmentClasses],
         })
         .run();
     },

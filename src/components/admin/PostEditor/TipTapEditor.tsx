@@ -159,7 +159,7 @@ export function TipTapEditor({
     return {
       words: editor.storage.characterCount.words(),
     };
-  }, [editor, editor?.state]);
+  }, [editor]);
 
   if (!editor) return null;
 

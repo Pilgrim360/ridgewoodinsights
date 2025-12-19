@@ -2,8 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { X } from 'lucide-react';
 
 interface SidebarHeaderProps {
   isExpanded: boolean;
