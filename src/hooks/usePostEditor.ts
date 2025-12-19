@@ -104,13 +104,13 @@ export function usePostEditor({
     [postId, onError, onSuccess]
   );
 
-  // Create debounced auto-save (2 second delay)
+  // Create debounced auto-save (5 second delay)
   useEffect(() => {
     debouncedSaveRef.current = debounce(
       (stateToSave: EditorState) => {
         performSave(stateToSave);
       },
-      2000,
+      5000,
       { leading: false, trailing: true }
     );
 
