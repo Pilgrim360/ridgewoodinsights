@@ -8,6 +8,7 @@ import {
   useAdminHeaderSlots,
 } from '@/contexts/AdminHeaderSlotsContext';
 import { useSidebarState } from '@/hooks/useSidebarState';
+import { ConnectionManager } from '@/components/admin/ConnectionManager';
 
 /**
  * Admin Dashboard Layout
@@ -24,6 +25,7 @@ export default function DashboardLayout({
 
   return (
     <AdminHeaderSlotsProvider>
+      <ConnectionManager />
       <div className="flex h-screen bg-background">
         <AdminSidebar state={sidebarState} />
 
