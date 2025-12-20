@@ -3,7 +3,7 @@ import { Slot } from '@radix-ui/react-slot';
 import { cn } from '@/lib/utils';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive';
-export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
+export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl' | 'icon';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: ButtonVariant;
@@ -33,6 +33,7 @@ const sizeClasses: Record<ButtonSize, string> = {
     md: 'h-10 px-4 text-sm font-semibold rounded-md',
     lg: 'h-12 px-6 text-base font-semibold rounded-lg',
     xl: 'h-14 px-8 text-lg font-semibold rounded-lg',
+    icon: 'h-8 w-8 rounded-full',
 };
 
 const loadingSpinnerClasses = {
@@ -40,6 +41,7 @@ const loadingSpinnerClasses = {
     md: 'h-4 w-4',
     lg: 'h-5 w-5',
     xl: 'h-6 w-6',
+    icon: 'h-3 w-3',
 };
 
 const LoadingSpinner = ({ size }: { size: ButtonSize }) => (
