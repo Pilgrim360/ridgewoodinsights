@@ -14,12 +14,12 @@ import { getSupabaseClient } from '@/lib/supabase/client';
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const handleVisibilityChange = useCallback(() => {
     const supabase = getSupabaseClient();
-    // A lightweight call to refresh the session and potentially reconnect
-    supabase.auth.getSession().catch((error: unknown) => {
+    // A more active call to refresh the session and reconnect
+    supabase.auth.getUser().catch((error: unknown) => {
       if (error instanceof Error) {
-        console.error('Error refreshing Supabase session on visibility change:', error.message);
+        console.error('Error refreshing Supabase user on visibility change:', error.message);
       } else {
-        console.error('An unknown error occurred refreshing Supabase session:', error);
+        console.error('An unknown error occurred refreshing Supabase user:', error);
       }
     });
   }, []);
