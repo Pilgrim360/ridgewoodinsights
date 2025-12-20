@@ -213,40 +213,61 @@ export async function createPost(
 }
 
 /**
- * Update an existing post
+ * Update an existing post with retry logic and timeout handling
  */
 export async function updatePost(
   id: string,
   updates: Partial<PostData>
 ): Promise<PostData> {
-  try {
-    // Map content to content_html for database compatibility
-    // IMPORTANT: Exclude 'content' from the payload as it's not in the DB schema
-    const { content, ...rest } = updates;
-    const updateData = {
-      ...rest,
-      ...(content !== undefined && { content_html: content }), // Only update if content is provided
-    };
+  // Helper function to perform the update with timeout
+  const performUpdate = async (attempt = 1): Promise<PostData> => {
+    try {
+      // Map content to content_html for database compatibility
+      // IMPORTANT: Exclude 'content' from the payload as it's not in the DB schema
+      const { content, ...rest } = updates;
+      const updateData = {
+        ...rest,
+        ...(content !== undefined && { content_html: content }), // Only update if content is provided
+      };
 
-    // If content_html was explicitly passed in updates, it takes precedence (or just exists)
-    if (updates.content_html) {
-        updateData.content_html = updates.content_html;
+      // If content_html was explicitly passed in updates, it takes precedence (or just exists)
+      if (updates.content_html) {
+          updateData.content_html = updates.content_html;
+      }
+
+      const { data, error } = await supabase
+        .from('posts')
+        .update(updateData)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      if (!data) throw new Error('Post not found');
+      
+      return data;
+    } catch (error) {
+      console.error(`Error updating post (attempt ${attempt}):`, error);
+      
+      // Check if it's a network/auth error and retry
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const isRetryable = 
+        errorMessage.includes('Network') || 
+        errorMessage.includes('timeout') || 
+        errorMessage.includes('connection') ||
+        errorMessage.includes('Auth retryable');
+      
+      if (isRetryable && attempt <= 3) {
+        // Exponential backoff before retry
+        await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+        return performUpdate(attempt + 1);
+      }
+      
+      throw error;
     }
+  };
 
-    const { data, error } = await supabase
-      .from('posts')
-      .update(updateData)
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) throw error;
-    if (!data) throw new Error('Post not found');
-    return data;
-  } catch (error) {
-    console.error('Error updating post:', error);
-    throw error;
-  }
+  return performUpdate();
 }
 
 /**

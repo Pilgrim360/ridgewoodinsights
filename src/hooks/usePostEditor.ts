@@ -39,7 +39,9 @@ export function usePostEditor({
 
   const debouncedSaveRef = useRef<ReturnType<typeof debounce>>(null);
 
-  // Auto-save function
+  // Auto-save function with timeout and cancellation
+  const cancelTokenRef = useRef<boolean>(false);
+  
   const performSave = useCallback(
     async (stateToSave: EditorState) => {
       // If no postId and no title, don't create ghost draft
@@ -55,36 +57,65 @@ export function usePostEditor({
         }
 
         let savedPost;
+        let attempts = 0;
+        const maxRetries = 3;
         
-        if (postId) {
-          // Update existing post
-          savedPost = await updatePost(postId, {
-            title: stateToSave.title,
-            slug: stateToSave.slug,
-            content: stateToSave.content,
-            category_id: stateToSave.category_id,
-            cover_image: stateToSave.cover_image,
-            excerpt: stateToSave.excerpt,
-            status: stateToSave.status,
-            published_at: stateToSave.published_at,
-            disclaimer_type: stateToSave.disclaimer_type,
-          });
-        } else {
-          // Create new post (first save)
-          // Dynamically import createPost to avoid circular dependency if possible, or assume it's available
-          const { createPost } = await import('@/lib/admin/posts');
-          
-          savedPost = await createPost({
-            title: stateToSave.title || 'Untitled Post',
-            slug: stateToSave.slug || `post-${Date.now()}`,
-            content: stateToSave.content,
-            category_id: stateToSave.category_id,
-            cover_image: stateToSave.cover_image,
-            excerpt: stateToSave.excerpt,
-            status: 'draft', // Always start as draft
-            author_id: stateToSave.author_id,
-            disclaimer_type: stateToSave.disclaimer_type,
-          });
+        // Retry logic with exponential backoff
+        while (attempts < maxRetries) {
+          try {
+            if (postId) {
+              // Update existing post with retry logic
+              savedPost = await updatePost(postId, {
+                title: stateToSave.title,
+                slug: stateToSave.slug,
+                content: stateToSave.content,
+                category_id: stateToSave.category_id,
+                cover_image: stateToSave.cover_image,
+                excerpt: stateToSave.excerpt,
+                status: stateToSave.status,
+                published_at: stateToSave.published_at,
+                disclaimer_type: stateToSave.disclaimer_type,
+              });
+            } else {
+              // Create new post (first save)
+              const { createPost } = await import('@/lib/admin/posts');
+              
+              savedPost = await createPost({
+                title: stateToSave.title || 'Untitled Post',
+                slug: stateToSave.slug || `post-${Date.now()}`,
+                content: stateToSave.content,
+                category_id: stateToSave.category_id,
+                cover_image: stateToSave.cover_image,
+                excerpt: stateToSave.excerpt,
+                status: 'draft', // Always start as draft
+                author_id: stateToSave.author_id,
+                disclaimer_type: stateToSave.disclaimer_type,
+              });
+            }
+            
+            // Success! Break out of retry loop
+            break;
+          } catch (error) {
+            attempts++;
+            console.error(`Save attempt ${attempts} failed:`, error);
+            
+            if (attempts >= maxRetries) {
+              throw error;
+            }
+            
+            // Wait with exponential backoff before retry
+            await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempts) * 1000));
+            
+            // Check if request was cancelled between attempts
+            if (cancelTokenRef.current) {
+              return;
+            }
+          }
+        }
+
+        // Check if request was cancelled
+        if (cancelTokenRef.current) {
+          return;
         }
 
         setLastSaved(new Date());
@@ -97,6 +128,11 @@ export function usePostEditor({
           error instanceof Error ? error.message : 'Failed to save post';
         setSaveError(errorMessage);
         onError?.(errorMessage);
+        
+        // If auth/network error, trigger session recovery
+        if (errorMessage.includes('Auth') || errorMessage.includes('Network')) {
+          onError?.('Connection issues detected. Please check your internet connection.');
+        }
       } finally {
         setIsSaving(false);
       }
@@ -104,20 +140,74 @@ export function usePostEditor({
     [postId, onError, onSuccess]
   );
 
-  // Create debounced auto-save (5 second delay)
+  // Create debounced auto-save (10 second delay for larger content)
   useEffect(() => {
     debouncedSaveRef.current = debounce(
       (stateToSave: EditorState) => {
+        // Queue cancellation token for long-running saves
+        cancelTokenRef.current = false;
         performSave(stateToSave);
       },
-      5000,
+      10000, // Increased from 5s to 10s to handle larger content gracefully
       { leading: false, trailing: true }
     );
 
     return () => {
       debouncedSaveRef.current?.cancel();
+      cancelTokenRef.current = true; // Cancel any in-flight request
     };
   }, [performSave]);
+
+  // Network status awareness - cancel if disconnected
+  useEffect(() => {
+    const handleOnline = () => {
+      // Re-enable saving when back online
+      if (isDirty && postId) {
+        debouncedSaveRef.current?.(state);
+      }
+    };
+    
+    const handleOffline = () => {
+      // Cancel any pending saves when offline
+      cancelTokenRef.current = true;
+      debouncedSaveRef.current?.cancel();
+      onError?.('You appear to be offline. Changes will be saved when connection is restored.');
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, [state, isDirty, postId, onError]);
+
+  // Tab visibility awareness - disable autosave when tab is inactive
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // Tab is hidden - cancel pending saves
+        cancelTokenRef.current = true;
+        debouncedSaveRef.current?.cancel();
+      } else {
+        // Tab is visible again - re-enable autosave if there are changes
+        cancelTokenRef.current = false;
+        if (isDirty && postId) {
+          // Debounce re-engagement to allow network to stabilize
+          setTimeout(() => {
+            debouncedSaveRef.current?.(state);
+          }, 2000);
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [state, isDirty, postId]);
 
   // Trigger auto-save when state changes
   useEffect(() => {
