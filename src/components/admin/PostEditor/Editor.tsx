@@ -144,6 +144,7 @@ export function Editor({ postId, initialData }: EditorProps) {
     state.status,
     isSidebarMobile,
     isSidebarVisible,
+    toggleSidebar,
   ]);
 
   if (!isSidebarMounted) {
@@ -176,7 +177,7 @@ export function Editor({ postId, initialData }: EditorProps) {
             isSidebarMobile && (isSidebarVisible ? 'translate-x-0' : 'translate-x-full')
           )}
         >
-          {isSidebarVisible && !isSidebarMobile && (
+          {!isSidebarMobile && (
             <SidebarToggle
               onClick={toggleSidebar}
               isVisible={isSidebarVisible}

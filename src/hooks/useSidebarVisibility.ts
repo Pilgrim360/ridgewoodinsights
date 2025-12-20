@@ -45,7 +45,7 @@ export function useSidebarVisibility() {
   }, [isVisible, isMobile, isMounted]);
 
   const toggle = useCallback(() => {
-    setIsVisible((prev) => !prev);
+    setIsVisible((prev: boolean) => !prev);
   }, []);
 
   return { isVisible, isMobile, toggle, isMounted };
