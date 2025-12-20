@@ -41,11 +41,43 @@ export function usePostEditor({
 
   // Auto-save function with timeout and cancellation
   const cancelTokenRef = useRef<boolean>(false);
+  const isTabActiveRef = useRef<boolean>(true);
+  const reconnectScheduledRef = useRef<boolean>(false);
+  
+  // Helper to refresh session if needed
+  const refreshSessionIfNeeded = useCallback(async () => {
+    try {
+      const { getSupabaseClient } = await import('@/lib/supabase/client');
+      const client = getSupabaseClient();
+      const { data: { session }, error } = await client.auth.getSession();
+      
+      if (error || !session) {
+        // Force a token refresh
+        const { error: refreshError } = await client.auth.refreshSession();
+        if (refreshError) {
+          console.error('Failed to refresh session:', refreshError);
+          return false;
+        }
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error refreshing session:', error);
+      return false;
+    }
+  }, []);
   
   const performSave = useCallback(
     async (stateToSave: EditorState) => {
       // If no postId and no title, don't create ghost draft
       if (!postId && !stateToSave.title) return;
+
+      // Check if tab is active - if not, queue for later
+      if (!isTabActiveRef.current) {
+        // Don't attempt save when tab is inactive, just mark as dirty
+        setIsDirty(true);
+        return;
+      }
 
       try {
         setIsSaving(true);
@@ -96,11 +128,28 @@ export function usePostEditor({
             // Success! Break out of retry loop
             break;
           } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            
+            // Check if it's an abort error (user switched tabs)
+            if (errorMessage.includes('abort') || errorMessage.includes('AbortError')) {
+              console.log('Request aborted - will retry when tab is active');
+              setIsSaving(false);
+              return; // Don't retry abort errors immediately, will retry on tab focus
+            }
+            
             attempts++;
             console.error(`Save attempt ${attempts} failed:`, error);
             
             if (attempts >= maxRetries) {
               throw error;
+            }
+            
+            // If auth error, try to refresh session
+            if (errorMessage.includes('Auth') || errorMessage.includes('401')) {
+              const refreshed = await refreshSessionIfNeeded();
+              if (!refreshed) {
+                throw error; // Session refresh failed
+              }
             }
             
             // Wait with exponential backoff before retry
@@ -130,14 +179,23 @@ export function usePostEditor({
         onError?.(errorMessage);
         
         // If auth/network error, trigger session recovery
-        if (errorMessage.includes('Auth') || errorMessage.includes('Network')) {
-          onError?.('Connection issues detected. Please check your internet connection.');
+        if (errorMessage.includes('Auth') || errorMessage.includes('Network') || errorMessage.includes('timeout')) {
+          onError?.('Connection issues detected. Attempting to recover...');
+          
+          // Try to refresh session
+          setTimeout(async () => {
+            const refreshed = await refreshSessionIfNeeded();
+            if (refreshed && isDirty) {
+              // Retry save after session refresh
+              performSave(stateToSave);
+            }
+          }, 1000);
         }
       } finally {
         setIsSaving(false);
       }
     },
-    [postId, onError, onSuccess]
+    [postId, onError, onSuccess, refreshSessionIfNeeded, state, isDirty]
   );
 
   // Create debounced auto-save (10 second delay for larger content)
@@ -185,18 +243,53 @@ export function usePostEditor({
 
   // Tab visibility awareness - disable autosave when tab is inactive
   useEffect(() => {
-    const handleVisibilityChange = () => {
+    const handleVisibilityChange = async () => {
       if (document.hidden) {
-        // Tab is hidden - cancel pending saves
+        // Tab is hidden - cancel pending saves and mark tab as inactive
+        isTabActiveRef.current = false;
         cancelTokenRef.current = true;
         debouncedSaveRef.current?.cancel();
+        reconnectScheduledRef.current = false;
       } else {
-        // Tab is visible again - re-enable autosave if there are changes
+        // Tab is visible again
+        isTabActiveRef.current = true;
         cancelTokenRef.current = false;
-        if (isDirty && postId) {
-          // Debounce re-engagement to allow network to stabilize
-          setTimeout(() => {
-            debouncedSaveRef.current?.(state);
+        
+        if (!reconnectScheduledRef.current) {
+          reconnectScheduledRef.current = true;
+          
+          // Give the network time to stabilize (2 seconds)
+          setTimeout(async () => {
+            try {
+              // Try to perform a lightweight health check
+              const { getSupabaseClient } = await import('@/lib/supabase/client');
+              const client = getSupabaseClient();
+              
+              // Simple query to test connection
+              const { error } = await client
+                .from('posts')
+                .select('id')
+                .limit(1)
+                .single();
+              
+              if (!error) {
+                console.log('Connection restored');
+                reconnectScheduledRef.current = false;
+                
+                // If there are unsaved changes, trigger a save
+                if (isDirty && postId) {
+                  setTimeout(() => {
+                    debouncedSaveRef.current?.(state);
+                  }, 1000); // Wait another second to ensure full connection stability
+                }
+              } else {
+                console.error('Connection health check failed:', error);
+                reconnectScheduledRef.current = false;
+              }
+            } catch (error) {
+              console.error('Failed to reconnect:', error);
+              reconnectScheduledRef.current = false;
+            }
           }, 2000);
         }
       }
