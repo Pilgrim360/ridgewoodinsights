@@ -14,34 +14,7 @@ export function getSupabaseClient() {
           autoRefreshToken: true,
           detectSessionInUrl: true,
           persistSession: true,
-        },
-        global: {
-          fetch: (input: RequestInfo | URL, init: RequestInit = {}): Promise<Response> => {
-            const timeoutMs = typeof init.signal === 'undefined' ? 60000 : undefined;
-            
-            if (timeoutMs !== undefined) {
-              const controller = new AbortController();
-              const signal = controller.signal;
-              
-              const timeoutPromise = new Promise<Response>((_, reject) => {
-                setTimeout(() => {
-                  reject(new Error('Request timeout'));
-                  controller.abort();
-                }, timeoutMs);
-              });
-              
-              return Promise.race([
-                fetch(input, { ...init, signal }) as Promise<Response>,
-                timeoutPromise
-              ]).finally(() => {
-                if (!controller.signal.aborted) {
-                  controller.abort();
-                }
-              });
-            }
-            
-            return fetch(input, init) as Promise<Response>;
-          }
+          storage: typeof window !== 'undefined' ? window.localStorage : undefined
         }
       }
     );
@@ -55,11 +28,9 @@ export function getSupabaseClient() {
         }
       });
       
-      if (typeof window !== 'undefined') {
-        window.addEventListener('online', () => {
-          console.log('Network connection restored');
-        });
-      }
+      window.addEventListener('online', () => {
+        console.log('Network connection restored');
+      });
     }
   }
   return client;
