@@ -38,14 +38,17 @@ export function usePostEditor({
   const [saveError, setSaveError] = useState<string | null>(null);
 
   const debouncedSaveRef = useRef<ReturnType<typeof debounce>>(null);
+  const savingLockRef = useRef(false);
 
   // Auto-save function
   const performSave = useCallback(
     async (stateToSave: EditorState) => {
+      if (savingLockRef.current) return;
       // If no postId and no title, don't create ghost draft
       if (!postId && !stateToSave.title) return;
 
       try {
+        savingLockRef.current = true;
         setIsSaving(true);
         setSaveError(null);
 
@@ -99,6 +102,7 @@ export function usePostEditor({
         onError?.(errorMessage);
       } finally {
         setIsSaving(false);
+        savingLockRef.current = false;
       }
     },
     [postId, onError, onSuccess]
