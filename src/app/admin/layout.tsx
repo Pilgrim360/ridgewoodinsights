@@ -15,7 +15,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const handleVisibilityChange = useCallback(() => {
     const supabase = getSupabaseClient();
     // A lightweight call to refresh the session and potentially reconnect
-    supabase.auth.getSession().catch(error => {
+    supabase.auth.getSession().catch((error: any) => {
       console.error('Error refreshing Supabase session on visibility change:', error.message);
     });
   }, []);
