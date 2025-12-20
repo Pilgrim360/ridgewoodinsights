@@ -85,6 +85,7 @@ export const AdminHeader = React.forwardRef<HTMLElement, AdminHeaderProps>(
         {/* Right side actions */}
         <div className="flex items-center gap-2">
           {slots.actions}
+          {slots.sidebarToggle}
         </div>
       </header>
     );

@@ -9,7 +9,9 @@ import { usePostEditor, EditorState } from '@/hooks/usePostEditor';
 import { updatePost } from '@/lib/admin/posts';
 import { cn } from '@/lib/utils';
 
+import { useSidebarVisibility } from '@/hooks/useSidebarVisibility';
 import { EditorSidebar } from './EditorSidebar';
+import { SidebarToggle } from './SidebarToggle';
 import { TipTapEditor } from './TipTapEditor';
 
 interface EditorProps {
@@ -31,7 +33,14 @@ const DEFAULT_STATE: EditorState = {
 export function Editor({ postId, initialData }: EditorProps) {
   const router = useRouter();
   const { showSuccess, showError } = useAdminError();
-  const { setActions } = useAdminHeaderSlots();
+  const { setActions, setSidebarToggle } = useAdminHeaderSlots();
+
+  const {
+    isVisible: isSidebarVisible,
+    isMobile: isSidebarMobile,
+    toggle: toggleSidebar,
+    isMounted: isSidebarMounted,
+  } = useSidebarVisibility();
 
   const initialState: EditorState = {
     ...DEFAULT_STATE,
@@ -112,16 +121,39 @@ export function Editor({ postId, initialData }: EditorProps) {
       />
     );
 
+    if (isSidebarMobile) {
+      setSidebarToggle(
+        <SidebarToggle
+          onClick={toggleSidebar}
+          isVisible={isSidebarVisible}
+          className="absolute top-1/2 -translate-y-1/2 right-4 lg:hidden"
+        />
+      );
+    }
+
     return () => {
       setActions(null);
+      setSidebarToggle(null);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDirty, isSaving, lastSaved, saveError, state.status]);
+  }, [
+    isDirty,
+    isSaving,
+    lastSaved,
+    saveError,
+    state.status,
+    isSidebarMobile,
+    isSidebarVisible,
+  ]);
+
+  if (!isSidebarMounted) {
+    return null;
+  }
 
   return (
-    <div className="h-full flex flex-col bg-background pointer-events-auto">
-      <div className="flex-1 overflow-y-auto flex gap-4 pointer-events-auto">
-        <div className="flex-1 min-w-0 pointer-events-auto">
+    <div className="h-full flex flex-col bg-background">
+      <div className="flex-1 overflow-y-auto flex gap-4">
+        <div className="flex-1 min-w-0">
           <TipTapEditor
             title={state.title}
             onTitleChange={(value) => updateField('title', value)}
@@ -132,9 +164,32 @@ export function Editor({ postId, initialData }: EditorProps) {
           />
         </div>
 
-        <div className="w-80 flex-shrink-0 pointer-events-auto">
-          <div className="sticky top-4 space-y-6">
-            <div className="bg-white border border-surface rounded-lg p-4 pointer-events-auto">
+        <div
+          className={cn(
+            'flex-shrink-0 transition-all duration-300 ease-in-out',
+            isSidebarMobile
+              ? 'fixed inset-y-0 right-0 z-20 w-80 bg-white border-l border-surface transform'
+              : 'relative',
+            isSidebarVisible
+              ? 'w-80'
+              : 'w-0',
+            isSidebarMobile && (isSidebarVisible ? 'translate-x-0' : 'translate-x-full')
+          )}
+        >
+          {isSidebarVisible && !isSidebarMobile && (
+            <SidebarToggle
+              onClick={toggleSidebar}
+              isVisible={isSidebarVisible}
+            />
+          )}
+
+          <div
+            className={cn(
+              'sticky top-4 space-y-6 overflow-hidden',
+              isSidebarVisible ? 'opacity-100' : 'opacity-0'
+            )}
+          >
+            <div className="bg-white border border-surface rounded-lg p-4">
               <EditorSidebar
                 state={state}
                 updateField={updateFieldWithNull}
@@ -143,6 +198,14 @@ export function Editor({ postId, initialData }: EditorProps) {
             </div>
           </div>
         </div>
+
+        {isSidebarVisible && isSidebarMobile && (
+          <div
+            className="fixed inset-0 bg-black/20 z-10"
+            onClick={toggleSidebar}
+            aria-hidden="true"
+          />
+        )}
       </div>
     </div>
   );

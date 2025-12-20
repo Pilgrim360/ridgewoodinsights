@@ -12,6 +12,7 @@ export interface AdminHeaderSlots {
   title: React.ReactNode | null;
   actions: React.ReactNode | null;
   subHeader: React.ReactNode | null;
+  sidebarToggle: React.ReactNode | null;
 }
 
 interface AdminHeaderSlotsContextValue {
@@ -19,6 +20,7 @@ interface AdminHeaderSlotsContextValue {
   setTitle: (title: React.ReactNode | null) => void;
   setActions: (actions: React.ReactNode | null) => void;
   setSubHeader: (subHeader: React.ReactNode | null) => void;
+  setSidebarToggle: (toggle: React.ReactNode | null) => void;
   clear: () => void;
 }
 
@@ -35,6 +37,7 @@ export function AdminHeaderSlotsProvider({
     title: null,
     actions: null,
     subHeader: null,
+    sidebarToggle: null,
   });
 
   const setTitle = useCallback((title: React.ReactNode | null) => {
@@ -49,8 +52,17 @@ export function AdminHeaderSlotsProvider({
     setSlots((prev) => ({ ...prev, subHeader }));
   }, []);
 
+  const setSidebarToggle = useCallback((toggle: React.ReactNode | null) => {
+    setSlots((prev) => ({ ...prev, sidebarToggle: toggle }));
+  }, []);
+
   const clear = useCallback(() => {
-    setSlots({ title: null, actions: null, subHeader: null });
+    setSlots({
+      title: null,
+      actions: null,
+      subHeader: null,
+      sidebarToggle: null,
+    });
   }, []);
 
   const value = useMemo(
@@ -59,9 +71,10 @@ export function AdminHeaderSlotsProvider({
       setTitle,
       setActions,
       setSubHeader,
+      setSidebarToggle,
       clear,
     }),
-    [slots, setTitle, setActions, setSubHeader, clear]
+    [slots, setTitle, setActions, setSubHeader, setSidebarToggle, clear]
   );
 
   return (
