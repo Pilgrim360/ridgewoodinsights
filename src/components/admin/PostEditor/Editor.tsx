@@ -1,13 +1,15 @@
 'use client';
 
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 import { useAdminError } from '@/contexts/AdminErrorContext';
 import { useAdminHeaderSlots } from '@/contexts/AdminHeaderSlotsContext';
 import { usePostEditor, EditorState } from '@/hooks/usePostEditor';
 import { updatePost } from '@/lib/admin/posts';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/Button';
 
 import { EditorSidebar } from './EditorSidebar';
 import { TipTapEditor } from './TipTapEditor';
@@ -32,6 +34,10 @@ export function Editor({ postId, initialData }: EditorProps) {
   const router = useRouter();
   const { showSuccess, showError } = useAdminError();
   const { setActions } = useAdminHeaderSlots();
+
+  // Sidebar state for collapsible functionality
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   const initialState: EditorState = {
     ...DEFAULT_STATE,
@@ -94,6 +100,36 @@ export function Editor({ postId, initialData }: EditorProps) {
     updateField(field, value as EditorState[K]);
   };
 
+  // Handle keyboard shortcuts for sidebar toggle
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Ctrl/Cmd + \ to toggle sidebar
+      if ((event.ctrlKey || event.metaKey) && event.key === '\\') {
+        event.preventDefault();
+        if (window.innerWidth >= 1024) {
+          setSidebarCollapsed(prev => !prev);
+        } else {
+          setIsMobileSidebarOpen(prev => !prev);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Close mobile sidebar on escape key
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isMobileSidebarOpen) {
+        setIsMobileSidebarOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [isMobileSidebarOpen]);
+
   const canPublish = Boolean(state.title.trim()) && Boolean(state.slug.trim());
   const publishDisabledReason = canPublish ? undefined : 'Title and slug are required';
 
@@ -120,8 +156,25 @@ export function Editor({ postId, initialData }: EditorProps) {
 
   return (
     <div className="h-full flex flex-col bg-background pointer-events-auto">
-      <div className="flex-1 overflow-y-auto flex gap-4 pointer-events-auto">
-        <div className="flex-1 min-w-0 pointer-events-auto">
+      {/* Mobile toggle button */}
+      <div className="md:hidden mb-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+          icon={isMobileSidebarOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+        >
+          {isMobileSidebarOpen ? 'Hide Settings' : 'Show Settings'}
+        </Button>
+      </div>
+
+      <div className="flex-1 relative">
+        {/* Main content area */}
+        <div className={cn(
+          "h-full transition-all duration-300",
+          "lg:pr-80", // Always reserve space on desktop for sidebar when visible
+          sidebarCollapsed ? "lg:pr-4" : "lg:pr-80" // Adjust padding based on collapsed state
+        )}>
           <TipTapEditor
             title={state.title}
             onTitleChange={(value) => updateField('title', value)}
@@ -132,9 +185,29 @@ export function Editor({ postId, initialData }: EditorProps) {
           />
         </div>
 
-        <div className="w-80 flex-shrink-0 pointer-events-auto">
-          <div className="sticky top-4 space-y-6">
-            <div className="bg-white border border-surface rounded-lg p-4 pointer-events-auto">
+        {/* Desktop sidebar toggle button - positioned over content */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+          className={cn(
+            "hidden lg:flex absolute top-4 z-40",
+            sidebarCollapsed ? "right-4" : "right-80", // Position over sidebar when visible, over content when hidden
+            "bg-white border border-surface shadow-lg hover:shadow-xl",
+            "transition-all duration-300"
+          )}
+          title={sidebarCollapsed ? 'Show sidebar' : 'Hide sidebar'}
+          icon={sidebarCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+        />
+
+        {/* Desktop sidebar - fixed positioning */}
+        <div className={cn(
+          "hidden lg:block fixed top-0 right-0 h-full w-80 z-30",
+          "transform transition-transform duration-300 ease-in-out",
+          sidebarCollapsed ? "translate-x-full" : "translate-x-0"
+        )}>
+          <div className="sticky top-4 m-4 space-y-6">
+            <div className="bg-white border border-surface rounded-lg p-4 pointer-events-auto h-fit">
               <EditorSidebar
                 state={state}
                 updateField={updateFieldWithNull}
@@ -143,6 +216,46 @@ export function Editor({ postId, initialData }: EditorProps) {
             </div>
           </div>
         </div>
+
+        {/* Mobile sidebar overlay */}
+        {isMobileSidebarOpen && (
+          <div className="lg:hidden fixed inset-0 z-50 flex">
+            {/* Backdrop */}
+            <div 
+              className="fixed inset-0 bg-black/20 backdrop-blur-sm"
+              onClick={() => setIsMobileSidebarOpen(false)}
+              aria-hidden="true"
+            />
+            
+            {/* Sidebar */}
+            <div className="relative ml-auto w-full max-w-sm h-full bg-white border-l border-surface shadow-2xl transform transition-transform duration-300 ease-in-out">
+              <div className="flex flex-col h-full">
+                {/* Mobile sidebar header */}
+                <div className="flex items-center justify-between p-4 border-b border-surface">
+                  <h3 className="text-lg font-semibold text-secondary">Post Settings</h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsMobileSidebarOpen(false)}
+                    icon={<ChevronLeft className="h-4 w-4" />}
+                    aria-label="Close sidebar"
+                  >
+                    Close
+                  </Button>
+                </div>
+                
+                {/* Mobile sidebar content */}
+                <div className="flex-1 overflow-y-auto p-4">
+                  <EditorSidebar
+                    state={state}
+                    updateField={updateFieldWithNull}
+                    disabled={isSaving}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -190,6 +303,11 @@ function EditorHeaderActions({
         ) : lastSaved ? (
           <span className="text-text/60">Saved {formatRelativeTime(lastSaved)}</span>
         ) : null}
+        
+        {/* Keyboard shortcut hint */}
+        <span className="text-text/40 ml-3 text-xs" title="Toggle sidebar (Ctrl + \)">
+          Ctrl+\ to toggle sidebar
+        </span>
       </div>
 
       <button
