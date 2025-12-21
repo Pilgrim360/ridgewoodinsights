@@ -17,6 +17,7 @@ export const COMPANY_INFO = {
   address: '123 Financial District, Suite 400, New York, NY 10005',
   phone: '(555) 123-4567',
   email: 'info@ridgewoodinsights.com',
+  whatsapp: 'https://wa.me/15551234567',
 };
 
 export const SOCIAL_LINKS = [
