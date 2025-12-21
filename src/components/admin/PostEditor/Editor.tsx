@@ -1,7 +1,8 @@
 'use client';
 
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 import { useAdminError } from '@/contexts/AdminErrorContext';
 import { useAdminHeaderSlots } from '@/contexts/AdminHeaderSlotsContext';
@@ -32,6 +33,7 @@ export function Editor({ postId, initialData }: EditorProps) {
   const router = useRouter();
   const { showSuccess, showError } = useAdminError();
   const { setActions } = useAdminHeaderSlots();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const initialState: EditorState = {
     ...DEFAULT_STATE,
@@ -120,7 +122,7 @@ export function Editor({ postId, initialData }: EditorProps) {
 
   return (
     <div className="h-full flex flex-col bg-background pointer-events-auto">
-      <div className="flex-1 overflow-y-auto flex gap-4 pointer-events-auto">
+      <div className="flex-1 overflow-y-auto flex flex-col lg:flex-row pointer-events-auto relative">
         <div className="flex-1 min-w-0 pointer-events-auto">
           <TipTapEditor
             title={state.title}
@@ -132,14 +134,49 @@ export function Editor({ postId, initialData }: EditorProps) {
           />
         </div>
 
-        <div className="w-80 flex-shrink-0 pointer-events-auto">
-          <div className="sticky top-4 space-y-6">
-            <div className="bg-white border border-surface rounded-lg p-4 pointer-events-auto">
-              <EditorSidebar
-                state={state}
-                updateField={updateFieldWithNull}
-                disabled={isSaving}
-              />
+        <div
+          className={cn(
+            'flex-shrink-0 transition-all duration-300 ease-in-out relative pointer-events-auto',
+            'w-full mt-4 lg:mt-0',
+            isSidebarOpen ? 'lg:w-80 lg:ml-4' : 'lg:w-0 lg:ml-0'
+          )}
+        >
+          <div className="sticky top-4">
+            <button
+              type="button"
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className={cn(
+                'hidden lg:flex absolute top-6 z-10',
+                'items-center justify-center w-5 h-12',
+                'bg-white border border-surface border-r-0 rounded-l-md shadow-sm',
+                'text-secondary hover:text-primary transition-colors',
+                '-left-5'
+              )}
+              title={isSidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+            >
+              {isSidebarOpen ? (
+                <ChevronRight className="h-4 w-4" />
+              ) : (
+                <ChevronLeft className="h-4 w-4" />
+              )}
+            </button>
+
+            <div
+              className={cn(
+                'space-y-6 lg:w-80',
+                isSidebarOpen
+                  ? 'opacity-100 visible'
+                  : 'lg:opacity-0 lg:invisible',
+                'transition-all duration-300'
+              )}
+            >
+              <div className="bg-white border border-surface rounded-lg p-4 pointer-events-auto">
+                <EditorSidebar
+                  state={state}
+                  updateField={updateFieldWithNull}
+                  disabled={isSaving}
+                />
+              </div>
             </div>
           </div>
         </div>
