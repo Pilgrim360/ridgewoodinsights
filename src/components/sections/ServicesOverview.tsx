@@ -102,7 +102,7 @@ export function ServicesOverview({
                   {/* Description */}
                   <Text
                     as="p"
-                    className="text-text mb-4 flex-grow leading-relaxed"
+                    className="text-text mb-6 leading-relaxed"
                   >
                     {service.description}
                   </Text>

@@ -30,9 +30,9 @@ export default async function HomePage() {
     <>
       {/* Hero Section */}
       <Hero
-        title="Expert Financial Guidance for Your Success"
+        title="Expert Accounting & Compliance Services"
         subtitle="Ridgewood Insights"
-        description="We provide comprehensive accounting services and strategic financial insights to help businesses and individuals achieve their financial goals. Partner with us for personalized solutions that drive results."
+        description="We provide comprehensive accounting, bookkeeping, payroll, and regulatory compliance services designed to help your business operate smoothly and stay audit-ready. Let us handle the numbers while you focus on growth."
         primaryCTA={{
           label: 'Schedule a Consultation',
           href: '/contact',
@@ -61,7 +61,7 @@ export default async function HomePage() {
       <AboutTrust
         title="Why Choose Ridgewood Insights?"
         subtitle="Trusted Expertise"
-        description="With over 15 years of experience serving businesses and individuals, we've built a reputation for excellence, integrity, and personalized service. Our team of certified professionals is dedicated to helping you navigate complex financial challenges and achieve your goals."
+        description="We combine deep regulatory knowledge with personalized service to help businesses navigate compliance with confidence. Our certified team handles the complexities of accounting, payroll, and compliance so you can focus on what matters most—growing your business."
         trustSignals={TRUST_SIGNALS}
         layout="grid"
         backgroundVariant="white"
@@ -78,10 +78,10 @@ export default async function HomePage() {
 
       {/* CTA Section */}
       <CTA
-        title="Ready to Take Control of Your Finances?"
-        description="Schedule a free consultation with our team to discuss your financial needs and discover how we can help you achieve your goals."
+        title="Ready to Simplify Your Business Accounting?"
+        description="Schedule a free consultation with our team to discuss your accounting and compliance needs. We'll show you how to streamline operations and stay audit-ready."
         primaryAction={{
-          label: 'Get Started Today',
+          label: 'Schedule Consultation',
           href: '/contact',
         }}
         secondaryAction={{
