@@ -5,9 +5,10 @@ Successfully implemented a collapsible and responsive sidebar for the post edito
 
 ## Features Implemented
 
-### 1. **Collapsible Desktop Sidebar**
-- Toggle button positioned at the top left of the sidebar header
-- Smooth width transition (collapses from 320px to 64px when collapsed)
+### 1. **Collapsible Desktop Sidebar - Drawer Style**
+- **Always-visible drawer toggle button** positioned on the left edge of the sidebar area
+- Toggle button remains visible when sidebar is collapsed (centered vertically)
+- Smooth width transition (collapses from 320px to 0px when collapsed)
 - Sidebar follows normal document flow (no fixed positioning)
 - Main content area adjusts automatically via flexbox
 - Sidebar content scrolls independently with the page
@@ -50,9 +51,16 @@ const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
 ### Animation Classes
 ```typescript
+// Always-visible drawer toggle positioning
+"absolute top-1/2 -translate-y-1/2 z-50 transition-all duration-300"
+sidebarCollapsed ? "left-0" : "left-80"
+
 // Sidebar width transitions
-"transition-all duration-300"
+"transition-all duration-300 overflow-hidden"
 sidebarCollapsed ? "w-0" : "w-80"
+
+// Drawer toggle button styling
+"h-16 w-8 rounded-r-lg border-l-0 bg-white border-surface"
 
 // Desktop layout
 "flex flex-col lg:flex-row overflow-hidden"
@@ -75,11 +83,12 @@ sidebarCollapsed ? "w-0" : "w-80"
 
 ### Desktop Experience
 1. Sidebar visible by default on desktop (lg+ screens)
-2. Toggle button in top-left corner of sidebar header
-3. Smooth width collapse/expand animation
-4. Sidebar content scrolls with page
-5. Main content area adjusts automatically via flexbox
-6. Keyboard shortcut available for power users
+2. **Always-visible drawer toggle button** on the left edge of sidebar area (centered vertically)
+3. Smooth width collapse/expand animation (320px ↔ 0px)
+4. Toggle button remains visible when sidebar is collapsed
+5. Sidebar content scrolls with page
+6. Main content area adjusts automatically via flexbox
+7. Keyboard shortcut available for power users
 
 ### Mobile Experience  
 1. Sidebar hidden below main content by default
@@ -99,14 +108,22 @@ sidebarCollapsed ? "w-0" : "w-80"
 
 ### Visual Hierarchy
 ```
-Desktop Layout:
+Desktop Layout - Expanded State:
 ┌─────────────────────────────────────┐
 │ [Toolbar Area - Preserved]          │
 ├──────────────┬──────────────────────┤
-│ Main Content │ Sidebar Header [×]   │
+│ Main Content │ [×] Post Settings    │
 │              ├──────────────────────┤
 │              │ Scrollable Content   │
 └──────────────┴──────────────────────┘
+
+Desktop Layout - Collapsed State:
+┌─────────────────────────────────────┐
+│ [Toolbar Area - Preserved]          │
+├─────────────────────────────────────┤
+│ Main Content         [>]            │
+│                      └─ Always visible drawer toggle
+└─────────────────────────────────────┘
 
 Mobile Layout:
 ┌─────────────────────────────────────┐

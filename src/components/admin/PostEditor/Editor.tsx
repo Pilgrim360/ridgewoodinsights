@@ -159,48 +159,64 @@ export function Editor({ postId, initialData }: EditorProps) {
           />
         </div>
 
-        {/* Desktop sidebar - normal flow, not fixed */}
-        <div className={cn(
-          "hidden lg:flex flex-col w-80 flex-shrink-0 transition-all duration-300",
-          sidebarCollapsed ? "w-0" : "w-80"
-        )}>
-          {sidebarCollapsed ? (
-            /* Collapsed state - just show toggle button */
-            <div className="w-16 flex flex-col items-center py-4 border-l border-surface bg-white">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSidebarCollapsed(false)}
-                className="mb-4"
-                title="Show sidebar"
-                icon={<ChevronRight className="h-4 w-4" />}
-              />
-            </div>
-          ) : (
-            /* Expanded sidebar */
-            <div className="w-80 flex flex-col h-full border-l border-surface bg-white">
-              {/* Sidebar header with toggle */}
-              <div className="flex items-center justify-between p-4 border-b border-surface flex-shrink-0">
-                <h3 className="text-lg font-semibold text-secondary">Post Settings</h3>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setSidebarCollapsed(true)}
-                  title="Hide sidebar"
-                  icon={<ChevronLeft className="h-4 w-4" />}
-                />
+        {/* Desktop sidebar - drawer style with always-visible toggle */}
+        <div className="hidden lg:flex flex-col relative">
+          {/* Always-visible drawer toggle button */}
+          <div className={cn(
+            "absolute top-1/2 -translate-y-1/2 z-50 transition-all duration-300",
+            sidebarCollapsed ? "left-0" : "left-80" // Position based on sidebar state
+          )}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              className={cn(
+                "h-16 w-8 rounded-r-lg border-l-0",
+                "bg-white border-surface hover:bg-surface shadow-lg",
+                "flex items-center justify-center",
+                "transition-all duration-300",
+                sidebarCollapsed ? "shadow-xl" : "shadow-md"
+              )}
+              title={sidebarCollapsed ? 'Show sidebar' : 'Hide sidebar'}
+              icon={sidebarCollapsed ? 
+                <ChevronRight className="h-4 w-4" /> : 
+                <ChevronLeft className="h-4 w-4" />
+              }
+            />
+          </div>
+
+          {/* Collapsible sidebar content */}
+          <div className={cn(
+            "w-80 flex-shrink-0 transition-all duration-300 overflow-hidden",
+            sidebarCollapsed ? "w-0" : "w-80"
+          )}>
+            {sidebarCollapsed ? null : (
+              /* Expanded sidebar */
+              <div className="w-80 flex flex-col h-full border-l border-surface bg-white">
+                {/* Sidebar header */}
+                <div className="flex items-center justify-between p-4 border-b border-surface flex-shrink-0">
+                  <h3 className="text-lg font-semibold text-secondary">Post Settings</h3>
+                  {/* Inline toggle button for expanded state */}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSidebarCollapsed(true)}
+                    title="Hide sidebar"
+                    icon={<ChevronLeft className="h-4 w-4" />}
+                  />
+                </div>
+                
+                {/* Sidebar content - scrollable */}
+                <div className="flex-1 overflow-y-auto p-4">
+                  <EditorSidebar
+                    state={state}
+                    updateField={updateFieldWithNull}
+                    disabled={isSaving}
+                  />
+                </div>
               </div>
-              
-              {/* Sidebar content - scrollable */}
-              <div className="flex-1 overflow-y-auto p-4">
-                <EditorSidebar
-                  state={state}
-                  updateField={updateFieldWithNull}
-                  disabled={isSaving}
-                />
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         {/* Mobile sidebar - shown below main content */}
