@@ -15,6 +15,7 @@ export interface HeroCTA {
 }
 
 export interface HeroProps {
+  id?: string;
   title: string;
   subtitle?: string;
   description?: string;
@@ -29,6 +30,7 @@ export interface HeroProps {
 }
 
 export function Hero({
+  id,
   title,
   subtitle,
   description,
@@ -48,9 +50,9 @@ export function Hero({
 
   return (
     <Section
-      id="hero"
+      id={id}
       className={cn(
-        'relative flex min-h-screen items-center bg-cover bg-center py-20 overflow-hidden',
+        'relative flex min-h-screen items-center bg-cover bg-center pt-40 pb-20 overflow-hidden',
         className
       )}
       style={sectionStyle}

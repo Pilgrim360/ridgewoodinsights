@@ -30,6 +30,7 @@ export default async function HomePage() {
     <>
       {/* Hero Section */}
       <Hero
+        id="hero"
         title="Expert Financial Guidance for Your Success"
         subtitle="Ridgewood Insights"
         description="We provide comprehensive accounting services and strategic financial insights to help businesses and individuals achieve their financial goals. Partner with us for personalized solutions that drive results."
