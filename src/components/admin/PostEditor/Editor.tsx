@@ -124,14 +124,16 @@ export function Editor({ postId, initialData }: EditorProps) {
     <div className="h-full flex flex-col bg-background pointer-events-auto">
       <div className="flex-1 overflow-y-auto flex flex-col lg:flex-row pointer-events-auto relative">
         <div className="flex-1 min-w-0 pointer-events-auto">
-          <TipTapEditor
-            title={state.title}
-            onTitleChange={(value) => updateField('title', value)}
-            content={state.content}
-            onChange={(value) => updateField('content', value)}
-            disabled={isSaving}
-            onError={showError}
-          />
+          <div className="max-w-3xl mx-auto w-full">
+            <TipTapEditor
+              title={state.title}
+              onTitleChange={(value) => updateField('title', value)}
+              content={state.content}
+              onChange={(value) => updateField('content', value)}
+              disabled={isSaving}
+              onError={showError}
+            />
+          </div>
         </div>
 
         <div
