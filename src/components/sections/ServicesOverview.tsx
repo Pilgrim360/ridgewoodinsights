@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { Card } from '../ui/Card';
 import { Heading } from '../ui/Heading';
@@ -12,6 +13,7 @@ export interface Service {
   id: string;
   title: string;
   description: string;
+  image?: string;
   icon?: React.ComponentType<{ className?: string }>;
   href: string;
   features: string[];
@@ -72,7 +74,7 @@ export function ServicesOverview({
             <Card
               key={service.id}
               variant="default"
-              className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2"
+              className="group bg-white relative overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2"
               asChild
             >
               <Link
@@ -80,6 +82,22 @@ export function ServicesOverview({
                 className="block h-full"
                 aria-labelledby={`service-${service.id}-title`}
               >
+                {/* Featured Image */}
+                {service.image && (
+                  <div className="relative h-48 w-full overflow-hidden">
+                    <Image
+                      src={service.image}
+                      alt={service.title}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      placeholder="blur"
+                      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                  </div>
+                )}
+                
                 <div className="p-6 h-full flex flex-col">
                   {/* Icon */}
                   {service.icon && (
@@ -94,7 +112,7 @@ export function ServicesOverview({
                   <Heading
                     as={3}
                     id={`service-${service.id}-title`}
-                    className="text-xl font-semibold text-secondary mb-3 group-hover:text-primary transition-colors duration-300"
+                    className="text-xl font-semibold text-secondary mb-3 group-hover:text-primary transition-all duration-300"
                   >
                     {service.title}
                   </Heading>
@@ -102,7 +120,7 @@ export function ServicesOverview({
                   {/* Description */}
                   <Text
                     as="p"
-                    className="text-text mb-6 leading-relaxed"
+                    className="text-text mb-6 leading-relaxed group-hover:text-text/90 transition-colors duration-300"
                   >
                     {service.description}
                   </Text>
@@ -112,7 +130,7 @@ export function ServicesOverview({
                     {service.features.map((feature, featureIndex) => (
                       <li key={featureIndex} className="flex items-start">
                         <div className="w-1.5 h-1.5 bg-primary rounded-full mt-2 mr-3 flex-shrink-0" />
-                        <Text as="span" className="text-text text-sm">
+                        <Text as="span" className="text-text text-sm group-hover:text-text/90 transition-colors duration-300">
                           {feature}
                         </Text>
                       </li>
@@ -123,7 +141,7 @@ export function ServicesOverview({
                   <div className="mt-auto">
                     <Text
                       as="span"
-                      className="text-primary font-medium text-sm group-hover:underline"
+                      className="text-primary font-medium text-sm group-hover:underline transition-all duration-300"
                     >
                       Learn More →
                     </Text>
@@ -139,7 +157,7 @@ export function ServicesOverview({
           <div className="text-center">
             <Link
               href={viewAllHref}
-              className="inline-flex items-center px-6 py-3 border border-surface rounded-lg text-secondary font-medium hover:bg-surface hover:border-primary hover:text-primary transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              className="inline-flex items-center px-6 py-3 border border-surface rounded-lg text-secondary font-medium hover:bg-surface hover:border-primary hover:text-primary transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 hover:-translate-y-1 hover:shadow-lg"
             >
               View All Services
             </Link>
