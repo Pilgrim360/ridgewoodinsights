@@ -56,10 +56,29 @@ export function CTA({
     <Section
       id="cta"
       bg={backgroundVariant}
-      className={`${backgroundClasses[backgroundVariant]} ${className}`}
+      className={`relative overflow-hidden ${backgroundClasses[backgroundVariant]} ${className}`}
       aria-labelledby="cta-title"
     >
-      <Container maxWidth="xl">
+      {/* Background Visual Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Gradient Orbs */}
+        <div className="absolute top-0 left-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+        <div className="absolute bottom-0 right-0 w-80 h-80 bg-secondary/8 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
+        
+        {/* Geometric Elements */}
+        <div className="absolute top-1/4 right-10 w-20 h-20 border-2 border-primary/20 rotate-45 animate-spin-slow"></div>
+        <div className="absolute bottom-1/4 left-10 w-16 h-16 border border-secondary/30 rotate-12"></div>
+      </div>
+      
+      {/* Subtle pattern overlay */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center opacity-[0.02]"
+        style={{
+          backgroundImage: `url('https://images.pexels.com/photos/4386321/pexels-photo-4386321.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260')`,
+        }}
+      />
+      
+      <Container maxWidth="xl" className="relative z-10">
         <div className={contentClasses[variant]}>
           {/* Content */}
           <div className={`space-y-4 ${variant === 'split' ? '' : 'md:max-w-2xl'}`}>
