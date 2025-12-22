@@ -1,7 +1,18 @@
+
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
 export async function createClient() {
+  // If Supabase credentials are not provided, return a null client.
+  // This is a workaround to allow the development server to run without crashing.
+  if (
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  ) {
+    console.log('Supabase URL or Anon Key is missing. Returning null client.');
+    return null;
+  }
+
   const cookieStore = await cookies(); // Await is required in Next.js 15
 
   return createServerClient(
