@@ -131,10 +131,28 @@ export function AboutTrust({
     <Section
       id="about-trust"
       bg={backgroundVariant}
-      className={className}
+      className={`relative overflow-hidden ${className}`}
       aria-labelledby="about-trust-title"
     >
-      <Container maxWidth="xl">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 right-0 w-96 h-96 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+        <div className="absolute bottom-20 left-0 w-64 h-64 bg-secondary/3 rounded-full translate-x-1/2"></div>
+        
+        {/* Geometric patterns */}
+        <div className="absolute top-1/4 left-20 w-20 h-20 border border-primary/10 rotate-45"></div>
+        <div className="absolute bottom-1/3 right-20 w-16 h-16 border border-secondary/10 rotate-12"></div>
+      </div>
+      
+      {/* Subtle background image for depth */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center opacity-3"
+        style={{
+          backgroundImage: `url('https://images.pexels.com/photos/3182773/pexels-photo-3182773.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260')`,
+        }}
+      />
+      
+      <Container maxWidth="xl" className="relative z-10">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-start">
           {/* Content */}
           <div className="space-y-6">

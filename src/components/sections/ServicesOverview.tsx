@@ -42,10 +42,25 @@ export function ServicesOverview({
     <Section
       id="services-overview"
       bg="default"
-      className={className}
+      className={`relative overflow-hidden ${className}`}
       aria-labelledby="services-title"
     >
-      <Container maxWidth="xl">
+      {/* Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-10 left-10 w-32 h-32 bg-primary/5 rotate-45 rounded-lg"></div>
+        <div className="absolute bottom-20 right-10 w-24 h-24 bg-secondary/5 rotate-12 rounded-lg"></div>
+        <div className="absolute top-1/2 left-0 w-40 h-40 bg-primary/3 rounded-full -translate-x-20"></div>
+      </div>
+      
+      {/* Subtle background image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center opacity-5"
+        style={{
+          backgroundImage: `url('https://images.pexels.com/photos/3183197/pexels-photo-3183197.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260')`,
+        }}
+      />
+      
+      <Container maxWidth="xl" className="relative z-10">
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">
           {subtitle && (
@@ -69,68 +84,69 @@ export function ServicesOverview({
         {/* Services Grid */}
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 mb-12">
           {displayServices.map((service) => (
-            <Card
+            <div
               key={service.id}
-              variant="default"
-              className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2"
-              asChild
+              className="group relative"
             >
-              <Link
+              {/* Animated background gradient on hover */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
+              
+              {/* Floating icon container */}
+              <div className="absolute top-4 right-4 w-16 h-16 bg-primary/10 rounded-full opacity-0 group-hover:opacity-100 transform scale-50 group-hover:scale-100 transition-all duration-500 ease-out z-0"></div>
+              
+              <Link 
                 href={service.href}
                 className="block h-full"
                 aria-labelledby={`service-${service.id}-title`}
               >
-                <div className="p-6 h-full flex flex-col">
-                  {/* Icon */}
-                  {service.icon && (
-                    <div className="mb-4">
-                      <div className="inline-flex items-center justify-center w-12 h-12 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors duration-300">
-                        <service.icon className="w-6 h-6 text-primary" />
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* Title */}
-                  <Heading
-                    as={3}
-                    id={`service-${service.id}-title`}
-                    className="text-xl font-semibold text-secondary mb-3 group-hover:text-primary transition-colors duration-300"
-                  >
-                    {service.title}
-                  </Heading>
-                  
-                  {/* Description */}
-                  <Text
-                    as="p"
-                    className="text-text mb-6 leading-relaxed"
-                  >
-                    {service.description}
-                  </Text>
-                  
-                  {/* Features */}
-                  <ul className="space-y-2 mb-6">
-                    {service.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-start">
-                        <div className="w-1.5 h-1.5 bg-primary rounded-full mt-2 mr-3 flex-shrink-0" />
-                        <Text as="span" className="text-text text-sm">
-                          {feature}
-                        </Text>
-                      </li>
-                    ))}
-                  </ul>
-                  
-                  {/* CTA */}
-                  <div className="mt-auto">
-                    <Text
-                      as="span"
-                      className="text-primary font-medium text-sm group-hover:underline"
+                <Card
+                  variant="default"
+                  className="group-hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 bg-white/80 backdrop-blur-sm relative overflow-hidden h-full"
+                  interactive={true}
+                >
+                  <div className="p-6 h-full flex flex-col">
+                    {/* Title */}
+                    <Heading
+                      as={3}
+                      id={`service-${service.id}-title`}
+                      className="text-xl font-semibold text-secondary mb-3 group-hover:text-primary transition-colors duration-300"
                     >
-                      Learn More →
+                      {service.title}
+                    </Heading>
+                    
+                    {/* Description */}
+                    <Text
+                      as="p"
+                      className="text-text mb-6 leading-relaxed"
+                    >
+                      {service.description}
                     </Text>
+                    
+                    {/* Features */}
+                    <ul className="space-y-2 mb-6">
+                      {service.features.map((feature, featureIndex) => (
+                        <li key={featureIndex} className="flex items-start">
+                          <div className="w-1.5 h-1.5 bg-primary rounded-full mt-2 mr-3 flex-shrink-0" />
+                          <Text as="span" className="text-text text-sm">
+                            {feature}
+                          </Text>
+                        </li>
+                      ))}
+                    </ul>
+                    
+                    {/* CTA */}
+                    <div className="mt-auto">
+                      <Text
+                        as="span"
+                        className="text-primary font-medium text-sm group-hover:underline"
+                      >
+                        Learn More →
+                      </Text>
+                    </div>
                   </div>
-                </div>
+                </Card>
               </Link>
-            </Card>
+            </div>
           ))}
         </div>
 

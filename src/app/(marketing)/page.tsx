@@ -43,6 +43,8 @@ export default async function HomePage() {
           variant: 'outline',
         }}
         videoSrc="https://cdn.pixabay.com/video/2023/01/30/148596-794221551_tiny.mp4"
+        enableParallax={false}
+        floatingElements={true}
         backgroundVariant="default"
         alignment="left"
       />
