@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Card } from '../ui/Card';
 import { Heading } from '../ui/Heading';
 import { Text } from '../ui/Text';
@@ -14,6 +15,7 @@ export interface Service {
   description: string;
   icon?: React.ComponentType<{ className?: string }>;
   href: string;
+  imageSrc?: string;
   features: string[];
 }
 
@@ -45,7 +47,23 @@ export function ServicesOverview({
       className={className}
       aria-labelledby="services-title"
     >
-      <Container maxWidth="xl">
+      {/* Animated Background Pattern */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(0,100,102,0.03)_0%,transparent_50%),radial-gradient(circle_at_70%_60%,rgba(44,62,80,0.02)_0%,transparent_50%),radial-gradient(circle_at_40%_80%,rgba(0,100,102,0.02)_0%,transparent_50%)]" />
+        <div className="absolute top-0 left-0 w-full h-full opacity-30">
+          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+            <defs>
+              <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-surface/20" opacity="0.3"/>
+              </pattern>
+            </defs>
+            <rect width="100" height="100" fill="url(#grid)" />
+          </svg>
+        </div>
+      </div>
+
+      <Container maxWidth="xl" className="relative z-10">
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">
           {subtitle && (
@@ -72,20 +90,39 @@ export function ServicesOverview({
             <Card
               key={service.id}
               variant="default"
-              className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2"
+              className="group relative overflow-hidden hover:shadow-2xl transition-all duration-500 ease-out focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 bg-white hover:bg-surface/10"
               asChild
             >
               <Link
                 href={service.href}
-                className="block h-full"
+                className="block h-full transform-gpu transition-transform duration-500 ease-out hover:scale-105"
+                style={{
+                  perspective: '1000px',
+                }}
                 aria-labelledby={`service-${service.id}-title`}
               >
-                <div className="p-6 h-full flex flex-col">
-                  {/* Icon */}
+                {/* Service Image */}
+                {service.imageSrc && (
+                  <div className="relative h-48 overflow-hidden opacity-0 group-hover:opacity-100 transition-all duration-500 ease-in-out">
+                    <Image
+                      src={service.imageSrc}
+                      alt={service.title}
+                      fill
+                      className="object-cover transform scale-105 group-hover:scale-110 transition-transform duration-700 ease-out"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      priority={false}
+                    />
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                  </div>
+                )}
+                
+                <div className="p-6 h-full flex flex-col relative z-10">
+                  {/* Icon Animation Container */}
                   {service.icon && (
                     <div className="mb-4">
-                      <div className="inline-flex items-center justify-center w-12 h-12 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors duration-300">
-                        <service.icon className="w-6 h-6 text-primary" />
+                      <div className="inline-flex items-center justify-center w-12 h-12 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-primary/25">
+                        <service.icon className="w-6 h-6 text-primary group-hover:scale-110 transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(0,100,102,0.5)]" />
                       </div>
                     </div>
                   )}
@@ -129,6 +166,15 @@ export function ServicesOverview({
                     </Text>
                   </div>
                 </div>
+
+                {/* 3D Transform Overlay for Desktop */}
+                <div 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none hidden md:block"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(0,100,102,0.03) 0%, rgba(44,62,80,0.02) 100%)',
+                    transform: 'translateZ(0)',
+                  }}
+                />
               </Link>
             </Card>
           ))}

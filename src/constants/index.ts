@@ -38,6 +38,7 @@ export const SERVICES = [
     title: 'Bookkeeping',
     description: 'Accurate financial records that stand up to scrutiny. We manage your accounts payable, receivable, and bank reconciliation to ensure your books are always audit-ready.',
     href: '/services#bookkeeping',
+    imageSrc: 'https://images.pexels.com/photos/4386321/pexels-photo-4386321.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
     features: [
       'Monthly Bookkeeping & Record Maintenance',
       'Accounts Payable/Receivable Management',
@@ -50,6 +51,7 @@ export const SERVICES = [
     title: 'Payroll Management',
     description: 'Reliable payroll processing that ensures your team is paid accurately and on time. We handle tax withholding, statutory deductions, and all related compliance obligations.',
     href: '/services#payroll-management',
+    imageSrc: 'https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
     features: [
       'Monthly Payroll Processing',
       'Tax Withholding & Statutory Deductions',
@@ -62,6 +64,7 @@ export const SERVICES = [
     title: 'Tax Preparation',
     description: 'Expert tax preparation that minimizes your liability while ensuring full regulatory compliance. We handle income tax returns, VAT management, and strategic tax planning.',
     href: '/services#tax-preparation',
+    imageSrc: 'https://images.pexels.com/photos/4386321/pexels-photo-4386321.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
     features: [
       'Corporate & Personal Income Tax Returns',
       'VAT Returns & Management',
@@ -74,6 +77,7 @@ export const SERVICES = [
     title: 'Financial Statement Preparation',
     description: 'Professional financial statements prepared in accordance with international standards. Clear, credible reporting for lenders, investors, and stakeholders.',
     href: '/services#financial-statement-preparation',
+    imageSrc: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
     features: [
       'Consolidated Financial Statements',
       'Balance Sheet & Income Statement Preparation',
@@ -86,6 +90,7 @@ export const SERVICES = [
     title: 'Business Formation',
     description: 'From concept to launch. We guide you through company registration, tax registration, and licensing to get your business operating legally and efficiently.',
     href: '/services#business-formation',
+    imageSrc: 'https://images.pexels.com/photos/3184295/pexels-photo-3184295.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
     features: [
       'Company Registration & Registration Number',
       'Tax Identification & Statutory Registration',
@@ -98,6 +103,7 @@ export const SERVICES = [
     title: 'Regulatory Compliance',
     description: 'Stay compliant and avoid penalties. We handle audits, statutory filings, labor law requirements, and industry-specific regulations so you can focus on business.',
     href: '/services#regulatory-compliance',
+    imageSrc: 'https://images.pexels.com/photos/4386330/pexels-photo-4386330.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
     features: [
       'Audit Preparation & Support',
       'Annual Statutory Filing',
