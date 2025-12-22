@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRef, useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/Button';
 import { Heading } from '../ui/Heading';
@@ -39,6 +40,23 @@ export function Hero({
   alignment = 'left',
   className = '',
 }: HeroProps) {
+  const heroRef = useRef<HTMLDivElement>(null);
+  const [offset, setOffset] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!heroRef.current) return;
+      
+      const scrolled = window.scrollY;
+      const parallaxOffset = scrolled * 0.4;
+      
+      setOffset(parallaxOffset);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const alignmentClasses = {
     left: 'text-left',
     center: 'text-center',
@@ -55,6 +73,7 @@ export function Hero({
       )}
       style={sectionStyle}
       aria-labelledby="hero-title"
+      ref={heroRef}
     >
       {videoSrc && (
         <video
@@ -71,9 +90,15 @@ export function Hero({
       )}
       <div className="absolute inset-0 bg-black/60" />
       <Container className="relative" maxWidth="xl">
-        <div className={`grid items-center gap-8 ${alignmentClasses[alignment]}`}>
+        <div
+          className={`grid items-center gap-8 ${alignmentClasses[alignment]}`}
+          style={{
+            transform: `translateY(${offset * 0.2}px)`,
+            transition: 'transform 0.1s ease-out',
+          }}
+        >
           {/* Content */}
-          <div className="space-y-6">
+          <div className="space-y-6 animate-fade-in">
             {subtitle && (
               <Text
                 as="p"

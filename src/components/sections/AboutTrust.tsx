@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+import { useRef, useState, useEffect } from 'react';
 import { Card } from '../ui/Card';
 import { Heading } from '../ui/Heading';
 import { Text } from '../ui/Text';
@@ -34,6 +36,25 @@ export function AboutTrust({
   backgroundVariant = 'default',
   className = '',
 }: AboutTrustProps) {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const [offset, setOffset] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!sectionRef.current) return;
+      
+      const scrolled = window.scrollY;
+      const elementOffset = sectionRef.current.offsetTop;
+      const distance = scrolled - (elementOffset - window.innerHeight);
+      const parallaxOffset = distance * 0.3;
+      
+      setOffset(parallaxOffset);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const renderTrustSignal = (signal: TrustSignal, index: number) => {
     switch (signal.type) {
       case 'credential':
@@ -133,11 +154,30 @@ export function AboutTrust({
       bg={backgroundVariant}
       className={className}
       aria-labelledby="about-trust-title"
+      ref={sectionRef}
     >
       <Container maxWidth="xl">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-start">
+        <div className="relative grid gap-12 lg:grid-cols-2 lg:gap-16 items-start">
+          {/* Background Image with Parallax */}
+          <div className="hidden lg:block absolute left-0 top-0 w-full h-full pointer-events-none overflow-hidden opacity-5">
+            <div
+              style={{
+                transform: `translateY(${offset}px)`,
+                transition: 'transform 0.1s ease-out',
+              }}
+            >
+              <Image
+                src="/images/sections/office.jpg"
+                alt="Professional office environment"
+                fill
+                className="object-cover object-center"
+                priority
+              />
+            </div>
+          </div>
+
           {/* Content */}
-          <div className="space-y-6">
+          <div className="space-y-6 relative z-10">
             {subtitle && (
               <Text
                 as="p"
@@ -164,7 +204,7 @@ export function AboutTrust({
           </div>
           
           {/* Trust Signals */}
-          <div className="space-y-8">
+          <div className="space-y-8 relative z-10">
             <div className={`grid gap-6 ${
               layout === 'list' ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2'
             }`}>

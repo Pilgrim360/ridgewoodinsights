@@ -1,6 +1,8 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
+import { useState } from 'react';
 import { Card } from '../ui/Card';
 import { Heading } from '../ui/Heading';
 import { Text } from '../ui/Text';
@@ -15,6 +17,8 @@ export interface Service {
   icon?: React.ComponentType<{ className?: string }>;
   href: string;
   features: string[];
+  image?: string;
+  imageAlt?: string;
 }
 
 export interface ServicesOverviewProps {
@@ -37,6 +41,7 @@ export function ServicesOverview({
   className = '',
 }: ServicesOverviewProps) {
   const displayServices = maxDisplay ? services.slice(0, maxDisplay) : services;
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
   
   return (
     <Section
@@ -72,15 +77,38 @@ export function ServicesOverview({
             <Card
               key={service.id}
               variant="default"
-              className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2"
+              className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 overflow-hidden"
               asChild
             >
               <Link
                 href={service.href}
                 className="block h-full"
                 aria-labelledby={`service-${service.id}-title`}
+                onMouseEnter={() => setHoveredId(service.id)}
+                onMouseLeave={() => setHoveredId(null)}
               >
-                <div className="p-6 h-full flex flex-col">
+                <div className="p-6 h-full flex flex-col relative">
+                  {/* Background Image with Parallax */}
+                  {service.image && (
+                    <div className="absolute inset-0 -z-10 overflow-hidden opacity-0 group-hover:opacity-10 transition-opacity duration-300">
+                      <div
+                        className="w-full h-full"
+                        style={{
+                          transform: hoveredId === service.id ? 'scale(1.05)' : 'scale(1)',
+                          transition: 'transform 0.5s ease-out',
+                        }}
+                      >
+                        <Image
+                          src={service.image}
+                          alt={service.imageAlt || service.title}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        />
+                      </div>
+                    </div>
+                  )}
+                  
                   {/* Icon */}
                   {service.icon && (
                     <div className="mb-4">

@@ -1,6 +1,8 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
+import { useRef, useState, useEffect } from 'react';
 import { Button } from '../ui/Button';
 import { Heading } from '../ui/Heading';
 import { Text } from '../ui/Text';
@@ -34,6 +36,25 @@ export function CTA({
   urgencyMessage,
   className = '',
 }: CTAProps) {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const [offset, setOffset] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!sectionRef.current) return;
+      
+      const scrolled = window.scrollY;
+      const elementOffset = sectionRef.current.offsetTop;
+      const distance = scrolled - (elementOffset - window.innerHeight);
+      const parallaxOffset = distance * 0.25;
+      
+      setOffset(parallaxOffset);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const backgroundClasses = {
     default: 'bg-background',
     muted: 'bg-muted border border-surface',
@@ -56,11 +77,29 @@ export function CTA({
     <Section
       id="cta"
       bg={backgroundVariant}
-      className={`${backgroundClasses[backgroundVariant]} ${className}`}
+      className={`relative ${backgroundClasses[backgroundVariant]} ${className}`}
       aria-labelledby="cta-title"
+      ref={sectionRef}
     >
+      {/* Background Image with Parallax */}
+      <div className="absolute inset-0 -z-10 overflow-hidden opacity-8">
+        <div
+          style={{
+            transform: `translateY(${offset}px)`,
+            transition: 'transform 0.1s ease-out',
+          }}
+        >
+          <Image
+            src="/images/sections/workspace.jpg"
+            alt="Professional workspace"
+            fill
+            className="object-cover object-center"
+          />
+        </div>
+      </div>
+
       <Container maxWidth="xl">
-        <div className={contentClasses[variant]}>
+        <div className={`relative z-10 ${contentClasses[variant]}`}>
           {/* Content */}
           <div className={`space-y-4 ${variant === 'split' ? '' : 'md:max-w-2xl'}`}>
             <Heading

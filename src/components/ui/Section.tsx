@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 
 export interface SectionProps extends React.HTMLAttributes<HTMLElement> {
@@ -11,16 +12,27 @@ const bgClasses = {
   white: 'bg-white',
 };
 
-export function Section({
-  bg = 'default',
-  as: Tag = 'section',
-  className,
-  children,
-  ...props
-}: SectionProps) {
-  return (
-    <Tag className={cn('py-16 md:py-24', bgClasses[bg], className)} {...props}>
-      {children}
-    </Tag>
-  );
-}
+export const Section = forwardRef<HTMLElement, SectionProps>(
+  function Section(
+    {
+      bg = 'default',
+      as: Tag = 'section',
+      className,
+      children,
+      ...props
+    }: SectionProps,
+    ref
+  ) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const tagRef = ref as any;
+    return (
+      <Tag
+        ref={tagRef}
+        className={cn('py-16 md:py-24', bgClasses[bg], className)}
+        {...props}
+      >
+        {children}
+      </Tag>
+    );
+  }
+);

@@ -38,6 +38,8 @@ export const SERVICES = [
     title: 'Bookkeeping',
     description: 'Accurate financial records that stand up to scrutiny. We manage your accounts payable, receivable, and bank reconciliation to ensure your books are always audit-ready.',
     href: '/services#bookkeeping',
+    image: '/images/services/bookkeeping.jpg',
+    imageAlt: 'Professional bookkeeping and financial records',
     features: [
       'Monthly Bookkeeping & Record Maintenance',
       'Accounts Payable/Receivable Management',
@@ -50,6 +52,8 @@ export const SERVICES = [
     title: 'Payroll Management',
     description: 'Reliable payroll processing that ensures your team is paid accurately and on time. We handle tax withholding, statutory deductions, and all related compliance obligations.',
     href: '/services#payroll-management',
+    image: '/images/services/payroll.jpg',
+    imageAlt: 'Payroll management and employee payments',
     features: [
       'Monthly Payroll Processing',
       'Tax Withholding & Statutory Deductions',
@@ -62,6 +66,8 @@ export const SERVICES = [
     title: 'Tax Preparation',
     description: 'Expert tax preparation that minimizes your liability while ensuring full regulatory compliance. We handle income tax returns, VAT management, and strategic tax planning.',
     href: '/services#tax-preparation',
+    image: '/images/services/accounting.jpg',
+    imageAlt: 'Tax preparation and financial planning',
     features: [
       'Corporate & Personal Income Tax Returns',
       'VAT Returns & Management',
@@ -98,6 +104,8 @@ export const SERVICES = [
     title: 'Regulatory Compliance',
     description: 'Stay compliant and avoid penalties. We handle audits, statutory filings, labor law requirements, and industry-specific regulations so you can focus on business.',
     href: '/services#regulatory-compliance',
+    image: '/images/services/compliance.jpg',
+    imageAlt: 'Regulatory compliance and audit preparation',
     features: [
       'Audit Preparation & Support',
       'Annual Statutory Filing',

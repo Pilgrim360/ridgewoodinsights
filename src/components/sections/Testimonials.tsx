@@ -64,7 +64,7 @@ export function Testimonials({
     <Card
       key={testimonial.id}
       variant="default"
-      className="h-full p-6 relative"
+      className="h-full p-6 relative transition-all duration-500 hover:shadow-xl hover:scale-105 hover:-translate-y-2"
     >
       {/* Quote Icon */}
       <div className="absolute top-4 right-4 opacity-10">
