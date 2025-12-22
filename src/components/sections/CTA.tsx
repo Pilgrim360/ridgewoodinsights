@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useRef } from 'react';
 import { Button } from '../ui/Button';
 import { Heading } from '../ui/Heading';
 import { Text } from '../ui/Text';
@@ -20,6 +21,7 @@ export interface CTAProps {
   secondaryAction?: CTAAction;
   variant?: 'centered' | 'split' | 'inline';
   backgroundVariant?: 'default' | 'muted' | 'white';
+  backgroundImage?: string;
   urgencyMessage?: string;
   className?: string;
 }
@@ -31,9 +33,29 @@ export function CTA({
   secondaryAction,
   variant = 'centered',
   backgroundVariant = 'default',
+  backgroundImage,
   urgencyMessage,
   className = '',
 }: CTAProps) {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const backgroundRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!backgroundImage || !backgroundRef.current) return;
+
+    const handleScroll = () => {
+      if (sectionRef.current && backgroundRef.current) {
+        const { top } = sectionRef.current.getBoundingClientRect();
+        const speed = -0.3;
+        const yPos = top * speed;
+        backgroundRef.current.style.transform = `translateY(${yPos}px)`;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [backgroundImage]);
+
   const backgroundClasses = {
     default: 'bg-background',
     muted: 'bg-muted border border-surface',
@@ -52,21 +74,38 @@ export function CTA({
     inline: 'flex flex-col sm:flex-row gap-4 md:flex-shrink-0',
   };
 
+  const hasBackgroundImage = !!backgroundImage;
+  const textColor = hasBackgroundImage ? 'text-white' : 'text-text';
+  const headingColor = hasBackgroundImage ? 'text-white' : 'text-secondary';
+
+
   return (
     <Section
       id="cta"
+      ref={sectionRef}
       bg={backgroundVariant}
-      className={`${backgroundClasses[backgroundVariant]} ${className}`}
+      className={`${
+        !hasBackgroundImage ? backgroundClasses[backgroundVariant] : ''
+      } ${className} relative overflow-hidden`}
       aria-labelledby="cta-title"
     >
-      <Container maxWidth="xl">
+      {hasBackgroundImage && (
+        <div
+          ref={backgroundRef}
+          className="absolute inset-0 z-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${backgroundImage})` }}
+        >
+          <div className="absolute inset-0 bg-black/60" />
+        </div>
+      )}
+      <Container maxWidth="xl" className="relative z-10">
         <div className={contentClasses[variant]}>
           {/* Content */}
           <div className={`space-y-4 ${variant === 'split' ? '' : 'md:max-w-2xl'}`}>
             <Heading
               as={2}
               id="cta-title"
-              className="text-2xl md:text-3xl lg:text-4xl font-bold text-secondary"
+              className={`text-2xl md:text-3xl lg:text-4xl font-bold ${headingColor}`}
             >
               {title}
             </Heading>
@@ -74,7 +113,7 @@ export function CTA({
             {description && (
               <Text
                 as="p"
-                className="text-text text-lg leading-relaxed"
+                className={`${textColor} text-lg leading-relaxed`}
               >
                 {description}
               </Text>
@@ -105,9 +144,9 @@ export function CTA({
             {secondaryAction && (
               <Link href={secondaryAction.href} aria-label={secondaryAction.label}>
                 <Button
-                  variant={secondaryAction.variant || 'outline'}
+                  variant={secondaryAction.variant || (hasBackgroundImage ? 'outline' : 'secondary')}
                   size="lg"
-                  className="min-h-[44px]"
+                  className={`min-h-[44px] ${hasBackgroundImage ? 'border-white text-white hover:bg-white/10' : ''}`}
                 >
                   {secondaryAction.label}
                 </Button>
