@@ -33,7 +33,7 @@ export function Footer({ className, ...props }: FooterProps) {
       className={cn('bg-secondary text-white pt-20 pb-10', className)}
       {...props}
     >
-      <Container>
+      <Container maxWidth="wide">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16">
           {/* Column 1: Brand & Socials */}
           <div className="space-y-8">
