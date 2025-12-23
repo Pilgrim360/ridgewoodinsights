@@ -51,7 +51,7 @@ export function Hero({
       id="hero"
       bg="default"
       className={cn(
-        'relative flex min-h-screen max-h-screen items-center bg-cover bg-center overflow-hidden',
+        'relative flex min-h-screen items-center bg-cover bg-center',
         className
       )}
       style={sectionStyle}
@@ -71,14 +71,14 @@ export function Hero({
         </video>
       )}
       <div className="absolute inset-0 bg-black/60" />
-      <Container className="relative w-full py-16 md:py-24 lg:py-32" maxWidth="wide">
-        <div className={`grid items-center gap-12 ${alignmentClasses[alignment]}`}>
+      <Container className="relative w-full py-12 md:py-16 lg:py-20 xl:py-24" maxWidth="wide">
+        <div className={`grid items-center gap-8 md:gap-12 ${alignmentClasses[alignment]}`}>
           {/* Content */}
-          <div className="space-y-8">
+          <div className="space-y-6 md:space-y-8">
             {subtitle && (
               <Text
                 as="p"
-                className="font-semibold uppercase tracking-wide text-sm md:text-base text-white/90"
+                className="font-semibold uppercase tracking-wide text-xs md:text-sm text-white/90"
               >
                 {subtitle}
               </Text>
@@ -87,7 +87,7 @@ export function Hero({
               as={1}
               id="hero-title"
               className={cn(
-                'text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight max-w-4xl',
+                'text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight max-w-4xl',
                 alignment === 'center' && 'mx-auto'
               )}
             >
@@ -97,7 +97,7 @@ export function Hero({
               <Text
                 as="p"
                 className={cn(
-                  'text-white/90 text-lg md:text-xl leading-relaxed max-w-3xl',
+                  'text-white/90 text-base md:text-lg lg:text-xl leading-relaxed max-w-3xl',
                   alignment === 'center' && 'mx-auto'
                 )}
               >
@@ -107,7 +107,7 @@ export function Hero({
             {/* CTAs */}
             <div
               className={cn(
-                'flex flex-col sm:flex-row gap-4 pt-4',
+                'flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4 md:pt-6',
                 alignment === 'center' ? 'items-center justify-center' : 'items-start'
               )}
             >
