@@ -125,7 +125,7 @@ export function Hero({
                   <Button
                     variant={secondaryCTA.variant || 'outline'}
                     size="lg"
-                    className="min-h-[48px] w-full sm:w-auto"
+                    className="min-h-[48px] w-full sm:w-auto !bg-transparent !text-white !border-white hover:!bg-white hover:!text-primary transition-all duration-200"
                   >
                     {secondaryCTA.label}
                   </Button>
