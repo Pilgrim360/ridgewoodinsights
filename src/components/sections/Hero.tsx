@@ -49,8 +49,9 @@ export function Hero({
   return (
     <Section
       id="hero"
+      bg="default"
       className={cn(
-        'relative flex min-h-screen items-center bg-cover bg-center py-20 overflow-hidden',
+        'relative flex min-h-screen max-h-screen items-center bg-cover bg-center overflow-hidden',
         className
       )}
       style={sectionStyle}
@@ -70,10 +71,10 @@ export function Hero({
         </video>
       )}
       <div className="absolute inset-0 bg-black/60" />
-      <Container className="relative" maxWidth="wide">
-        <div className={`grid items-center gap-8 ${alignmentClasses[alignment]}`}>
+      <Container className="relative w-full py-16 md:py-24 lg:py-32" maxWidth="wide">
+        <div className={`grid items-center gap-12 ${alignmentClasses[alignment]}`}>
           {/* Content */}
-          <div className="space-y-6">
+          <div className="space-y-8">
             {subtitle && (
               <Text
                 as="p"
@@ -106,7 +107,7 @@ export function Hero({
             {/* CTAs */}
             <div
               className={cn(
-                'flex flex-col sm:flex-row gap-4 pt-6',
+                'flex flex-col sm:flex-row gap-4 pt-4',
                 alignment === 'center' ? 'items-center justify-center' : 'items-start'
               )}
             >
