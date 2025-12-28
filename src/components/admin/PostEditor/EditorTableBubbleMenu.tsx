@@ -1,6 +1,8 @@
 'use client';
 
+import { useState, useRef } from 'react';
 import { BubbleMenu, type Editor } from '@tiptap/react';
+import { HexColorPicker } from 'react-colorful';
 import {
   Columns2,
   Columns3,
@@ -9,7 +11,12 @@ import {
   Merge,
   Split,
   Trash2,
+  Palette,
+  X,
 } from 'lucide-react';
+
+import { useOnClickOutside } from '@/hooks/useOnClickOutside';
+
 import { ToolbarButton } from './ToolbarButton';
 
 export interface EditorTableBubbleMenuProps {
@@ -21,6 +28,16 @@ export function EditorTableBubbleMenu({
   editor,
   disabled,
 }: EditorTableBubbleMenuProps) {
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
+  const colorPickerRef = useRef<HTMLDivElement>(null);
+
+  useOnClickOutside(colorPickerRef, () => setIsColorPickerOpen(false));
+
+  const handleColorSelection = (color: string) => {
+    editor.chain().focus().setCellAttribute('backgroundColor', color).run();
+    setIsColorPickerOpen(false);
+  };
+
   return (
     <BubbleMenu
       editor={editor}
@@ -32,6 +49,32 @@ export function EditorTableBubbleMenu({
       shouldShow={() => editor.isActive('table')}
       className="flex items-center gap-1 rounded-lg border border-surface bg-white p-1 shadow-sm"
     >
+      <div className="relative" ref={colorPickerRef}>
+        <ToolbarButton
+          title="Cell background color"
+          aria-label="Cell background color"
+          disabled={disabled}
+          onClick={() => setIsColorPickerOpen(!isColorPickerOpen)}
+        >
+          <Palette className="h-4 w-4" />
+        </ToolbarButton>
+        {isColorPickerOpen && (
+          <div className="absolute top-full z-10 mt-2 rounded-lg border border-surface bg-white p-2 shadow-md">
+            <HexColorPicker onChange={handleColorSelection} />
+          </div>
+        )}
+      </div>
+
+      <ToolbarButton
+        title="Clear background color"
+        aria-label="Clear background color"
+        disabled={disabled}
+        onClick={() => {
+          editor.chain().focus().setCellAttribute('backgroundColor', null).run();
+        }}
+      >
+        <X className="h-4 w-4" />
+      </ToolbarButton>
       <ToolbarButton
         title="Add column before"
         aria-label="Add column before"
