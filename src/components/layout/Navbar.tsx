@@ -63,12 +63,12 @@ export function Navbar({ className, mobileMenuOpen, setMobileMenuOpen, ...props 
         )}
         {...props}
       >
-        <Container>
+        <Container maxWidth="2xl">
           <nav className="flex h-20 items-center justify-between" aria-label="Main navigation">
             <Link
               href="/"
               className={cn(
-                'flex items-center gap-2 text-2xl font-bold transition-colors',
+                'flex items-center gap-2 font-bold transition-colors text-base sm:text-lg md:text-xl lg:text-2xl',
                 isScrolled ? 'text-primary hover:text-primary/80' : 'text-white hover:text-white/90'
               )}
             >
@@ -76,8 +76,8 @@ export function Navbar({ className, mobileMenuOpen, setMobileMenuOpen, ...props 
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex md:items-center md:gap-8">
-              <ul className="flex items-center gap-8">
+            <div className="hidden md:flex md:items-center md:gap-6 lg:gap-8 xl:gap-10">
+              <ul className="flex items-center gap-6 lg:gap-8 xl:gap-10">
                 {NAV_LINKS.map((link) => {
                   const isActive = pathname === link.href;
                   return (

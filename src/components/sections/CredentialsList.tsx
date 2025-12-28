@@ -18,7 +18,7 @@ export function CredentialsList({
 }: CredentialsListProps) {
   return (
     <Section id="credentials" bg="default" aria-labelledby="credentials-title">
-      <Container maxWidth="xl">
+      <Container maxWidth="2xl">
         <div className="text-center mb-12">
           {subtitle && (
             <Text
@@ -31,13 +31,13 @@ export function CredentialsList({
           <Heading
             as={2}
             id="credentials-title"
-            className="text-2xl md:text-3xl lg:text-4xl font-bold text-secondary mb-6"
+            className="text-2xl sm:text-3xl lg:text-4xl font-bold text-secondary mb-6"
           >
             {title}
           </Heading>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-4">
+        <div className="flex flex-wrap justify-center gap-3 md:gap-4 lg:gap-6">
           {credentials.map((credential, index) => (
             <Badge
               key={index}

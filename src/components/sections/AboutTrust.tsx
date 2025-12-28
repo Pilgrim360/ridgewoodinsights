@@ -134,8 +134,8 @@ export function AboutTrust({
       className={className}
       aria-labelledby="about-trust-title"
     >
-      <Container maxWidth="xl">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-start">
+      <Container maxWidth="2xl">
+        <div className="grid gap-10 md:gap-12 lg:grid-cols-2 lg:gap-16 items-start">
           {/* Content */}
           <div className="space-y-6">
             {subtitle && (
@@ -150,7 +150,7 @@ export function AboutTrust({
             <Heading
               as={2}
               id="about-trust-title"
-              className="text-2xl md:text-3xl lg:text-4xl font-bold text-secondary"
+              className="text-2xl sm:text-3xl lg:text-4xl font-bold text-secondary"
             >
               {title}
             </Heading>
@@ -165,9 +165,11 @@ export function AboutTrust({
           
           {/* Trust Signals */}
           <div className="space-y-8">
-            <div className={`grid gap-6 ${
-              layout === 'list' ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2'
-            }`}>
+            <div
+              className={`grid gap-4 md:gap-6 ${
+                layout === 'list' ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2'
+              }`}
+            >
               {trustSignals.map((signal, index) => renderTrustSignal(signal, index))}
             </div>
           </div>

@@ -167,7 +167,7 @@ export function Testimonials({
       </div>
       
       {displayTestimonials.length > 1 && (
-        <div className="grid gap-8 md:grid-cols-2">
+        <div className="grid gap-6 md:gap-8 md:grid-cols-2">
           {displayTestimonials.slice(1).map((testimonial) => 
             renderTestimonial(testimonial)
           )}
@@ -183,7 +183,7 @@ export function Testimonials({
       className={className}
       aria-labelledby="testimonials-title"
     >
-      <Container maxWidth="xl">
+      <Container maxWidth="2xl">
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">
           {subtitle && (
@@ -198,7 +198,7 @@ export function Testimonials({
           <Heading
             as={2}
             id="testimonials-title"
-            className="text-2xl md:text-3xl lg:text-4xl font-bold text-secondary mb-6"
+            className="text-2xl sm:text-3xl lg:text-4xl font-bold text-secondary mb-6"
           >
             {title}
           </Heading>
@@ -208,7 +208,7 @@ export function Testimonials({
         {layout === 'carousel' && renderCarousel()}
         {layout === 'featured' && renderFeatured()}
         {layout === 'grid' && (
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 md:gap-8 lg:gap-10 md:grid-cols-2 lg:grid-cols-3">
             {displayTestimonials.map((testimonial) => 
               renderTestimonial(testimonial)
             )}

@@ -35,7 +35,7 @@ export function FAQ({
           <Heading
             as={2}
             id="faq-title"
-            className="text-2xl md:text-3xl lg:text-4xl font-bold text-secondary mb-6"
+            className="text-2xl sm:text-3xl lg:text-4xl font-bold text-secondary mb-6"
           >
             {title}
           </Heading>

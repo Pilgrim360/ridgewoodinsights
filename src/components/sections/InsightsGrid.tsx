@@ -482,7 +482,7 @@ export function InsightsGrid({
 
   return (
     <Section bg={backgroundVariant} aria-label="Insights">
-      <Container maxWidth="xl">
+      <Container maxWidth="2xl">
         {showLayoutSwitcher && viewOptions.length > 1 ? (
           <div className="mb-8 flex justify-end">
             <div className="flex items-center gap-2 rounded-xl border border-surface/70 bg-white p-1 overflow-x-auto">
@@ -528,7 +528,7 @@ export function InsightsGrid({
             {featured ? <FeaturedInsightCard insight={featured} /> : null}
 
             {remaining.length > 0 ? (
-              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-6 md:gap-8 lg:gap-10 md:grid-cols-2 lg:grid-cols-3">
                 {remaining.map((insight) => (
                   <InsightCard key={insight.id} insight={insight} />
                 ))}
@@ -538,7 +538,7 @@ export function InsightsGrid({
         ) : null}
 
         {items.length > 0 && layout === 'grid' ? (
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 md:gap-8 lg:gap-10 md:grid-cols-2 lg:grid-cols-3">
             {items.map((insight) => (
               <InsightCard key={insight.id} insight={insight} />
             ))}
@@ -546,9 +546,9 @@ export function InsightsGrid({
         ) : null}
 
         {items.length > 0 && layout === 'masonry' ? (
-          <div className="columns-1 sm:columns-2 lg:columns-3 gap-8 [column-fill:_balance]">
+          <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 md:gap-8 lg:gap-10 [column-fill:_balance]">
             {items.map((insight) => (
-              <div key={insight.id} className="break-inside-avoid mb-8">
+              <div key={insight.id} className="break-inside-avoid mb-6 md:mb-8 lg:mb-10">
                 <InsightCard insight={insight} />
               </div>
             ))}
@@ -596,13 +596,13 @@ export function InsightsGrid({
               className={cn(
                 'relative overflow-x-auto scroll-smooth',
                 'snap-x snap-mandatory',
-                'pb-2 -mx-4 px-4',
+                'pb-2 -mx-4 sm:-mx-6 md:-mx-8 lg:-mx-12 px-4 sm:px-6 md:px-8 lg:px-12',
                 '[scrollbar-width:thin]'
               )}
               role="region"
               aria-label="Insights carousel"
             >
-              <div className="grid grid-flow-col auto-cols-[88%] sm:auto-cols-[62%] lg:auto-cols-[38%] gap-6">
+              <div className="grid grid-flow-col auto-cols-[88%] sm:auto-cols-[62%] lg:auto-cols-[38%] gap-4 md:gap-6 lg:gap-8">
                 {items.map((insight) => (
                   <div key={insight.id} className="snap-start">
                     <InsightCard insight={insight} />
@@ -655,7 +655,7 @@ export function InsightsGrid({
             <div ref={sentinelRef} className="h-1 w-full" aria-hidden />
 
             {isLoadingMore ? (
-              <div className="grid w-full gap-8 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid w-full gap-6 md:gap-8 lg:gap-10 md:grid-cols-2 lg:grid-cols-3">
                 {Array.from({ length: 3 }).map((_, idx) => (
                   <InsightCardSkeleton key={idx} />
                 ))}

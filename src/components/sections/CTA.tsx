@@ -42,14 +42,14 @@ export function CTA({
 
   const contentClasses = {
     centered: 'text-center max-w-3xl mx-auto',
-    split: 'grid gap-8 md:grid-cols-2 md:items-center lg:gap-12',
-    inline: 'flex flex-col md:flex-row items-center justify-between gap-6',
+    split: 'grid gap-6 md:gap-8 md:grid-cols-2 md:items-center lg:gap-12',
+    inline: 'flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6 lg:gap-8',
   };
 
   const buttonContainerClasses = {
-    centered: 'flex flex-col sm:flex-row gap-4 justify-center items-center',
-    split: 'flex flex-col sm:flex-row gap-4',
-    inline: 'flex flex-col sm:flex-row gap-4 md:flex-shrink-0',
+    centered: 'flex flex-col sm:flex-row gap-4 md:gap-6 justify-center items-center',
+    split: 'flex flex-col sm:flex-row gap-4 md:gap-6',
+    inline: 'flex flex-col sm:flex-row gap-4 md:gap-6 md:flex-shrink-0',
   };
 
   return (
@@ -59,14 +59,14 @@ export function CTA({
       className={`${backgroundClasses[backgroundVariant]} ${className}`}
       aria-labelledby="cta-title"
     >
-      <Container maxWidth="xl">
+      <Container maxWidth="2xl">
         <div className={contentClasses[variant]}>
           {/* Content */}
           <div className={`space-y-4 ${variant === 'split' ? '' : 'md:max-w-2xl'}`}>
             <Heading
               as={2}
               id="cta-title"
-              className="text-2xl md:text-3xl lg:text-4xl font-bold text-secondary"
+              className="text-2xl sm:text-3xl lg:text-4xl font-bold text-secondary"
             >
               {title}
             </Heading>
