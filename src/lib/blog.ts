@@ -35,6 +35,9 @@ export async function getPublishedPostsPage({
   limit = 12,
 }: PublishedPostsPageParams = {}): Promise<{ insights: Insight[]; total: number }> {
   const supabase = await createClient();
+  if (!supabase) {
+    return { insights: [], total: 0 };
+  }
 
   const safeOffset = Math.max(0, offset);
   const safeLimit = Math.min(Math.max(1, limit), 50);
@@ -75,6 +78,9 @@ export async function getPublishedPostsPage({
 
 export async function getPublishedPosts(limit?: number): Promise<Insight[]> {
   const supabase = await createClient();
+  if (!supabase) {
+    return [];
+  }
 
   let query = supabase
     .from('posts')
@@ -115,6 +121,9 @@ export async function getPostBySlug(
   slug: string
 ): Promise<(Insight & { content: string }) | null> {
   const supabase = await createClient();
+  if (!supabase) {
+    return null;
+  }
 
   const { data: post, error } = await supabase
     .from('posts')

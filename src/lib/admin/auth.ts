@@ -9,6 +9,9 @@ import { AdminUser } from '@/types/admin';
 export async function getCurrentAdminUser(): Promise<AdminUser | null> {
   try {
     const supabase = await createClient();
+    if (!supabase) {
+      return null;
+    }
 
     // Get current auth user
     const {
@@ -52,6 +55,9 @@ export async function getCurrentAdminUser(): Promise<AdminUser | null> {
  */
 export async function getCurrentUser() {
   const supabase = await createClient();
+  if (!supabase) {
+    return null;
+  }
   const {
     data: { user },
   } = await supabase.auth.getUser();

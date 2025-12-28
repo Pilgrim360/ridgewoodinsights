@@ -31,7 +31,9 @@ export function EditorTableBubbleMenu({
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
   const colorPickerRef = useRef<HTMLDivElement>(null);
 
-  useOnClickOutside(colorPickerRef, () => setIsColorPickerOpen(false));
+  useOnClickOutside<HTMLDivElement>(colorPickerRef, () =>
+    setIsColorPickerOpen(false)
+  );
 
   const handleColorSelection = (color: string) => {
     editor.chain().focus().setCellAttribute('backgroundColor', color).run();

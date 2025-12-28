@@ -14,6 +14,7 @@ interface CategoryWithPosts extends CategoryData {
  * Get all categories
  */
 export async function getCategories(): Promise<CategoryData[]> {
+  if (!supabase) return [];
   try {
     const { data, error } = await supabase
       .from('categories')
@@ -32,6 +33,7 @@ export async function getCategories(): Promise<CategoryData[]> {
  * Get categories with post counts
  */
 export async function getCategoriesWithCount(): Promise<CategoryWithPostCount[]> {
+  if (!supabase) return [];
   try {
     const { data, error } = await supabase
       .from('categories')
@@ -54,6 +56,7 @@ export async function getCategoriesWithCount(): Promise<CategoryWithPostCount[]>
  * Get a single category by ID
  */
 export async function getCategory(id: string): Promise<CategoryData> {
+  if (!supabase) throw new Error('Supabase client is not available.');
   try {
     const { data, error } = await supabase
       .from('categories')
@@ -76,6 +79,7 @@ export async function getCategory(id: string): Promise<CategoryData> {
 export async function createCategory(
   category: Omit<CategoryData, 'id' | 'created_at'>
 ): Promise<CategoryData> {
+  if (!supabase) throw new Error('Supabase client is not available.');
   try {
     const { data, error } = await supabase
       .from('categories')
@@ -99,6 +103,7 @@ export async function updateCategory(
   id: string,
   updates: Partial<CategoryData>
 ): Promise<CategoryData> {
+  if (!supabase) throw new Error('Supabase client is not available.');
   try {
     const { data, error } = await supabase
       .from('categories')
@@ -120,6 +125,7 @@ export async function updateCategory(
  * Delete a category
  */
 export async function deleteCategory(id: string): Promise<void> {
+  if (!supabase) throw new Error('Supabase client is not available.');
   try {
     const { error } = await supabase.from('categories').delete().eq('id', id);
 
