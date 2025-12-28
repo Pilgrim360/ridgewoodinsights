@@ -22,13 +22,13 @@ import {
   AlignRight,
   AlignJustify,
   Images as MediaIcon,
-  Table as TableIcon,
   Minus,
   FileSpreadsheet,
   Youtube as YoutubeIcon,
   AudioLines,
   Frame,
   SeparatorHorizontal,
+  Table2,
 } from 'lucide-react';
 
 import { uploadPostAsset } from '@/lib/admin/storage';
@@ -39,6 +39,7 @@ import { getTocHeadings } from '@/lib/tiptap/toc';
 
 import { ToolbarButton } from './ToolbarButton';
 import { ToolbarSelect } from './ToolbarSelect';
+import { TableInsertModal } from './TableInsertModal';
 
 const FONT_FAMILIES: Array<{ label: string; value: string }> = [
   { label: 'Default', value: '' },
@@ -73,6 +74,7 @@ export function EditorToolbar({
 
   const [isUploading, setIsUploading] = useState(false);
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
+  const [isTableModalOpen, setIsTableModalOpen] = useState(false);
 
 
   const headings = useMemo(
@@ -209,6 +211,17 @@ export function EditorToolbar({
       }
     },
     [editor, onError]
+  );
+
+  const handleTableInsert = useCallback(
+    (rows: number, cols: number, withHeaderRow: boolean) => {
+      editor
+        .chain()
+        .focus()
+        .insertTable({ rows, cols, withHeaderRow })
+        .run();
+    },
+    [editor]
   );
 
   return (
@@ -582,9 +595,9 @@ export function EditorToolbar({
           title="Insert table"
           aria-label="Insert table"
           disabled={disabled}
-          onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+          onClick={() => setIsTableModalOpen(true)}
         >
-          <TableIcon className="h-4 w-4" />
+          <Table2 className="h-4 w-4" />
         </ToolbarButton>
         <ToolbarButton
           title="Toggle header row"
@@ -602,6 +615,12 @@ export function EditorToolbar({
         >
           <TrashButtonIcon />
         </ToolbarButton>
+
+        <TableInsertModal
+          isOpen={isTableModalOpen}
+          onClose={() => setIsTableModalOpen(false)}
+          onInsert={handleTableInsert}
+        />
 
         <input
           ref={csvInputRef}

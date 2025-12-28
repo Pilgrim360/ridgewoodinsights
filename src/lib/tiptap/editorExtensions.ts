@@ -24,6 +24,7 @@ import { IframeEmbed } from './extensions/IframeEmbed';
 import { AudioEmbed } from './extensions/AudioEmbed';
 import { ImageExtended } from './extensions/ImageExtended';
 import { HeadingWithId } from './extensions/HeadingWithId';
+import { TableCellBackground } from './extensions/TableCellBackground';
 
 export interface PostEditorExtensionsOptions {
   placeholder?: string;
@@ -74,6 +75,7 @@ export function createPostEditorExtensions({
     TableRow,
     TableHeader,
     TableCell,
+    TableCellBackground,
     Youtube.configure({
       controls: true,
       nocookie: true,

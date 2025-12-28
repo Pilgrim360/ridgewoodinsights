@@ -38,6 +38,18 @@
     @apply bg-surface text-secondary;
   }
 
+  /* Table cell backgrounds - handled via inline style in extension */
+  .ProseMirror td,
+  .ProseMirror th {
+    transition: background-color 0.2s ease;
+  }
+
+  /* Selected table cell indicator */
+  .ProseMirror .selectedCell:after {
+    @apply absolute inset-0 bg-primary/20 pointer-events-none content-[''];
+    z-index: 1;
+  }
+
   .ProseMirror .page-break {
     @apply my-6 border-t border-surface;
   }
