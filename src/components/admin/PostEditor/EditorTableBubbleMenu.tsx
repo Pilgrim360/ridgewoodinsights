@@ -11,9 +11,11 @@ import {
   Split,
   Square,
   ChevronDown,
-  Check,
-  Scissors,
-  TrashIcon,
+  ChevronRight,
+  ChevronLeft,
+  ArrowLeftRight,
+  Heading1,
+  Trash2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ToolbarButton } from './ToolbarButton';
@@ -51,8 +53,11 @@ export function EditorTableBubbleMenu({
   const canDeleteColumn = editor.can().deleteColumn();
   const canDeleteRow = editor.can().deleteRow();
   const canDeleteTable = editor.can().deleteTable();
+  const canToggleHeaderColumn = editor.can().toggleHeaderColumn();
+  const canToggleHeaderCell = editor.can().toggleHeaderCell();
 
   const currentCellBg = editor.getAttributes('tableCell').backgroundColor;
+  const isHeaderCell = editor.isActive('tableHeader');
 
   const handleColorSelect = useCallback(
     (color: string) => {
@@ -101,7 +106,7 @@ export function EditorTableBubbleMenu({
           disabled={disabled || !canDeleteColumn}
           onClick={() => editor.chain().focus().deleteColumn().run()}
         >
-          <Scissors className="h-4 w-4 rotate-90" />
+          <ScissorsHorizontal className="h-4 w-4 rotate-90" />
         </ToolbarButton>
       </div>
 
@@ -128,7 +133,7 @@ export function EditorTableBubbleMenu({
           disabled={disabled || !canDeleteRow}
           onClick={() => editor.chain().focus().deleteRow().run()}
         >
-          <Scissors className="h-4 w-4" />
+          <ScissorsVertical className="h-4 w-4" />
         </ToolbarButton>
       </div>
 
@@ -149,6 +154,35 @@ export function EditorTableBubbleMenu({
           onClick={() => editor.chain().focus().splitCell().run()}
         >
           <Split className="h-4 w-4" />
+        </ToolbarButton>
+        <ToolbarButton
+          title="Merge or split"
+          aria-label="Merge or split"
+          disabled={disabled}
+          onClick={() => editor.chain().focus().mergeOrSplit().run()}
+        >
+          <ArrowLeftRight className="h-4 w-4" />
+        </ToolbarButton>
+      </div>
+
+      {/* Header formatting */}
+      <div className="flex items-center gap-0.5 border-r border-surface pr-1 mr-1">
+        <ToolbarButton
+          title="Toggle header column"
+          aria-label="Toggle header column"
+          disabled={disabled || !canToggleHeaderColumn}
+          onClick={() => editor.chain().focus().toggleHeaderColumn().run()}
+        >
+          <ChevronRight className="h-4 w-4 rotate-90" />
+        </ToolbarButton>
+        <ToolbarButton
+          title="Toggle header cell"
+          aria-label="Toggle header cell"
+          disabled={disabled || !canToggleHeaderCell}
+          isActive={isHeaderCell}
+          onClick={() => editor.chain().focus().toggleHeaderCell().run()}
+        >
+          <Heading1 className="h-4 w-4" />
         </ToolbarButton>
       </div>
 
@@ -186,7 +220,7 @@ export function EditorTableBubbleMenu({
                 onClick={() => handleColorSelect(color.value)}
               >
                 {color.value === currentCellBg && (
-                  <Check
+                  <CheckIcon
                     className={cn(
                       'mx-auto h-4 w-4',
                       color.value === '#FEE2E2' ||
@@ -203,14 +237,33 @@ export function EditorTableBubbleMenu({
         )}
       </div>
 
-      {/* Selection - uses focus to navigate within table */}
+      {/* Cell navigation */}
+      <div className="flex items-center gap-0.5 border-l border-surface pl-1 ml-1">
+        <ToolbarButton
+          title="Go to previous cell"
+          aria-label="Go to previous cell"
+          disabled={disabled}
+          onClick={() => editor.chain().focus().goToPreviousCell().run()}
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </ToolbarButton>
+        <ToolbarButton
+          title="Go to next cell"
+          aria-label="Go to next cell"
+          disabled={disabled}
+          onClick={() => editor.chain().focus().goToNextCell().run()}
+        >
+          <ChevronRight className="h-4 w-4" />
+        </ToolbarButton>
+      </div>
+
+      {/* Selection */}
       <div className="flex items-center gap-0.5 border-l border-surface pl-1 ml-1">
         <ToolbarButton
           title="Select all cells"
           aria-label="Select all cells"
           disabled={disabled}
           onClick={() => {
-            // Select the entire table by selecting all content
             editor.chain().focus().selectAll().run();
           }}
         >
@@ -227,12 +280,69 @@ export function EditorTableBubbleMenu({
           onClick={() => editor.chain().focus().deleteTable().run()}
           className="hover:bg-red-50 hover:border-red-200 hover:text-red-600"
         >
-          <TrashIcon className="h-4 w-4" />
+          <Trash2 className="h-4 w-4" />
         </ToolbarButton>
       </div>
     </BubbleMenu>
   );
 }
 
-// Re-export icons for backwards compatibility
+// SVG icons for scissors (rotated for column/row delete)
+function ScissorsVertical({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="6" cy="6" r="3" />
+      <circle cx="6" cy="18" r="3" />
+      <line x1="20" y1="4" x2="8.12" y2="15.88" />
+      <line x1="14.47" y1="14.48" x2="20" y2="20" />
+      <line x1="8.12" y1="8.12" x2="12" y2="12" />
+    </svg>
+  );
+}
+
+function ScissorsHorizontal({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="6" cy="6" r="3" />
+      <circle cx="6" cy="18" r="3" />
+      <line x1="20" y1="4" x2="8.12" y2="15.88" />
+      <line x1="14.47" y1="14.48" x2="20" y2="20" />
+      <line x1="8.12" y1="8.12" x2="12" y2="12" />
+    </svg>
+  );
+}
+
+function CheckIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
+
+// Re-export for backwards compatibility
 export { Columns3Icon } from 'lucide-react';
