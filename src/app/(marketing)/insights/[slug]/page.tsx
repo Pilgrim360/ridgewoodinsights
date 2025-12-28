@@ -61,52 +61,61 @@ export default async function BlogPostPage({ params }: PageProps) {
     <>
       <ReadingProgress />
       
-      <article className="min-h-screen pb-24 bg-white">
-        {/* Minimalist Hero Section */}
-        <div className="pt-8 pb-8 md:pt-12 md:pb-12">
-          <Container maxWidth="lg">
-            <div className="max-w-3xl mx-auto text-center">
-              <div className="flex justify-center mb-6">
-                <Badge className="bg-primary/10 text-primary hover:bg-primary/20 transition-colors border-transparent px-3 py-1">
-                  {post.category}
-                </Badge>
-              </div>
-
-              <Heading as={1} className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-secondary mb-6 leading-tight tracking-tight">
-                {post.title}
-              </Heading>
-
-              <div className="flex flex-wrap items-center justify-center gap-3 text-secondary/40 text-sm font-medium">
-                <span>
-                  {formatDate(post.date)}
-                </span>
-                {post.readTime && (
-                  <>
-                    <span>•</span>
-                    <span>{post.readTime}</span>
-                  </>
-                )}
-              </div>
-            </div>
-          </Container>
-        </div>
-
-        {/* Featured Image */}
+      <article className="min-h-screen bg-white">
+        {/* Hero Section with Background Image */}
         {post.image && (
-          <Container maxWidth="full-bleed" className="mb-16 md:mb-24">
-            <div className="relative aspect-[21/9] w-full overflow-hidden rounded-lg">
-              <Image
-                src={post.image}
-                alt={post.title}
-                fill
-                className="object-cover"
-                priority
-              />
+          <div className="relative w-full h-[50vh] md:h-[60vh] overflow-hidden">
+            {/* Background Image */}
+            <Image
+              src={post.image}
+              alt={post.title}
+              fill
+              className="object-cover"
+              priority
+            />
+            
+            {/* Dark Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/45 to-black/50" />
+            
+            {/* Hero Content */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Container maxWidth="xl">
+                <div className="max-w-4xl mx-auto text-center px-4">
+                  {/* Category Badge */}
+                  <div className="flex justify-center mb-6">
+                    <Badge className="bg-white/90 text-secondary backdrop-blur-sm hover:bg-white transition-colors border-transparent px-4 py-1.5 text-sm">
+                      {post.category}
+                    </Badge>
+                  </div>
+
+                  {/* Title */}
+                  <Heading 
+                    as={1} 
+                    className="text-3xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-6 leading-tight tracking-tight"
+                  >
+                    {post.title}
+                  </Heading>
+
+                  {/* Metadata */}
+                  <div className="flex flex-wrap items-center justify-center gap-3 text-white/80 text-sm md:text-base font-medium">
+                    <span>
+                      {formatDate(post.date)}
+                    </span>
+                    {post.readTime && (
+                      <>
+                        <span>•</span>
+                        <span>{post.readTime}</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </Container>
             </div>
-          </Container>
+          </div>
         )}
 
-        <Container maxWidth="lg">
+        {/* Content Section */}
+        <Container maxWidth="xl" className="py-16 md:py-24">
           <div className="flex flex-col md:flex-row gap-8 md:gap-12 lg:gap-24 relative">
             
             {/* Sidebar / Share Buttons - Sticky on Desktop */}
@@ -117,7 +126,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 max-w-3xl mx-auto md:mx-0">
+            <div className="flex-1 max-w-4xl mx-auto md:mx-0">
               <div 
                 className="prose prose-lg md:prose-xl prose-slate max-w-none 
                   prose-headings:text-secondary prose-headings:font-bold prose-headings:tracking-tight
