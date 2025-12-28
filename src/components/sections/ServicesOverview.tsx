@@ -45,7 +45,7 @@ export function ServicesOverview({
       className={className}
       aria-labelledby="services-title"
     >
-      <Container maxWidth="xl">
+      <Container>
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">
           {subtitle && (

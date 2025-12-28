@@ -183,7 +183,7 @@ export function Testimonials({
       className={className}
       aria-labelledby="testimonials-title"
     >
-      <Container maxWidth="xl">
+      <Container>
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">
           {subtitle && (

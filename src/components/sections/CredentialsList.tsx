@@ -18,7 +18,7 @@ export function CredentialsList({
 }: CredentialsListProps) {
   return (
     <Section id="credentials" bg="default" aria-labelledby="credentials-title">
-      <Container maxWidth="xl">
+      <Container>
         <div className="text-center mb-12">
           {subtitle && (
             <Text

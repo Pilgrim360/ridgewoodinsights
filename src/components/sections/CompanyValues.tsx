@@ -22,7 +22,7 @@ export function CompanyValues({
 }: CompanyValuesProps) {
   return (
     <Section id="values" bg="default" aria-labelledby="values-title">
-      <Container maxWidth="xl">
+      <Container>
         <div className="text-center mb-12 md:mb-16">
           {subtitle && (
             <Text

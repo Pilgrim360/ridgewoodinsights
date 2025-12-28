@@ -1,7 +1,7 @@
 import { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 
-export interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {}
+export type ContainerProps = React.HTMLAttributes<HTMLDivElement>;
 
 export const Container = forwardRef<HTMLDivElement, ContainerProps>(
   ({ className, children, ...props }, ref) => {

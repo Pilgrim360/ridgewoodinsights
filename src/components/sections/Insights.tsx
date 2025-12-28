@@ -177,7 +177,7 @@ export function Insights({
             className={className}
             aria-labelledby="insights-title"
         >
-            <Container maxWidth="xl">
+            <Container>
                 <div className="text-center mb-12 md:mb-16">
                     {subtitle && (
                         <Text

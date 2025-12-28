@@ -70,7 +70,7 @@ export function Hero({
         </video>
       )}
       <div className="absolute inset-0 bg-black/60" />
-      <Container className="relative" maxWidth="xl">
+      <Container className="relative">
         <div className={`grid items-center gap-8 ${alignmentClasses[alignment]}`}>
           {/* Content */}
           <div className="space-y-6">

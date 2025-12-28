@@ -38,7 +38,7 @@ export function NewInsights({ title, subtitle, insights }: NewInsightsProps) {
 
     return (
         <Section id="new-insights" bg="default" aria-labelledby="new-insights-title" className="mt-16 py-8">
-            <Container maxWidth="xl">
+            <Container>
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-12">
                     <div className="text-center md:text-left mb-8 md:mb-0">
                         {subtitle && (

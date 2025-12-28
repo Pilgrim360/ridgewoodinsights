@@ -59,7 +59,7 @@ export function CTA({
       className={`${backgroundClasses[backgroundVariant]} ${className}`}
       aria-labelledby="cta-title"
     >
-      <Container maxWidth="xl">
+      <Container>
         <div className={contentClasses[variant]}>
           {/* Content */}
           <div className={`space-y-4 ${variant === 'split' ? '' : 'md:max-w-2xl'}`}>

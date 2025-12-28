@@ -64,7 +64,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       <article className="min-h-screen pb-24 bg-white">
         {/* Minimalist Hero Section */}
         <div className="pt-8 pb-8 md:pt-12 md:pb-12">
-          <Container maxWidth="lg">
+            <Container>
             <div className="max-w-3xl mx-auto text-center">
               <div className="flex justify-center mb-6">
                 <Badge className="bg-primary/10 text-primary hover:bg-primary/20 transition-colors border-transparent px-3 py-1">
@@ -93,7 +93,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {/* Featured Image */}
         {post.image && (
-          <Container maxWidth="xl" className="mb-16 md:mb-24">
+          <Container className="mb-16 md:mb-24">
             <div className="relative aspect-[21/9] w-full overflow-hidden rounded-lg">
               <Image
                 src={post.image}
@@ -106,7 +106,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           </Container>
         )}
 
-        <Container maxWidth="lg">
+        <Container>
           <div className="flex flex-col md:flex-row gap-12 lg:gap-24 relative">
             
             {/* Sidebar / Share Buttons - Sticky on Desktop */}

@@ -118,7 +118,7 @@ export function ContactForm({
   if (submitStatus === 'success') {
     return (
       <Section id="contact-form" bg="white" className={className}>
-        <Container maxWidth="lg">
+          <Container>
           <Card variant="default" className="p-8 text-center">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <svg
@@ -159,7 +159,7 @@ export function ContactForm({
 
   return (
     <Section id="contact-form" bg="white" className={className}>
-      <Container maxWidth="lg">
+      <Container>
         <div className={formContainerClasses[variant]}>
           {/* Form Header */}
           <div className="text-center mb-8">

@@ -21,7 +21,7 @@ export function ServiceDetails({
 }: ServiceDetailsProps) {
   return (
     <Section id="service-details" bg="white" aria-labelledby="details-title">
-      <Container maxWidth="xl">
+      <Container>
         <div className="text-center mb-12 md:mb-16">
           {subtitle && (
             <Text

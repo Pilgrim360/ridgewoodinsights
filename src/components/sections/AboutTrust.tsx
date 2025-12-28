@@ -134,7 +134,7 @@ export function AboutTrust({
       className={className}
       aria-labelledby="about-trust-title"
     >
-      <Container maxWidth="xl">
+      <Container>
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-start">
           {/* Content */}
           <div className="space-y-6">
