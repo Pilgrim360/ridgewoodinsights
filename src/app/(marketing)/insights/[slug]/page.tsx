@@ -64,7 +64,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       <article className="min-h-screen bg-white">
         {/* Hero Section with Background Image */}
         {post.image && (
-          <div className="relative w-full h-[50vh] md:h-[60vh] overflow-hidden">
+          <div className="relative w-full h-[60vh] md:h-[70vh] overflow-hidden">
             {/* Background Image */}
             <Image
               src={post.image}
@@ -74,8 +74,8 @@ export default async function BlogPostPage({ params }: PageProps) {
               priority
             />
             
-            {/* Gradient Overlay - Subtle at top, darker at bottom for text readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+            {/* Gradient Overlay - Increased opacity for better contrast */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
             
             {/* Hero Content - Lower Left Positioning */}
             <div className="absolute inset-0 flex items-end">
@@ -91,7 +91,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                   {/* Title */}
                   <Heading 
                     as={1} 
-                    className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-white mb-3 md:mb-4 leading-tight tracking-tight"
+                    className="text-2xl md:text-3xl lg:text-4xl font-sans font-bold text-white mb-3 md:mb-4 leading-tight tracking-tight"
                   >
                     {post.title}
                   </Heading>
