@@ -21,21 +21,64 @@
     @apply mt-4;
   }
 
+  /* Table Styling */
   .ProseMirror .tableWrapper {
-    @apply overflow-x-auto;
+    @apply overflow-x-auto my-4;
+    padding: 1px;
   }
 
   .ProseMirror table {
-    @apply w-full border-collapse;
+    @apply w-full border-collapse m-0;
+    border-spacing: 0;
   }
 
   .ProseMirror th,
   .ProseMirror td {
-    @apply border border-surface px-3 py-2 align-top;
+    @apply border border-surface px-3 py-2 align-top relative;
+    min-width: 60px;
+    vertical-align: top;
   }
 
+  /* Header cells - distinct styling */
   .ProseMirror th {
-    @apply bg-surface text-secondary;
+    @apply bg-secondary/5 text-secondary font-bold;
+    border-width: 2px;
+    border-color: #2C3E50;
+  }
+
+  /* Selected cells */
+  .ProseMirror .selectedCell {
+    @apply bg-primary/10;
+  }
+
+  .ProseMirror th.selectedCell {
+    @apply bg-primary/20;
+  }
+
+  /* Column resize handle */
+  .ProseMirror .column-resize-handle {
+    position: absolute;
+    right: -2px;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    cursor: col-resize;
+    background-color: transparent;
+    z-index: 10;
+  }
+
+  .ProseMirror .column-resize-handle:hover {
+    @apply bg-primary/30;
+  }
+
+  .ProseMirror.resize-cursor {
+    cursor: col-resize;
+  }
+
+  /* Table cell content alignment */
+  .ProseMirror td p,
+  .ProseMirror th p {
+    @apply m-0;
   }
 
   .ProseMirror .page-break {

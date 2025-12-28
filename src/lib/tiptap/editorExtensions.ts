@@ -12,8 +12,6 @@ import CharacterCount from '@tiptap/extension-character-count';
 import Placeholder from '@tiptap/extension-placeholder';
 import Table from '@tiptap/extension-table';
 import TableRow from '@tiptap/extension-table-row';
-import TableHeader from '@tiptap/extension-table-header';
-import TableCell from '@tiptap/extension-table-cell';
 import Youtube from '@tiptap/extension-youtube';
 import Typography from '@tiptap/extension-typography';
 
@@ -24,6 +22,8 @@ import { IframeEmbed } from './extensions/IframeEmbed';
 import { AudioEmbed } from './extensions/AudioEmbed';
 import { ImageExtended } from './extensions/ImageExtended';
 import { HeadingWithId } from './extensions/HeadingWithId';
+import { TableCellExtended } from './extensions/TableCellExtended';
+import { TableHeaderExtended } from './extensions/TableHeaderExtended';
 
 export interface PostEditorExtensionsOptions {
   placeholder?: string;
@@ -72,8 +72,8 @@ export function createPostEditorExtensions({
       resizable: true,
     }),
     TableRow,
-    TableHeader,
-    TableCell,
+    TableHeaderExtended,
+    TableCellExtended,
     Youtube.configure({
       controls: true,
       nocookie: true,
