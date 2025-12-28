@@ -63,7 +63,7 @@ export function Navbar({ className, mobileMenuOpen, setMobileMenuOpen, ...props 
         )}
         {...props}
       >
-        <Container maxWidth="2xl">
+        <Container maxWidth="full-bleed">
           <nav className="flex h-20 items-center justify-between" aria-label="Main navigation">
             <Link
               href="/"

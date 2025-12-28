@@ -8,12 +8,12 @@ export interface HeadingProps extends React.HTMLAttributes<HTMLHeadingElement> {
 }
 
 const sizeClasses: Record<HeadingLevel, string> = {
-  1: 'text-4xl md:text-5xl lg:text-6xl font-bold',
-  2: 'text-3xl md:text-4xl font-bold',
-  3: 'text-2xl md:text-3xl font-semibold',
-  4: 'text-xl md:text-2xl font-semibold',
-  5: 'text-lg md:text-xl font-medium',
-  6: 'text-base md:text-lg font-medium',
+  1: 'text-4xl sm:text-5xl md:text-6xl font-bold',
+  2: 'text-3xl sm:text-4xl font-bold',
+  3: 'text-2xl sm:text-3xl font-semibold',
+  4: 'text-xl sm:text-2xl font-semibold',
+  5: 'text-lg sm:text-xl font-medium',
+  6: 'text-base sm:text-lg font-medium',
 };
 
 export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(

@@ -30,7 +30,7 @@ export function TeamGrid({
 }: TeamGridProps) {
   return (
     <Section id="team" bg="white" aria-labelledby="team-title">
-      <Container maxWidth="2xl">
+      <Container maxWidth="full-bleed">
         <div className="text-center mb-12 md:mb-16">
           {subtitle && (
             <Text

@@ -482,7 +482,7 @@ export function InsightsGrid({
 
   return (
     <Section bg={backgroundVariant} aria-label="Insights">
-      <Container maxWidth="2xl">
+      <Container maxWidth="full-bleed">
         {showLayoutSwitcher && viewOptions.length > 1 ? (
           <div className="mb-8 flex justify-end">
             <div className="flex items-center gap-2 rounded-xl border border-surface/70 bg-white p-1 overflow-x-auto">

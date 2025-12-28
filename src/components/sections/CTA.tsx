@@ -36,7 +36,7 @@ export function CTA({
 }: CTAProps) {
   const backgroundClasses = {
     default: 'bg-background',
-    muted: 'bg-muted border border-surface',
+    muted: 'bg-background border-y border-surface',
     white: 'bg-white',
   };
 
@@ -59,7 +59,7 @@ export function CTA({
       className={`${backgroundClasses[backgroundVariant]} ${className}`}
       aria-labelledby="cta-title"
     >
-      <Container maxWidth="2xl">
+      <Container maxWidth="full-bleed">
         <div className={contentClasses[variant]}>
           {/* Content */}
           <div className={`space-y-4 ${variant === 'split' ? '' : 'md:max-w-2xl'}`}>

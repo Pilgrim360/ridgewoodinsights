@@ -22,7 +22,7 @@ export function FAQ({
 }: FAQProps) {
   return (
     <Section id="faq" bg="default" aria-labelledby="faq-title">
-      <Container maxWidth="xl">
+      <Container maxWidth="full-bleed">
         <div className="text-center mb-12">
           {subtitle && (
             <Text

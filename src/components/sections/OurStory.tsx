@@ -18,7 +18,7 @@ export function OurStory({
 }: OurStoryProps) {
   return (
     <Section id="our-story" bg="white" aria-labelledby="story-title">
-      <Container maxWidth="2xl">
+      <Container maxWidth="full-bleed">
         <div className="grid gap-10 md:gap-12 lg:grid-cols-2 lg:gap-16 items-center">
           <div>
             {subtitle && (
