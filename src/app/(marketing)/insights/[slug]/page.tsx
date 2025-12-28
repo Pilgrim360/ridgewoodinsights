@@ -74,16 +74,16 @@ export default async function BlogPostPage({ params }: PageProps) {
               priority
             />
             
-            {/* Dark Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/45 to-black/50" />
+            {/* Gradient Overlay - Subtle at top, darker at bottom for text readability */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
             
-            {/* Hero Content */}
-            <div className="absolute inset-0 flex items-center justify-center">
+            {/* Hero Content - Lower Left Positioning */}
+            <div className="absolute inset-0 flex items-end">
               <Container maxWidth="xl">
-                <div className="max-w-4xl mx-auto text-center px-4">
+                <div className="max-w-4xl pb-8 md:pb-12 lg:pb-16 px-4">
                   {/* Category Badge */}
-                  <div className="flex justify-center mb-6">
-                    <Badge className="bg-white/90 text-secondary backdrop-blur-sm hover:bg-white transition-colors border-transparent px-4 py-1.5 text-sm">
+                  <div className="flex mb-3 md:mb-4">
+                    <Badge className="bg-white/90 text-secondary backdrop-blur-sm hover:bg-white transition-colors border-transparent px-3 py-1 text-xs">
                       {post.category}
                     </Badge>
                   </div>
@@ -91,13 +91,13 @@ export default async function BlogPostPage({ params }: PageProps) {
                   {/* Title */}
                   <Heading 
                     as={1} 
-                    className="text-3xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-6 leading-tight tracking-tight"
+                    className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-white mb-3 md:mb-4 leading-tight tracking-tight"
                   >
                     {post.title}
                   </Heading>
 
                   {/* Metadata */}
-                  <div className="flex flex-wrap items-center justify-center gap-3 text-white/80 text-sm md:text-base font-medium">
+                  <div className="flex flex-wrap items-center gap-2 md:gap-3 text-white/70 text-xs md:text-sm font-medium">
                     <span>
                       {formatDate(post.date)}
                     </span>
