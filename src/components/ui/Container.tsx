@@ -1,25 +1,12 @@
 import { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 
-export interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
-  maxWidth?: 'lg' | 'xl' | '2xl' | 'full';
-}
-
-const maxWidthClasses = {
-  lg: 'max-w-5xl',
-  xl: 'max-w-7xl',
-  '2xl': 'max-w-screen-2xl',
-  full: 'max-w-full',
-};
+export interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export const Container = forwardRef<HTMLDivElement, ContainerProps>(
-  ({ maxWidth = 'xl', className, children, ...props }, ref) => {
+  ({ className, children, ...props }, ref) => {
     return (
-      <div
-        ref={ref}
-        className={cn('container', maxWidthClasses[maxWidth], className)}
-        {...props}
-      >
+      <div ref={ref} className={cn('container', className)} {...props}>
         {children}
       </div>
     );
