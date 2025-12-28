@@ -22,7 +22,7 @@ export function CompanyValues({
 }: CompanyValuesProps) {
   return (
     <Section id="values" bg="default" aria-labelledby="values-title">
-      <Container maxWidth="xl">
+      <Container maxWidth="full-bleed">
         <div className="text-center mb-12 md:mb-16">
           {subtitle && (
             <Text
@@ -35,13 +35,13 @@ export function CompanyValues({
           <Heading
             as={2}
             id="values-title"
-            className="text-2xl md:text-3xl lg:text-4xl font-bold text-secondary mb-6"
+            className="text-2xl sm:text-3xl lg:text-4xl font-bold text-secondary mb-6"
           >
             {title}
           </Heading>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-6 md:gap-8 lg:gap-10 md:grid-cols-2 lg:grid-cols-4">
           {values.map((value, index) => (
             <Card
               key={index}

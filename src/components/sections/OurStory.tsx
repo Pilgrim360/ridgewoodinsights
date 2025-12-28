@@ -18,8 +18,8 @@ export function OurStory({
 }: OurStoryProps) {
   return (
     <Section id="our-story" bg="white" aria-labelledby="story-title">
-      <Container maxWidth="xl">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
+      <Container maxWidth="full-bleed">
+        <div className="grid gap-10 md:gap-12 lg:grid-cols-2 lg:gap-16 items-center">
           <div>
             {subtitle && (
               <Text
@@ -32,7 +32,7 @@ export function OurStory({
             <Heading
               as={2}
               id="story-title"
-              className="text-2xl md:text-3xl lg:text-4xl font-bold text-secondary mb-6"
+              className="text-2xl sm:text-3xl lg:text-4xl font-bold text-secondary mb-6"
             >
               {title}
             </Heading>
@@ -56,7 +56,7 @@ export function OurStory({
               </Text>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4 md:gap-6">
             {trustSignals.map((signal, index) => (
               <Card
                 key={index}

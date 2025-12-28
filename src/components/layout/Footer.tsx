@@ -33,8 +33,8 @@ export function Footer({ className, ...props }: FooterProps) {
       className={cn('bg-secondary text-white pt-20 pb-10', className)}
       {...props}
     >
-      <Container>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16">
+      <Container maxWidth="full-bleed">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-12 gap-x-4 md:gap-x-6 lg:gap-x-8 mb-16">
           {/* Column 1: Brand & Socials */}
           <div className="space-y-8">
             <div className="space-y-4">
@@ -154,7 +154,7 @@ export function Footer({ className, ...props }: FooterProps) {
           <p className="text-xs text-white/40 font-medium">
             © {currentYear} {COMPANY_INFO.name}. All rights reserved.
           </p>
-          <div className="flex gap-8 text-xs text-white/40">
+          <div className="flex flex-wrap justify-center gap-6 md:gap-8 text-xs text-white/40">
             <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
             <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link href="/cookies" className="hover:text-white transition-colors">Cookie Policy</Link>

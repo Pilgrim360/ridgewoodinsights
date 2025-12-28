@@ -93,7 +93,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {/* Featured Image */}
         {post.image && (
-          <Container maxWidth="xl" className="mb-16 md:mb-24">
+          <Container maxWidth="full-bleed" className="mb-16 md:mb-24">
             <div className="relative aspect-[21/9] w-full overflow-hidden rounded-lg">
               <Image
                 src={post.image}
@@ -107,7 +107,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         )}
 
         <Container maxWidth="lg">
-          <div className="flex flex-col md:flex-row gap-12 lg:gap-24 relative">
+          <div className="flex flex-col md:flex-row gap-8 md:gap-12 lg:gap-24 relative">
             
             {/* Sidebar / Share Buttons - Sticky on Desktop */}
             <div className="hidden md:block w-12 flex-shrink-0">

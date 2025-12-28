@@ -20,8 +20,8 @@ export interface ContactInfoProps {
 export function ContactInfo({ companyInfo }: ContactInfoProps) {
   return (
     <Section id="contact-info" bg="white" aria-labelledby="contact-info-title">
-      <Container maxWidth="xl">
-        <div className="grid gap-8 md:grid-cols-3 mb-16">
+      <Container maxWidth="full-bleed">
+        <div className="grid gap-6 md:gap-8 lg:gap-10 md:grid-cols-3 mb-16">
           {/* Phone */}
           <Card variant="default" className="p-6 text-center hover:shadow-lg transition-shadow duration-300">
             <div className="inline-flex items-center justify-center w-12 h-12 bg-primary/10 rounded-full mb-4">

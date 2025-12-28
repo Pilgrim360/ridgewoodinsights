@@ -70,7 +70,7 @@ export function Hero({
         </video>
       )}
       <div className="absolute inset-0 bg-black/60" />
-      <Container className="relative" maxWidth="xl">
+      <Container className="relative" maxWidth="full-bleed">
         <div className={`grid items-center gap-8 ${alignmentClasses[alignment]}`}>
           {/* Content */}
           <div className="space-y-6">
@@ -86,7 +86,7 @@ export function Hero({
               as={1}
               id="hero-title"
               className={cn(
-                'text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight max-w-4xl',
+                'text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight max-w-5xl',
                 alignment === 'center' && 'mx-auto'
               )}
             >
@@ -96,7 +96,7 @@ export function Hero({
               <Text
                 as="p"
                 className={cn(
-                  'text-white/90 text-lg md:text-xl leading-relaxed max-w-3xl',
+                  'text-white/90 text-lg md:text-xl leading-relaxed max-w-2xl',
                   alignment === 'center' && 'mx-auto'
                 )}
               >
@@ -106,7 +106,7 @@ export function Hero({
             {/* CTAs */}
             <div
               className={cn(
-                'flex flex-col sm:flex-row gap-4 pt-6',
+                'flex flex-col sm:flex-row gap-4 md:gap-6 pt-6',
                 alignment === 'center' ? 'items-center justify-center' : 'items-start'
               )}
             >

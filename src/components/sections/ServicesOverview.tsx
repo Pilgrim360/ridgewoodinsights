@@ -45,7 +45,7 @@ export function ServicesOverview({
       className={className}
       aria-labelledby="services-title"
     >
-      <Container maxWidth="xl">
+      <Container maxWidth="full-bleed">
         {/* Section Header */}
         <div className="text-center mb-12 md:mb-16">
           {subtitle && (
@@ -60,14 +60,14 @@ export function ServicesOverview({
           <Heading
             as={2}
             id="services-title"
-            className="text-2xl md:text-3xl lg:text-4xl font-bold text-secondary mb-6"
+            className="text-2xl sm:text-3xl lg:text-4xl font-bold text-secondary mb-6"
           >
             {title}
           </Heading>
         </div>
 
         {/* Services Grid */}
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 mb-12">
+        <div className="grid gap-6 md:gap-8 lg:gap-10 md:grid-cols-2 lg:grid-cols-3 mb-12">
           {displayServices.map((service) => (
             <Card
               key={service.id}

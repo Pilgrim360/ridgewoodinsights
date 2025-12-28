@@ -10,12 +10,21 @@ const config: Config = {
   theme: {
     container: {
       center: true,
-      padding: '1rem',
-      screens: {
-        '2xl': '1400px',
+      padding: {
+        DEFAULT: '1rem',
+        sm: '1.5rem',
+        md: '2rem',
+        lg: '3rem',
+        xl: '4rem',
+        '2xl': '5rem',
       },
     },
     extend: {
+      spacing: {
+        'fluid-4': 'clamp(1rem, 0.95rem + 0.25vw, 1.5rem)',
+        'fluid-6': 'clamp(1.5rem, 1.35rem + 0.6vw, 2.25rem)',
+        'fluid-8': 'clamp(2rem, 1.8rem + 0.9vw, 3rem)',
+      },
       colors: {
         primary: {
           DEFAULT: '#006466',
