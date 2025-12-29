@@ -70,10 +70,25 @@ export function createPostEditorExtensions({
     }),
     Table.configure({
       resizable: true,
+      HTMLAttributes: {
+        class: 'tiptap-table w-full border-collapse',
+      },
     }),
-    TableRow,
-    TableHeader,
-    TableCell,
+    TableRow.configure({
+      HTMLAttributes: {
+        class: 'tiptap-table-row',
+      },
+    }),
+    TableHeader.configure({
+      HTMLAttributes: {
+        class: 'tiptap-table-header',
+      },
+    }),
+    TableCell.configure({
+      HTMLAttributes: {
+        class: 'tiptap-table-cell',
+      },
+    }),
     Youtube.configure({
       controls: true,
       nocookie: true,

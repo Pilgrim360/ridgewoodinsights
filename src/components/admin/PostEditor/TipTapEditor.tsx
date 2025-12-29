@@ -10,7 +10,8 @@ import { sanitizePastedHtml } from '@/lib/tiptap/sanitize';
 import { useAdminHeaderSlots } from '@/contexts/AdminHeaderSlotsContext';
 
 import { EditorImageBubbleMenu } from './EditorImageBubbleMenu';
-import { EditorTableBubbleMenu } from './EditorTableBubbleMenu';
+import { TableToolbar, TableInsertButton } from './TableToolbar';
+import { TableCreationModal } from './TableCreationModal';
 import { EditorToolbar } from './EditorToolbar';
 
 export interface TipTapEditorProps {
@@ -35,6 +36,7 @@ export function TipTapEditor({
   const { setSubHeader } = useAdminHeaderSlots();
 
   const [isPastingUpload, setIsPastingUpload] = useState(false);
+  const [isTableCreationOpen, setIsTableCreationOpen] = useState(false);
   const editorRef = useRef<Editor | null>(null);
 
   const editor = useEditor({
@@ -136,12 +138,15 @@ export function TipTapEditor({
     if (!editor) return;
 
     setSubHeader(
-      <EditorToolbar
-        editor={editor}
-        disabled={disabled}
-        onError={onError}
-        className="w-full border-0 rounded-none bg-transparent p-0"
-      />
+      <div className="flex items-center gap-2 w-full">
+        <EditorToolbar
+          editor={editor}
+          disabled={disabled}
+          onError={onError}
+          onTableCreate={() => setIsTableCreationOpen(true)}
+          className="flex-1 border-0 rounded-none bg-transparent p-0"
+        />
+      </div>
     );
 
     return () => {
@@ -166,7 +171,29 @@ export function TipTapEditor({
   return (
     <div className="space-y-3">
       <EditorImageBubbleMenu editor={editor} disabled={disabled} onError={onError} />
-      <EditorTableBubbleMenu editor={editor} disabled={disabled} />
+      <TableToolbar editor={editor} disabled={disabled} onError={onError} />
+      <TableCreationModal
+        isOpen={isTableCreationOpen}
+        onClose={() => setIsTableCreationOpen(false)}
+        onConfirm={(data) => {
+          editor
+            .chain()
+            .focus()
+            .insertTable({
+              rows: data.rows,
+              cols: data.cols,
+              withHeaderRow: data.headerRow,
+            })
+            .run();
+
+          // Apply header column after insertion if needed
+          if (data.headerColumn) {
+            setTimeout(() => {
+              editor.chain().focus().toggleHeaderColumn().run();
+            }, 50);
+          }
+        }}
+      />
 
       <div className="overflow-hidden rounded-lg border border-surface bg-white">
         <div className="px-4 pt-4 pb-3">
@@ -205,3 +232,6 @@ export function TipTapEditor({
     </div>
   );
 }
+
+// Export the TableInsertButton for use in the toolbar
+export { TableInsertButton };

@@ -59,6 +59,7 @@ export interface EditorToolbarProps {
   editor: Editor;
   disabled?: boolean;
   onError?: (message: string) => void;
+  onTableCreate?: () => void;
   className?: string;
 }
 
@@ -66,6 +67,7 @@ export function EditorToolbar({
   editor,
   disabled,
   onError,
+  onTableCreate,
   className,
 }: EditorToolbarProps) {
   const csvInputRef = useRef<HTMLInputElement>(null);
@@ -582,7 +584,7 @@ export function EditorToolbar({
           title="Insert table"
           aria-label="Insert table"
           disabled={disabled}
-          onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+          onClick={() => onTableCreate?.() || editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
         >
           <TableIcon className="h-4 w-4" />
         </ToolbarButton>
@@ -598,7 +600,11 @@ export function EditorToolbar({
           title="Delete table"
           aria-label="Delete table"
           disabled={disabled || !editor.isActive('table')}
-          onClick={() => editor.chain().focus().deleteTable().run()}
+          onClick={() => {
+            if (confirm('Are you sure you want to delete this table?')) {
+              editor.chain().focus().deleteTable().run();
+            }
+          }}
         >
           <TrashButtonIcon />
         </ToolbarButton>

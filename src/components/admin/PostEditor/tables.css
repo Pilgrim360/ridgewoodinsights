@@ -1,0 +1,638 @@
+/* Ridgewood Insights Table Styles */
+
+/* Base table structure */
+.tiptap-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+/* Table container for responsive behavior */
+.table-container {
+  overflow-x: auto;
+  margin: 1rem 0;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.table-container.table-responsive-scroll {
+  overflow-x: auto;
+}
+
+.table-container.table-responsive-stack {
+  display: block;
+}
+
+.table-container.table-responsive-stack table {
+  min-width: 100%;
+}
+
+.table-container.table-responsive-collapse {
+  overflow-x: hidden;
+}
+
+/* Table cells */
+.tiptap-table td,
+.tiptap-table th {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #E2E7ED;
+  vertical-align: top;
+  min-width: 3rem;
+}
+
+.tiptap-table td:first-child,
+.tiptap-table th:first-child {
+  border-left-width: 1px;
+}
+
+.tiptap-table td:last-child,
+.tiptap-table th:last-child {
+  border-right-width: 1px;
+}
+
+/* Row borders */
+.tiptap-table tr:first-child td,
+.tiptap-table tr:first-child th {
+  border-top-width: 1px;
+}
+
+.tiptap-table tr:last-child td,
+.tiptap-table tr:last-child th {
+  border-bottom-width: 1px;
+}
+
+/* Header styling */
+.tiptap-table thead th,
+.tiptap-table tbody tr:first-child th {
+  background-color: #E8EAED;
+  font-weight: 600;
+  text-align: center;
+  color: #2C3E50;
+}
+
+/* Header column styling */
+.tiptap-table tbody tr th:first-child {
+  background-color: #E8EAED;
+  font-weight: 600;
+  text-align: center;
+  color: #2C3E50;
+}
+
+/* Selected cell styling */
+.tiptap-table td.selected,
+.tiptap-table th.selected {
+  outline: 2px solid #006466;
+  outline-offset: -1px;
+  background-color: rgba(0, 100, 102, 0.08) !important;
+}
+
+/* Resize handle styling */
+.tiptap-table .resize-handle {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  cursor: col-resize;
+  background: transparent;
+  transition: background-color 0.15s ease;
+  z-index: 10;
+}
+
+.tiptap-table .resize-handle:hover,
+.tiptap-table .resize-handle.active {
+  background-color: #006466;
+}
+
+.tiptap-table .resize-handle::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 25%;
+  bottom: 25%;
+  width: 2px;
+  background-color: rgba(0, 100, 102, 0.5);
+  transform: translateX(-50%);
+  border-radius: 1px;
+}
+
+.tiptap-table .resize-handle:hover::after,
+.tiptap-table .resize-handle.active::after {
+  background-color: #fff;
+}
+
+/* Row resize handle */
+.tiptap-table .row-resize-handle {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 6px;
+  cursor: row-resize;
+  background: transparent;
+  transition: background-color 0.15s ease;
+  z-index: 10;
+}
+
+.tiptap-table .row-resize-handle:hover,
+.tiptap-table .row-resize-handle.active {
+  background-color: #006466;
+}
+
+/* Selection indicators */
+.table-selection-indicator {
+  position: absolute;
+  background-color: rgba(0, 100, 102, 0.1);
+  border: 2px solid #006466;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Row selection indicator */
+.row-header-indicator {
+  background-color: #006466;
+  color: white;
+  font-weight: 600;
+}
+
+/* Column selection indicator */
+.column-header-indicator {
+  background-color: #006466;
+  color: white;
+  font-weight: 600;
+}
+
+/* Cell background colors */
+.tiptap-table td.bg-primary-light,
+.tiptap-table th.bg-primary-light {
+  background-color: #E8F5F5;
+}
+
+.tiptap-table td.bg-secondary-light,
+.tiptap-table th.bg-secondary-light {
+  background-color: #E8EAED;
+}
+
+.tiptap-table td.bg-surface,
+.tiptap-table th.bg-surface {
+  background-color: #E2E7ED;
+}
+
+.tiptap-table td.bg-background,
+.tiptap-table th.bg-background {
+  background-color: #F8F9FB;
+}
+
+.tiptap-table td.bg-yellow-light,
+.tiptap-table th.bg-yellow-light {
+  background-color: #FEF3C7;
+}
+
+.tiptap-table td.bg-green-light,
+.tiptap-table th.bg-green-light {
+  background-color: #DCFCE7;
+}
+
+.tiptap-table td.bg-blue-light,
+.tiptap-table th.bg-blue-light {
+  background-color: #DBEAFE;
+}
+
+.tiptap-table td.bg-pink-light,
+.tiptap-table th.bg-pink-light {
+  background-color: #FCE7F3;
+}
+
+.tiptap-table td.bg-red-light,
+.tiptap-table th.bg-red-light {
+  background-color: #FEE2E2;
+}
+
+/* Text alignment */
+.tiptap-table td.text-left,
+.tiptap-table th.text-left {
+  text-align: left;
+}
+
+.tiptap-table td.text-center,
+.tiptap-table th.text-center {
+  text-align: center;
+}
+
+.tiptap-table td.text-right,
+.tiptap-table th.text-right {
+  text-align: right;
+}
+
+.tiptap-table td.text-justify,
+.tiptap-table th.text-justify {
+  text-align: justify;
+}
+
+/* Vertical alignment */
+.tiptap-table td.valign-top,
+.tiptap-table th.valign-top {
+  vertical-align: top;
+}
+
+.tiptap-table td.valign-middle,
+.tiptap-table th.valign-middle {
+  vertical-align: middle;
+}
+
+.tiptap-table td.valign-bottom,
+.tiptap-table th.valign-bottom {
+  vertical-align: bottom;
+}
+
+/* Bold styling for headers */
+.tiptap-table td.bold,
+.tiptap-table th.bold {
+  font-weight: 600;
+}
+
+/* Border variations */
+.tiptap-table.bordered-solid td,
+.tiptap-table.bordered-solid th {
+  border-style: solid;
+}
+
+.tiptap-table.bordered-dashed td,
+.tiptap-table.bordered-dashed th {
+  border-style: dashed;
+}
+
+.tiptap-table.bordered-dotted td,
+.tiptap-table.bordered-dotted th {
+  border-style: dotted;
+}
+
+.tiptap-table.bordered-double td,
+.tiptap-table.bordered-double th {
+  border-style: double;
+}
+
+.tiptap-table.bordered-none td,
+.tiptap-table.bordered-none th {
+  border-style: none;
+}
+
+/* Table caption */
+.tiptap-table caption {
+  padding: 0.5rem;
+  font-size: 0.875rem;
+  color: #415161;
+  text-align: left;
+  caption-side: bottom;
+  font-style: italic;
+}
+
+/* Hover effects */
+.tiptap-table tbody tr:hover td,
+.tiptap-table tbody tr:hover th {
+  background-color: rgba(0, 100, 102, 0.04);
+}
+
+/* Focus state for accessibility */
+.tiptap-table:focus-within {
+  outline: 2px solid #006466;
+  outline-offset: 2px;
+}
+
+/* Table node view wrapper */
+.table-nodeview {
+  position: relative;
+  margin: 1rem 0;
+}
+
+.table-nodeview.selected {
+  outline: 2px solid #006466;
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+/* Dimension tooltip during resize */
+.resize-tooltip {
+  position: fixed;
+  background-color: #2C3E50;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  pointer-events: none;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Empty table state */
+.tiptap-table-empty {
+  min-height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #415161;
+  font-style: italic;
+  background-color: #F8F9FB;
+  border: 2px dashed #E2E7ED;
+  border-radius: 0.5rem;
+}
+
+/* Print styles */
+@media print {
+  .tiptap-table {
+    page-break-inside: avoid;
+    border: 1px solid #000;
+  }
+
+  .tiptap-table td,
+  .tiptap-table th {
+    border: 1px solid #000;
+  }
+
+  .tiptap-table thead th,
+  .tiptap-table tbody tr:first-child th {
+    background-color: #f0f0f0 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .tiptap-table {
+    font-size: 0.875rem;
+  }
+
+  .tiptap-table td,
+  .tiptap-table th {
+    padding: 0.375rem 0.5rem;
+    min-width: 2rem;
+  }
+
+  .tiptap-table .resize-handle {
+    width: 10px;
+  }
+}
+
+/* Animation for table operations */
+@keyframes table-row-insert {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tiptap-table tbody tr.new-row {
+  animation: table-row-insert 0.2s ease-out;
+}
+
+@keyframes table-column-insert {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.tiptap-table td.new-column,
+.tiptap-table th.new-column {
+  animation: table-column-insert 0.2s ease-out;
+}
+
+/* Table toolbar styles */
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.table-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0 0.5rem;
+  border-right: 1px solid #E2E7ED;
+}
+
+.table-toolbar-group:last-child {
+  border-right: none;
+}
+
+.table-toolbar-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  background: transparent;
+  border-radius: 0.375rem;
+  color: #415161;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.table-toolbar-button:hover {
+  background-color: #F8F9FB;
+  color: #006466;
+}
+
+.table-toolbar-button.active {
+  background-color: #006466;
+  color: white;
+}
+
+.table-toolbar-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Context menu styles */
+.table-context-menu {
+  position: fixed;
+  background-color: white;
+  border: 1px solid #E2E7ED;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  padding: 0.25rem;
+  min-width: 12rem;
+  z-index: 1000;
+}
+
+.table-context-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  font-size: 0.875rem;
+  color: #415161;
+  cursor: pointer;
+  border-radius: 0.375rem;
+  transition: all 0.15s ease;
+}
+
+.table-context-menu-item:hover {
+  background-color: #F8F9FB;
+}
+
+.table-context-menu-item.danger {
+  color: #B42318;
+}
+
+.table-context-menu-item.danger:hover {
+  background-color: #FEE2E2;
+}
+
+.table-context-menu-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.table-context-menu-divider {
+  height: 1px;
+  background-color: #E2E7ED;
+  margin: 0.25rem 0;
+}
+
+/* Modal styles */
+.table-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.table-modal {
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  max-width: 28rem;
+  width: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.table-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #E2E7ED;
+}
+
+.table-modal-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #2C3E50;
+}
+
+.table-modal-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.table-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #E2E7ED;
+  background-color: #F8F9FB;
+}
+
+/* Color picker styles */
+.color-preset-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+}
+
+.color-preset {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.375rem;
+  border: 2px solid #E2E7ED;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.color-preset:hover {
+  transform: scale(1.1);
+}
+
+.color-preset.selected {
+  border-color: #006466;
+  box-shadow: 0 0 0 2px rgba(0, 100, 102, 0.2);
+}
+
+/* Tab styles */
+.table-tabs {
+  display: flex;
+  border-bottom: 1px solid #E2E7ED;
+}
+
+.table-tab {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: transparent;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #415161;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border-bottom: 2px solid transparent;
+}
+
+.table-tab:hover {
+  color: #2C3E50;
+  background-color: #F8F9FB;
+}
+
+.table-tab.active {
+  color: #006466;
+  border-bottom-color: #006466;
+}
+
+/* Preview table */
+.preview-table {
+  border: 1px solid #E2E7ED;
+  border-radius: 0.375rem;
+  overflow: hidden;
+}
+
+.preview-table td,
+.preview-table th {
+  padding: 0.5rem;
+  border: 1px solid #E2E7ED;
+  text-align: center;
+  font-size: 0.75rem;
+}
+
+.preview-table th {
+  background-color: #E8EAED;
+  font-weight: 600;
+}
