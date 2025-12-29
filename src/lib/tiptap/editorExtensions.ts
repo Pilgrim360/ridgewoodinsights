@@ -17,6 +17,7 @@ import TableCell from '@tiptap/extension-table-cell';
 import Youtube from '@tiptap/extension-youtube';
 import Typography from '@tiptap/extension-typography';
 
+import { CustomTableCell } from './extensions/CustomTableCell';
 import { FontSize } from './extensions/FontSize';
 import { LineHeight } from './extensions/LineHeight';
 import { PageBreak } from './extensions/PageBreak';
@@ -73,7 +74,7 @@ export function createPostEditorExtensions({
     }),
     TableRow,
     TableHeader,
-    TableCell,
+    CustomTableCell,
     Youtube.configure({
       controls: true,
       nocookie: true,

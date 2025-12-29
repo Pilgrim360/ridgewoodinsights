@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+.tiptap table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tiptap th,
+.tiptap td {
+  border: 1px solid #000;
+  padding: 8px;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
