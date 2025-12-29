@@ -1,7 +1,11 @@
-import { NodeViewWrapper, ReactNodeViewRenderer } from '@tiptap/react';
+import { Editor, NodeViewWrapper, ReactNodeViewRenderer } from '@tiptap/react';
 import { Table as TableIcon } from 'lucide-react';
 
-export const TableView = ({ editor }) => (
+interface TableViewProps {
+  editor: Editor;
+}
+
+export const TableView = ({ editor }: TableViewProps) => (
   <NodeViewWrapper className="relative">
     <div
       className="absolute -left-8 top-0 flex h-full items-center"
