@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef, useEffect } from 'react';
-import { Editor, type Editor as EditorType } from '@tiptap/react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { X, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
@@ -126,7 +125,6 @@ export function TableStylesPanel({
   className,
 }: TableStylesPanelProps) {
   const [selectedTheme, setSelectedTheme] = useState(currentTheme);
-  const [customizeMode, setCustomizeMode] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
 
   // Close on click outside
@@ -162,10 +160,6 @@ export function TableStylesPanel({
   const handleApplyTheme = useCallback(() => {
     onSelectTheme(selectedTheme);
   }, [onSelectTheme, selectedTheme]);
-
-  const handleCustomize = useCallback(() => {
-    setCustomizeMode(true);
-  }, []);
 
   return (
     <div

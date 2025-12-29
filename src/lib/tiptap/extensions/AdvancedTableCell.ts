@@ -1,5 +1,4 @@
 import { TableCell, TableCellOptions } from '@tiptap/extension-table-cell';
-import { mergeAttributes } from '@tiptap/core';
 
 export interface AdvancedTableCellOptions extends TableCellOptions {
   HTMLAttributes: Record<string, string>;

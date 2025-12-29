@@ -10,7 +10,6 @@ import Highlight from '@tiptap/extension-highlight';
 import FontFamily from '@tiptap/extension-font-family';
 import CharacterCount from '@tiptap/extension-character-count';
 import Placeholder from '@tiptap/extension-placeholder';
-import Table from '@tiptap/extension-table';
 import TableRow from '@tiptap/extension-table-row';
 import Youtube from '@tiptap/extension-youtube';
 import Typography from '@tiptap/extension-typography';

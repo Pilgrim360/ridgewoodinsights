@@ -1,5 +1,4 @@
 import { TableHeader, TableHeaderOptions } from '@tiptap/extension-table-header';
-import { mergeAttributes } from '@tiptap/core';
 
 export interface AdvancedTableHeaderOptions extends TableHeaderOptions {
   HTMLAttributes: Record<string, string>;

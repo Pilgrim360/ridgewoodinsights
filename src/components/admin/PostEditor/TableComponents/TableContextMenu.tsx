@@ -1,9 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Editor, type Editor as EditorType } from '@tiptap/react';
+import { type Editor as EditorType } from '@tiptap/react';
 import {
-  Plus,
   Trash2,
   Merge,
   Split,
@@ -11,9 +10,7 @@ import {
   Rows2,
   Palette,
   MoreHorizontal,
-  Type,
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 interface TableContextMenuProps {
   editor: EditorType;

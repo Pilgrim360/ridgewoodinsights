@@ -281,10 +281,6 @@ export function selectCell(editor: Editor, row: number, column: number): boolean
     return false;
   }
 
-  // Calculate position
-  const rowLengths = tableInfo.rowLengths;
-  const rowContent = rowLengths[row] || 0;
-  
   // Position cursor at the start of the cell
   const basePos = tableInfo.tableStart;
   let currentPos = basePos + 1; // Skip table tag

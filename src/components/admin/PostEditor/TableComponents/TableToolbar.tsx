@@ -1,12 +1,11 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { Editor, type Editor as EditorType } from '@tiptap/react';
+import { type Editor as EditorType } from '@tiptap/react';
 import {
   Table as TableIcon,
   Rows2,
   Columns2,
-  Plus,
   Trash2,
   Merge,
   Split,
@@ -16,7 +15,6 @@ import { cn } from '@/lib/utils';
 import {
   TABLE_THEMES,
   getThemeById,
-  type TableTheme,
 } from '@/lib/tiptap/styles/tableThemes';
 
 import { TableStylesPanel } from './TableStylesPanel';

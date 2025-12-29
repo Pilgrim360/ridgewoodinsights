@@ -1,5 +1,4 @@
 import { Table, TableOptions } from '@tiptap/extension-table';
-import { mergeAttributes } from '@tiptap/core';
 
 export interface AdvancedTableOptions extends TableOptions {
   HTMLAttributes: Record<string, string>;
