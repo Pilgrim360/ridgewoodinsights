@@ -1,4 +1,5 @@
 import Table from '@tiptap/extension-table';
+import { mergeAttributes } from '@tiptap/core';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 import { TableView } from '../nodeViews/TableView';
 
