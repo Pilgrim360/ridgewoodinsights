@@ -577,12 +577,39 @@ export function EditorToolbar({
 
         <Divider />
 
-        {/* Tables */}
+        {/* Tables - Using AdvancedTable */}
         <ToolbarButton
           title="Insert table"
           aria-label="Insert table"
           disabled={disabled}
-          onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+          onClick={() => {
+            const rows = window.prompt('Number of rows:', '4');
+            const cols = window.prompt('Number of columns:', '4');
+            const theme = window.prompt('Theme (minimal, professional, header-blue, banded-rows, etc.):', 'minimal');
+            
+            if (rows && cols) {
+              const rowsNum = Math.max(1, Math.min(50, parseInt(rows) || 4));
+              const colsNum = Math.max(1, Math.min(50, parseInt(cols) || 4));
+              const themeId = theme || 'minimal';
+              
+              // Create table using advanced table extension
+              let tableHTML = `<table data-component="advancedTable" data-theme="${themeId}" data-border-style="solid" data-border-color="#E2E7ED" data-border-width="1">`;
+              
+              for (let i = 0; i < rowsNum; i++) {
+                tableHTML += '<tr>';
+                for (let j = 0; j < colsNum; j++) {
+                  const isHeader = i === 0;
+                  const tag = isHeader ? 'th' : 'td';
+                  const component = isHeader ? 'advancedTableHeader' : 'advancedTableCell';
+                  tableHTML += `<${tag} data-component="${component}"></${tag}>`;
+                }
+                tableHTML += '</tr>';
+              }
+              
+              tableHTML += '</table>';
+              editor.chain().focus().insertContent(tableHTML).run();
+            }
+          }}
         >
           <TableIcon className="h-4 w-4" />
         </ToolbarButton>
@@ -601,6 +628,29 @@ export function EditorToolbar({
           onClick={() => editor.chain().focus().deleteTable().run()}
         >
           <TrashButtonIcon />
+        </ToolbarButton>
+
+        {/* Quick table insert presets */}
+        <ToolbarButton
+          title="Insert 2×2 table"
+          aria-label="Insert 2x2 table"
+          disabled={disabled}
+          onClick={() => {
+            let tableHTML = '<table data-component="advancedTable" data-theme="minimal">';
+            for (let i = 0; i < 2; i++) {
+              tableHTML += '<tr>';
+              for (let j = 0; j < 2; j++) {
+                const tag = i === 0 ? 'th' : 'td';
+                const component = i === 0 ? 'advancedTableHeader' : 'advancedTableCell';
+                tableHTML += `<${tag} data-component="${component}"></${tag}>`;
+              }
+              tableHTML += '</tr>';
+            }
+            tableHTML += '</table>';
+            editor.chain().focus().insertContent(tableHTML).run();
+          }}
+        >
+          <span className="text-xs font-bold">2×2</span>
         </ToolbarButton>
 
         <input

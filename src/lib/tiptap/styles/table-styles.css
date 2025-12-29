@@ -1,0 +1,1004 @@
+/* Advanced Table Styles for TipTap Editor
+ * Enterprise-grade table styling with themes, selection states, and responsive design
+ */
+
+/* ========================================
+   Base Table Styles
+   ======================================== */
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  border-radius: 6px;
+  background: transparent;
+}
+
+.advanced-table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 400px;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.advanced-table td,
+.advanced-table th {
+  padding: 10px 14px;
+  border: 1px solid #E2E7ED;
+  vertical-align: top;
+  min-width: 80px;
+  position: relative;
+}
+
+.advanced-table th {
+  font-weight: 600;
+  text-align: left;
+}
+
+/* ========================================
+   Theme Styles
+   ======================================== */
+
+/* Minimal Theme */
+.advanced-table.table-theme-minimal {
+  border: 1px solid #E2E7ED;
+}
+
+.advanced-table.table-theme-minimal th {
+  background: #F8F9FB;
+  color: #2C3E50;
+}
+
+/* Professional Theme */
+.advanced-table.table-theme-professional {
+  border: 1px solid #415161;
+}
+
+.advanced-table.table-theme-professional th {
+  background: #415161;
+  color: #FFFFFF;
+}
+
+/* Header Blue Theme */
+.advanced-table.table-theme-header-blue {
+  border: 1px solid #006466;
+}
+
+.advanced-table.table-theme-header-blue th {
+  background: #006466;
+  color: #FFFFFF;
+}
+
+/* Header Green Theme */
+.advanced-table.table-theme-header-green {
+  border: 1px solid #0B4F6C;
+}
+
+.advanced-table.table-theme-header-green th {
+  background: #0B4F6C;
+  color: #FFFFFF;
+}
+
+/* Banded Rows Theme */
+.advanced-table.table-theme-banded-rows {
+  border: 1px solid #E2E7ED;
+}
+
+.advanced-table.table-theme-banded-rows th {
+  background: #F8F9FB;
+  color: #2C3E50;
+}
+
+.advanced-table.table-theme-banded-rows tbody tr:nth-child(even) td {
+  background: #F8F9FB;
+}
+
+/* Alternating Blue Theme */
+.advanced-table.table-theme-alternating-blue {
+  border: 1px solid #006466;
+}
+
+.advanced-table.table-theme-alternating-blue th {
+  background: #006466;
+  color: #FFFFFF;
+}
+
+.advanced-table.table-theme-alternating-blue tbody tr:nth-child(even) td {
+  background: #E8F5F5;
+}
+
+/* Alternating Gray Theme */
+.advanced-table.table-theme-alternating-gray {
+  border: 1px solid #415161;
+}
+
+.advanced-table.table-theme-alternating-gray th {
+  background: #415161;
+  color: #FFFFFF;
+}
+
+.advanced-table.table-theme-alternating-gray tbody tr:nth-child(even) td {
+  background: #F8F9FB;
+}
+
+/* Bold Theme */
+.advanced-table.table-theme-bold {
+  border: 2px solid #2C3E50;
+}
+
+.advanced-table.table-theme-bold th {
+  background: #2C3E50;
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+.advanced-table.table-theme-bold td,
+.advanced-table.table-theme-bold th {
+  border: 2px solid #2C3E50;
+}
+
+/* Dashed Modern Theme */
+.advanced-table.table-theme-dashed-modern {
+  border: 1px dashed #006466;
+}
+
+.advanced-table.table-theme-dashed-modern th {
+  background: #E8F5F5;
+  color: #006466;
+  border: 1px dashed #006466;
+}
+
+.advanced-table.table-theme-dashed-modern td {
+  border: 1px dashed #006466;
+}
+
+/* ========================================
+   Cell Selection States
+   ======================================== */
+
+/* Single cell selection */
+.cell-selected {
+  outline: 2px solid #006466 !important;
+  outline-offset: -2px;
+  background-color: rgba(0, 100, 102, 0.08) !important;
+}
+
+/* Row selection */
+.row-selected td {
+  background-color: rgba(0, 100, 102, 0.12) !important;
+}
+
+.row-selected td:first-child {
+  border-left: 3px solid #006466 !important;
+}
+
+/* Column selection */
+.column-selected td,
+.column-selected th {
+  background-color: rgba(0, 100, 102, 0.12) !important;
+}
+
+.column-selected th:first-child {
+  border-top: 3px solid #006466 !important;
+}
+
+/* Table selection (all cells) */
+.table-selected td,
+.table-selected th {
+  background-color: rgba(0, 100, 102, 0.08) !important;
+}
+
+.table-selected td:first-child {
+  border-left: 2px solid #006466 !important;
+}
+
+.table-selected td:last-child {
+  border-right: 2px solid #006466 !important;
+}
+
+/* Range selection (multiple cells) */
+.cell-range-selected {
+  background-color: rgba(0, 100, 102, 0.1) !important;
+}
+
+/* ========================================
+   Header Cell Styling
+   ======================================== */
+
+.table-header-cell {
+  font-weight: 600;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.advanced-table-header {
+  position: relative;
+}
+
+/* Sort indicators could be added via ::after */
+.advanced-table-header[data-sortable="true"]::after {
+  content: '';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 4px solid transparent;
+  border-top-color: currentColor;
+  opacity: 0.4;
+}
+
+.advanced-table-header[data-sort="asc"]::after {
+  border-top-color: #006466;
+  opacity: 1;
+}
+
+.advanced-table-header[data-sort="desc"]::after {
+  border-bottom-color: #006466;
+  opacity: 1;
+  border-top-color: transparent;
+}
+
+/* ========================================
+   Column Resize Handles
+   ======================================== */
+
+.table-resize-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: transparent;
+  cursor: col-resize;
+  z-index: 10;
+  transition: background-color 0.15s ease;
+}
+
+.table-resize-handle:hover,
+.table-resize-handle.active {
+  background: #006466;
+}
+
+.table-resize-handle::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 24px;
+  background: transparent;
+  border-radius: 2px;
+}
+
+.table-resize-handle:hover::before,
+.table-resize-handle.active::before {
+  background: rgba(0, 100, 102, 0.2);
+}
+
+/* Resize cursor state on table */
+.advanced-table[data-resizing="true"] {
+  cursor: col-resize;
+}
+
+/* Column width indicator during resize */
+.column-width-indicator {
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  font-size: 10px;
+  color: #415161;
+  background: #F8F9FB;
+  padding: 2px 6px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+/* ========================================
+   Table Actions Overlay
+   ======================================== */
+
+.table-actions-overlay {
+  position: absolute;
+  top: -36px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: #2C3E50;
+  border-radius: 6px 6px 0 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 20;
+}
+
+.table-wrapper:hover .table-actions-overlay,
+.table-wrapper:focus-within .table-actions-overlay {
+  opacity: 1;
+}
+
+.table-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.table-action-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.table-action-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+
+@media (max-width: 768px) {
+  .table-wrapper {
+    margin: 1rem 0;
+    border-radius: 4px;
+  }
+
+  .advanced-table {
+    font-size: 0.875rem;
+    min-width: 300px;
+  }
+
+  .advanced-table td,
+  .advanced-table th {
+    padding: 8px 10px;
+    min-width: 60px;
+  }
+
+  /* Horizontal scroll indicator */
+  .table-wrapper::after {
+    content: '→';
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: #415161;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .table-wrapper[data-scrollable="true"]::after {
+    opacity: 1;
+  }
+}
+
+/* ========================================
+   Print Styles
+   ======================================== */
+
+@media print {
+  .table-wrapper {
+    overflow: visible;
+    margin: 1rem 0;
+  }
+
+  .advanced-table {
+    min-width: auto;
+    font-size: 10pt;
+  }
+
+  .advanced-table td,
+  .advanced-table th {
+    padding: 6px 10px;
+  }
+
+  /* Preserve backgrounds in print */
+  .advanced-table th {
+    background-color: #F8F9FB !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Remove interactive elements */
+  .table-resize-handle,
+  .table-actions-overlay,
+  .column-width-indicator {
+    display: none !important;
+  }
+}
+
+/* ========================================
+   Focus States (Accessibility)
+   ======================================== */
+
+.advanced-table:focus {
+  outline: 2px solid #006466;
+  outline-offset: 2px;
+}
+
+.advanced-table:focus-within {
+  outline: none;
+}
+
+.advanced-table-cell:focus,
+.advanced-table-header:focus {
+  outline: 2px solid #006466;
+  outline-offset: -2px;
+}
+
+/* ========================================
+   Hover States
+   ======================================== */
+
+.advanced-table tbody tr:hover td {
+  background-color: rgba(0, 100, 102, 0.04) !important;
+}
+
+.advanced-table tbody tr:hover td:first-child {
+  border-left-color: #006466;
+}
+
+.advanced-table tbody tr:hover td:last-child {
+  border-right-color: #006466;
+}
+
+/* ========================================
+   Merge/Split Cell Indicators
+   ======================================== */
+
+.merged-cell {
+  background-color: rgba(0, 100, 102, 0.06) !important;
+}
+
+.merged-cell::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
+  border: 1px dashed rgba(0, 100, 102, 0.3);
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+/* ========================================
+   Context Menu (for TableContextMenu component)
+   ======================================== */
+
+.table-context-menu {
+  position: fixed;
+  min-width: 200px;
+  max-width: 280px;
+  background: #FFFFFF;
+  border: 1px solid #E2E7ED;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 6px;
+  z-index: 1000;
+  animation: menuFadeIn 0.15s ease;
+}
+
+@keyframes menuFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.table-context-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: #415161;
+  font-size: 0.875rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+}
+
+.table-context-menu-item:hover {
+  background: #F8F9FB;
+}
+
+.table-context-menu-item:focus {
+  outline: none;
+  background: #E8F5F5;
+}
+
+.table-context-menu-item:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.table-context-menu-item svg {
+  width: 16px;
+  height: 16px;
+  color: #415161;
+}
+
+.table-context-menu-divider {
+  height: 1px;
+  background: #E2E7ED;
+  margin: 6px 0;
+}
+
+.table-context-menu-item .shortcut {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: #415161;
+  opacity: 0.6;
+}
+
+/* ========================================
+   Table Toolbar (for TableToolbar component)
+   ======================================== */
+
+.table-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background: #FFFFFF;
+  border: 1px solid #E2E7ED;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.table-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 8px;
+  border-right: 1px solid #E2E7ED;
+}
+
+.table-toolbar-group:last-child {
+  border-right: none;
+}
+
+.table-toolbar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: #415161;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.table-toolbar-btn:hover:not(:disabled) {
+  background: #F8F9FB;
+  color: #006466;
+}
+
+.table-toolbar-btn.active {
+  background: #E8F5F5;
+  color: #006466;
+}
+
+.table-toolbar-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.table-toolbar-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ========================================
+   Theme Selection Panel
+   ======================================== */
+
+.table-theme-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 12px;
+}
+
+.table-theme-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.table-theme-item:hover {
+  background: #F8F9FB;
+}
+
+.table-theme-item.active {
+  border-color: #006466;
+  background: #E8F5F5;
+}
+
+.table-theme-preview {
+  width: 100%;
+  aspect-ratio: 1.5;
+  border: 1px solid #E2E7ED;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.table-theme-preview-table {
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse;
+}
+
+.table-theme-preview-table th,
+.table-theme-preview-table td {
+  padding: 2px;
+  border: 0.5px solid rgba(0, 0, 0, 0.1);
+  font-size: 6px;
+}
+
+.table-theme-preview-table th {
+  background: #415161;
+  color: #FFFFFF;
+}
+
+.table-theme-name {
+  font-size: 0.75rem;
+  color: #415161;
+  text-align: center;
+}
+
+/* ========================================
+   Color Picker Styles
+   ======================================== */
+
+.color-picker-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 8px;
+}
+
+.color-swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.color-swatch:hover {
+  transform: scale(1.1);
+}
+
+.color-swatch.active {
+  border-color: #2C3E50;
+  box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px #006466;
+}
+
+.color-swatch-transparent {
+  position: relative;
+  background: linear-gradient(45deg, #ccc 25%, transparent 25%),
+              linear-gradient(-45deg, #ccc 25%, transparent 25%),
+              linear-gradient(45deg, transparent 75%, #ccc 75%),
+              linear-gradient(-45deg, transparent 75%, #ccc 75%);
+  background-size: 8px 8px;
+  background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
+}
+
+.color-swatch-transparent::after {
+  content: '✕';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 10px;
+  color: #B42318;
+}
+
+/* ========================================
+   Border Control Styles
+   ======================================== */
+
+.border-control {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+}
+
+.border-control-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.border-control-label {
+  font-size: 0.75rem;
+  color: #415161;
+  font-weight: 500;
+}
+
+.border-style-selector {
+  display: flex;
+  gap: 4px;
+}
+
+.border-style-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 28px;
+  border: 1px solid #E2E7ED;
+  border-radius: 4px;
+  background: #FFFFFF;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.border-style-btn:hover {
+  background: #F8F9FB;
+}
+
+.border-style-btn.active {
+  border-color: #006466;
+  background: #E8F5F5;
+}
+
+.border-style-btn svg {
+  width: 20px;
+  height: 14px;
+}
+
+.border-width-presets {
+  display: flex;
+  gap: 4px;
+}
+
+.border-width-btn {
+  min-width: 32px;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid #E2E7ED;
+  border-radius: 4px;
+  background: #FFFFFF;
+  font-size: 0.75rem;
+  color: #415161;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.border-width-btn:hover {
+  background: #F8F9FB;
+}
+
+.border-width-btn.active {
+  border-color: #006466;
+  background: #E8F5F5;
+  color: #006466;
+}
+
+/* ========================================
+   Cell Padding Controls
+   ======================================== */
+
+.cell-padding-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.cell-padding-btn {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid #E2E7ED;
+  border-radius: 4px;
+  background: #FFFFFF;
+  font-size: 0.75rem;
+  color: #415161;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cell-padding-btn:hover {
+  background: #F8F9FB;
+}
+
+.cell-padding-btn.active {
+  border-color: #006466;
+  background: #E8F5F5;
+  color: #006466;
+}
+
+.cell-padding-preview {
+  width: 100%;
+  text-align: center;
+  font-size: 0.625rem;
+  color: #415161;
+  opacity: 0.6;
+}
+
+/* ========================================
+   Bubble Menu Expansion
+   ======================================== */
+
+.table-bubble-menu-expanded {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: #FFFFFF;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.table-bubble-menu-section {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 6px;
+  border-right: 1px solid #E2E7ED;
+}
+
+.table-bubble-menu-section:last-child {
+  border-right: none;
+}
+
+.table-bubble-menu-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: #415161;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.table-bubble-menu-btn:hover {
+  background: #F8F9FB;
+  color: #006466;
+}
+
+.table-bubble-menu-btn.active {
+  background: #E8F5F5;
+  color: #006466;
+}
+
+.table-bubble-menu-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ========================================
+   Table Insertion Dialog
+   ======================================== */
+
+.table-insert-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: #FFFFFF;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+.table-insert-presets {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.table-insert-preset {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px;
+  border: 2px solid #E2E7ED;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.table-insert-preset:hover {
+  border-color: #006466;
+  background: #E8F5F5;
+}
+
+.table-insert-preset.active {
+  border-color: #006466;
+  background: #E8F5F5;
+}
+
+.table-insert-grid {
+  display: flex;
+  gap: 2px;
+}
+
+.table-insert-cell {
+  width: 12px;
+  height: 12px;
+  border: 1px solid #415161;
+  border-radius: 1px;
+}
+
+.table-insert-cell.active {
+  background: #006466;
+}
+
+.table-insert-label {
+  font-size: 0.75rem;
+  color: #415161;
+  font-weight: 500;
+}
+
+.table-insert-custom {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.table-insert-input {
+  width: 60px;
+  padding: 6px 8px;
+  border: 1px solid #E2E7ED;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.table-insert-input:focus {
+  outline: none;
+  border-color: #006466;
+}
+
+.table-insert-theme-select {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid #E2E7ED;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  background: #FFFFFF;
+}
+
+.table-insert-theme-select:focus {
+  outline: none;
+  border-color: #006466;
+}

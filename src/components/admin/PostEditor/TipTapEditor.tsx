@@ -9,8 +9,13 @@ import { createPostEditorExtensions } from '@/lib/tiptap/editorExtensions';
 import { sanitizePastedHtml } from '@/lib/tiptap/sanitize';
 import { useAdminHeaderSlots } from '@/contexts/AdminHeaderSlotsContext';
 
+import '@/lib/tiptap/styles/table-styles.css';
+
 import { EditorImageBubbleMenu } from './EditorImageBubbleMenu';
 import { EditorTableBubbleMenu } from './EditorTableBubbleMenu';
+import { EnhancedEditorTableBubbleMenu } from './TableComponents/EnhancedEditorTableBubbleMenu';
+import { TableToolbar } from './TableComponents/TableToolbar';
+import { TableContextMenu } from './TableComponents/TableContextMenu';
 import { EditorToolbar } from './EditorToolbar';
 
 export interface TipTapEditorProps {
@@ -167,6 +172,11 @@ export function TipTapEditor({
     <div className="space-y-3">
       <EditorImageBubbleMenu editor={editor} disabled={disabled} onError={onError} />
       <EditorTableBubbleMenu editor={editor} disabled={disabled} />
+      <EnhancedEditorTableBubbleMenu editor={editor} disabled={disabled} />
+      <TableContextMenu editor={editor} />
+
+      {/* Table Toolbar - shown when in table context */}
+      <TableToolbar editor={editor} className="mb-2" />
 
       <div className="overflow-hidden rounded-lg border border-surface bg-white">
         <div className="px-4 pt-4 pb-3">
