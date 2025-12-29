@@ -1,6 +1,16 @@
 import TableCell from '@tiptap/extension-table-cell';
 import { mergeAttributes } from '@tiptap/core';
 
+interface TableCellAttributes {
+  colspan?: number;
+  rowspan?: number;
+  colwidth?: number[];
+  backgroundColor?: string;
+  borderColor?: string;
+  borderWidth?: string;
+  borderStyle?: string;
+}
+
 export const CustomTableCell = TableCell.extend({
   addAttributes() {
     return {
@@ -56,7 +66,7 @@ export const CustomTableCell = TableCell.extend({
           const colwidthOk = colwidth && /^\d+(,\d+)*$/.test(colwidth);
 
           let hasCustomAttrs = false;
-          const attrs: { [key: string]: any } = {};
+          const attrs: TableCellAttributes = {};
 
           if (colspanOk) {
             attrs.colspan = Number.parseInt(colspan, 10);
