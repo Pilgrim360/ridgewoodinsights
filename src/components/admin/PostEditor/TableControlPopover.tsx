@@ -16,21 +16,23 @@ export function TableControlPopover({ editor }: Omit<TableControlPopoverProps, '
   const [backgroundColor, setBackgroundColor] = useState('#ffffff');
 
   const applyStyles = () => {
-    const { selection } = editor.state;
+    const { selection, tr } = editor.state;
+    const { view } = editor;
+
     if (selection instanceof NodeSelection && selection.node.type.name === 'table') {
       const { from, to } = selection;
       editor.state.doc.nodesBetween(from, to, (node, pos) => {
         if (node.type.name === 'tableCell' || node.type.name === 'tableHeader') {
-          editor
-            .chain()
-            .focus()
-            .setCellAttributeAt(pos, 'borderColor', borderColor)
-            .setCellAttributeAt(pos, 'borderWidth', `${borderWidth}px`)
-            .setCellAttributeAt(pos, 'borderStyle', borderStyle)
-            .setCellAttributeAt(pos, 'backgroundColor', backgroundColor)
-            .run();
+          tr.setNodeMarkup(pos, undefined, {
+            ...node.attrs,
+            borderColor,
+            borderWidth: `${borderWidth}px`,
+            borderStyle,
+            backgroundColor,
+          });
         }
       });
+      view.dispatch(tr);
     } else {
       editor
         .chain()
