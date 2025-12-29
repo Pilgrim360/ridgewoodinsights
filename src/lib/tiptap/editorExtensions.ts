@@ -10,7 +10,7 @@ import Highlight from '@tiptap/extension-highlight';
 import FontFamily from '@tiptap/extension-font-family';
 import CharacterCount from '@tiptap/extension-character-count';
 import Placeholder from '@tiptap/extension-placeholder';
-import Table from '@tiptap/extension-table';
+import { CustomTable } from './extensions/CustomTable';
 import TableRow from '@tiptap/extension-table-row';
 import TableHeader from '@tiptap/extension-table-header';
 import Youtube from '@tiptap/extension-youtube';
@@ -68,7 +68,7 @@ export function createPostEditorExtensions({
     ImageExtended.configure({
       allowBase64: false,
     }),
-    Table.configure({
+    CustomTable.configure({
       resizable: true,
     }),
     TableRow,

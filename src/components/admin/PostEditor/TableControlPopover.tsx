@@ -15,14 +15,31 @@ export function TableControlPopover({ editor }: Omit<TableControlPopoverProps, '
   const [backgroundColor, setBackgroundColor] = useState('#ffffff');
 
   const applyStyles = () => {
-    editor
-      .chain()
-      .focus()
-      .setCellAttribute('borderColor', borderColor)
-      .setCellAttribute('borderWidth', `${borderWidth}px`)
-      .setCellAttribute('borderStyle', borderStyle)
-      .setCellAttribute('backgroundColor', backgroundColor)
-      .run();
+    const { selection } = editor.state;
+    if (selection.isNode && selection.node.type.name === 'table') {
+      const { from, to } = selection;
+      editor.state.doc.nodesBetween(from, to, (node, pos) => {
+        if (node.type.name === 'tableCell' || node.type.name === 'tableHeader') {
+          editor
+            .chain()
+            .focus()
+            .setCellAttributeAt(pos, 'borderColor', borderColor)
+            .setCellAttributeAt(pos, 'borderWidth', `${borderWidth}px`)
+            .setCellAttributeAt(pos, 'borderStyle', borderStyle)
+            .setCellAttributeAt(pos, 'backgroundColor', backgroundColor)
+            .run();
+        }
+      });
+    } else {
+      editor
+        .chain()
+        .focus()
+        .setCellAttribute('borderColor', borderColor)
+        .setCellAttribute('borderWidth', `${borderWidth}px`)
+        .setCellAttribute('borderStyle', borderStyle)
+        .setCellAttribute('backgroundColor', backgroundColor)
+        .run();
+    }
   };
 
   return (
