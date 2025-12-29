@@ -38,7 +38,7 @@ declare module '@tiptap/core' {
 }
 
 export const AdvancedTableHeader = TableHeader.extend<AdvancedTableHeaderOptions>({
-  name: 'advancedTableHeader',
+  name: 'tableHeader',
 
   addOptions() {
     return {

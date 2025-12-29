@@ -38,7 +38,7 @@ declare module '@tiptap/core' {
 }
 
 export const AdvancedTableCell = TableCell.extend<AdvancedTableCellOptions>({
-  name: 'advancedTableCell',
+  name: 'tableCell',
 
   addOptions() {
     return {
@@ -211,6 +211,10 @@ export const AdvancedTableCell = TableCell.extend<AdvancedTableCellOptions>({
       },
       {
         tag: 'td',
+        priority: 50,
+      },
+      {
+        tag: 'th',
         priority: 50,
       },
     ];

@@ -22,7 +22,7 @@ declare module '@tiptap/core' {
 }
 
 export const AdvancedTable = Table.extend<AdvancedTableOptions>({
-  name: 'advancedTable',
+  name: 'table',
 
   addOptions() {
     return {
