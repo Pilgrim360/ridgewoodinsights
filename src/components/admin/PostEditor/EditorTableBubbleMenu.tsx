@@ -12,6 +12,7 @@ import {
   Settings,
 } from 'lucide-react';
 import { useState } from 'react';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { TableControlPopover } from './TableControlPopover';
 import { ToolbarButton } from './ToolbarButton';
 
@@ -20,9 +21,6 @@ export interface EditorTableBubbleMenuProps {
   disabled?: boolean;
 }
 
-import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
-import { TableControlPopover } from './TableControlPopover';
-
 export function EditorTableBubbleMenu({
   editor,
   disabled,
@@ -30,34 +28,33 @@ export function EditorTableBubbleMenu({
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   return (
-    <>
-      <BubbleMenu
-        editor={editor}
-        tippyOptions={{
-          duration: 150,
-          placement: 'bottom',
-          maxWidth: 'calc(100vw - 400px)',
-        }}
-        shouldShow={() => editor.isActive('table')}
-        className="flex items-center gap-1 rounded-lg border border-surface bg-white p-1 shadow-sm"
-      >
-        <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-          <PopoverTrigger asChild>
-            <ToolbarButton
-              title="Table settings"
-              aria-label="Table settings"
-              disabled={disabled}
-            >
-              <Settings className="h-4 w-4" />
-            </ToolbarButton>
-          </PopoverTrigger>
-          <PopoverContent className="w-80">
-            <TableControlPopover editor={editor} onClose={() => setIsPopoverOpen(false)} />
-          </PopoverContent>
-        </Popover>
-        <ToolbarButton
-          title="Add column before"
-          aria-label="Add column before"
+    <BubbleMenu
+      editor={editor}
+      tippyOptions={{
+        duration: 150,
+        placement: 'bottom',
+        maxWidth: 'calc(100vw - 400px)',
+      }}
+      shouldShow={() => editor.isActive('table')}
+      className="flex items-center gap-1 rounded-lg border border-surface bg-white p-1 shadow-sm"
+    >
+      <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+        <PopoverTrigger asChild>
+          <ToolbarButton
+            title="Table settings"
+            aria-label="Table settings"
+            disabled={disabled}
+          >
+            <Settings className="h-4 w-4" />
+          </ToolbarButton>
+        </PopoverTrigger>
+        <PopoverContent className="w-80">
+          <TableControlPopover editor={editor} />
+        </PopoverContent>
+      </Popover>
+      <ToolbarButton
+        title="Add column before"
+        aria-label="Add column before"
         disabled={disabled}
         onClick={() => editor.chain().focus().addColumnBefore().run()}
       >
@@ -112,14 +109,5 @@ export function EditorTableBubbleMenu({
         <Trash2 className="h-4 w-4" />
       </ToolbarButton>
     </BubbleMenu>
-      {isPopoverOpen && (
-        <div className="absolute z-10">
-          <TableControlPopover
-            editor={editor}
-            onClose={() => setIsPopoverOpen(false)}
-          />
-        </div>
-      )}
-    </>
   );
 }
