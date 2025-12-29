@@ -2,6 +2,7 @@
 
 import { Editor } from '@tiptap/react';
 import { useState } from 'react';
+import { NodeSelection } from '@tiptap/pm/state';
 
 export interface TableControlPopoverProps {
   editor: Editor;
@@ -16,7 +17,7 @@ export function TableControlPopover({ editor }: Omit<TableControlPopoverProps, '
 
   const applyStyles = () => {
     const { selection } = editor.state;
-    if (selection.isNode && selection.node.type.name === 'table') {
+    if (selection instanceof NodeSelection && selection.node.type.name === 'table') {
       const { from, to } = selection;
       editor.state.doc.nodesBetween(from, to, (node, pos) => {
         if (node.type.name === 'tableCell' || node.type.name === 'tableHeader') {
