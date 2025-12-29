@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { Editor } from '@/components/admin/PostEditor/Editor';
 import { getPost } from '@/lib/admin/posts';
+import './post-editor.css';
 import { useAdminError } from '@/contexts/AdminErrorContext';
 import { EditorState } from '@/hooks/usePostEditor';
 

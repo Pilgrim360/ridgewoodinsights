@@ -9,8 +9,10 @@ import {
   Merge,
   Split,
   Trash2,
+  Heading1,
 } from 'lucide-react';
 import { ToolbarButton } from './ToolbarButton';
+import { ColorPicker } from './ColorPicker';
 
 export interface EditorTableBubbleMenuProps {
   editor: Editor;
@@ -88,6 +90,18 @@ export function EditorTableBubbleMenu({
       >
         <Trash2 className="h-4 w-4" />
       </ToolbarButton>
+      <ToolbarButton
+        title="Toggle header row"
+        aria-label="Toggle header row"
+        disabled={disabled}
+        onClick={() => editor.chain().focus().toggleHeaderRow().run()}
+      >
+        <Heading1 className="h-4 w-4" />
+      </ToolbarButton>
+      <ColorPicker
+        disabled={disabled}
+        onChange={color => editor.chain().focus().setCellAttribute('backgroundColor', color).run()}
+      />
     </BubbleMenu>
   );
 }

@@ -1,0 +1,12 @@
+.ProseMirror .selectedCell {
+  background-color: #cceeff !important;
+}
+
+.ProseMirror .resize-cursor {
+  cursor: col-resize;
+}
+
+.ProseMirror .table-resizing-handle {
+  background-color: #007bff;
+  width: 2px !important;
+}

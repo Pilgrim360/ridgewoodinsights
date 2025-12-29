@@ -11,6 +11,7 @@ import { useAdminHeaderSlots } from '@/contexts/AdminHeaderSlotsContext';
 
 import { EditorImageBubbleMenu } from './EditorImageBubbleMenu';
 import { EditorTableBubbleMenu } from './EditorTableBubbleMenu';
+import { EditorTableContextMenu } from './EditorTableContextMenu';
 import { EditorToolbar } from './EditorToolbar';
 
 export interface TipTapEditorProps {
@@ -35,6 +36,8 @@ export function TipTapEditor({
   const { setSubHeader } = useAdminHeaderSlots();
 
   const [isPastingUpload, setIsPastingUpload] = useState(false);
+  const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
+  const contextMenuTriggerRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<Editor | null>(null);
 
   const editor = useEditor({
@@ -149,6 +152,30 @@ export function TipTapEditor({
     };
   }, [editor, disabled, onError, setSubHeader]);
 
+  useEffect(() => {
+    const editorElement = editor?.options.element;
+    if (!editorElement) return;
+
+    const handleContextMenu = (event: Event) => {
+      const mouseEvent = event as MouseEvent;
+      if (editor.isActive('table')) {
+        event.preventDefault();
+        const { clientX, clientY } = mouseEvent;
+        if (contextMenuTriggerRef.current) {
+            contextMenuTriggerRef.current.style.top = `${clientY}px`;
+            contextMenuTriggerRef.current.style.left = `${clientX}px`;
+            setIsContextMenuOpen(true);
+        }
+      }
+    };
+
+    editorElement.addEventListener('contextmenu', handleContextMenu);
+
+    return () => {
+      editorElement.removeEventListener('contextmenu', handleContextMenu);
+    };
+  }, [editor]);
+
   const stats = useMemo(() => {
     if (!editor) {
       return {
@@ -167,6 +194,14 @@ export function TipTapEditor({
     <div className="space-y-3">
       <EditorImageBubbleMenu editor={editor} disabled={disabled} onError={onError} />
       <EditorTableBubbleMenu editor={editor} disabled={disabled} />
+      <EditorTableContextMenu
+        editor={editor}
+        disabled={disabled}
+        isOpen={isContextMenuOpen}
+        onOpenChange={setIsContextMenuOpen}
+      >
+        <div ref={contextMenuTriggerRef} style={{ position: 'absolute' }} />
+      </EditorTableContextMenu>
 
       <div className="overflow-hidden rounded-lg border border-surface bg-white">
         <div className="px-4 pt-4 pb-3">
