@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAdminError } from '@/contexts/AdminErrorContext';
+import { useDataRefresh } from '@/contexts/DataRefreshContext';
 import {
   getCategoriesWithCount,
   createCategory,
@@ -16,6 +17,7 @@ import { DeleteConfirmModal } from '@/components/admin/Categories/DeleteConfirmM
 
 export default function CategoriesPage() {
   const { showError, showSuccess } = useAdminError();
+  const { refreshKey } = useDataRefresh();
   const [categories, setCategories] = useState<CategoryWithPostCount[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,7 +25,7 @@ export default function CategoriesPage() {
   const [deleteTarget, setDeleteTarget] = useState<CategoryWithPostCount | null>(null);
   const [isDeletingId, setIsDeletingId] = useState<string | undefined>();
 
-  // Load categories
+  // Load categories on mount and when data is refreshed
   useEffect(() => {
     async function loadCategories() {
       try {
@@ -40,7 +42,7 @@ export default function CategoriesPage() {
     }
 
     loadCategories();
-  }, [showError]);
+  }, [showError, refreshKey]);
 
   const handleNewCategory = () => {
     setEditingCategory(null);

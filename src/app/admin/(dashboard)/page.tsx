@@ -13,12 +13,14 @@ import { StatsCard } from '@/components/admin/Dashboard/StatsCard';
 import { ActivityFeed } from '@/components/admin/Dashboard/ActivityFeed';
 import { QuickActions } from '@/components/admin/Dashboard/QuickActions';
 import { useAdminError } from '@/contexts/AdminErrorContext';
+import { useDataRefresh } from '@/contexts/DataRefreshContext';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [activities, setActivities] = useState<RecentActivity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { showError } = useAdminError();
+  const { refreshKey } = useDataRefresh();
 
   useEffect(() => {
     const loadDashboardData = async () => {
@@ -42,7 +44,7 @@ export default function AdminDashboard() {
     };
 
     loadDashboardData();
-  }, [showError]);
+  }, [showError, refreshKey]); // Add refreshKey to dependencies
 
   return (
     <div className="space-y-8">

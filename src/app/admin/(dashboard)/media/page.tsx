@@ -11,6 +11,7 @@ import { Text } from '@/components/ui/Text';
 import { Badge } from '@/components/ui/Badge';
 import { getMediaItems, uploadMedia, deleteMedia, searchMedia } from '@/lib/admin/media';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
+import { useDataRefresh } from '@/contexts/DataRefreshContext';
 import { useAdminMutation } from '@/hooks/useAdminMutation';
 import { formatFileSize, formatDate } from '@/lib/admin/dates';
 import { ErrorBoundary } from '@/components/admin/ErrorBoundary';
@@ -18,6 +19,7 @@ import { AdminError } from '@/types/admin';
 
 export default function MediaPage() {
   const { user } = useAdminAuth();
+  const { refreshKey } = useDataRefresh();
   const router = useRouter();
   const [mediaItems, setMediaItems] = useState<Array<{
     path: string;
@@ -73,7 +75,7 @@ export default function MediaPage() {
     }
 
     loadMedia();
-  }, [user, router]);
+  }, [user, router, refreshKey]);
 
   const handleSearch = async (term: string) => {
     setSearchTerm(term);

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAdminError } from '@/contexts/AdminErrorContext';
+import { useDataRefresh } from '@/contexts/DataRefreshContext';
 import { getSettings, updateSettings } from '@/lib/admin/settings';
 import { SiteSettings } from '@/types/admin';
 import { SettingsHeader } from '@/components/admin/Settings/SettingsHeader';
@@ -15,6 +16,7 @@ const DEFAULT_SETTINGS: SiteSettings = {
 
 export default function SettingsPage() {
   const { showError, showSuccess } = useAdminError();
+  const { refreshKey } = useDataRefresh();
   const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SETTINGS);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -22,7 +24,7 @@ export default function SettingsPage() {
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
 
-  // Load settings on mount
+  // Load settings on mount and when data is refreshed
   useEffect(() => {
     async function loadSettings() {
       try {
@@ -42,7 +44,7 @@ export default function SettingsPage() {
     }
 
     loadSettings();
-  }, [showError]);
+  }, [showError, refreshKey]);
 
   const handleSave = async (newSettings: SiteSettings) => {
     setIsSaving(true);

@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useEffect, useCallback, useRef, ReactNode } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { usePageVisibility } from '@/hooks/usePageVisibility';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 import { useAdminError } from '@/contexts/AdminErrorContext';
+import { useDataRefresh } from '@/contexts/DataRefreshContext';
 
 interface SessionManagerProps {
   children: ReactNode;
@@ -14,6 +15,7 @@ interface SessionManagerProps {
  * SessionManager
  * Handles all session management logic:
  * - Refreshes session when tab becomes visible
+ * - Triggers data refresh when tab becomes visible
  * - Periodic health checks (every 5 minutes)
  * - Shows user feedback on session issues
  * - Redirects to login when session is expired
@@ -21,7 +23,9 @@ interface SessionManagerProps {
 export function SessionManager({ children }: SessionManagerProps): React.ReactElement {
   const { user, checkAndRefreshSession, handleSessionExpired } = useAdminAuth();
   const { showError } = useAdminError();
+  const { triggerRefresh } = useDataRefresh();
   const pathname = usePathname();
+  const router = useRouter();
   
   // Use ref to track if we're currently refreshing to avoid duplicate calls
   const isRefreshing = useRef(false);
@@ -33,7 +37,7 @@ export function SessionManager({ children }: SessionManagerProps): React.ReactEl
   /**
    * Handle session refresh with user feedback
    */
-  const handleSessionRefresh = useCallback(async () => {
+  const handleSessionRefresh = useCallback(async (shouldRefreshData = false) => {
     // Skip if already refreshing or on login page
     if (isRefreshing.current || isLoginPage) {
       return;
@@ -56,6 +60,13 @@ export function SessionManager({ children }: SessionManagerProps): React.ReactEl
         handleSessionExpired();
       } else {
         console.log('[SessionManager] Session is valid');
+        
+        // If requested, trigger data refresh and router refresh
+        if (shouldRefreshData) {
+          console.log('[SessionManager] Triggering data and router refresh');
+          triggerRefresh();
+          router.refresh();
+        }
       }
     } catch (error) {
       console.error('[SessionManager] Error during session refresh:', error);
@@ -64,16 +75,16 @@ export function SessionManager({ children }: SessionManagerProps): React.ReactEl
     } finally {
       isRefreshing.current = false;
     }
-  }, [checkAndRefreshSession, handleSessionExpired, showError, user, isLoginPage]);
+  }, [checkAndRefreshSession, handleSessionExpired, showError, user, isLoginPage, triggerRefresh, router]);
 
   /**
    * Handle tab visibility change
-   * When user returns to tab, check and refresh session
+   * When user returns to tab, check and refresh session + data
    */
   const handleVisibilityChange = useCallback(() => {
     if (!isLoginPage && user) {
-      console.log('[SessionManager] Tab became visible - checking session');
-      handleSessionRefresh();
+      console.log('[SessionManager] Tab became visible - checking session and refreshing data');
+      handleSessionRefresh(true); // Pass true to trigger data refresh
     }
   }, [handleSessionRefresh, user, isLoginPage]);
 

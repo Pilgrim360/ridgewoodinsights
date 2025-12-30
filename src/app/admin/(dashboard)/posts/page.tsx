@@ -7,6 +7,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { useAdminError } from '@/contexts/AdminErrorContext';
+import { useDataRefresh } from '@/contexts/DataRefreshContext';
 import { getPosts, deletePost, bulkDeletePosts, bulkPublishPosts } from '@/lib/admin/posts';
 import { FilterBar } from '@/components/admin/Posts/FilterBar';
 import { PostsTable } from '@/components/admin/Posts/PostsTable';
@@ -31,6 +32,7 @@ interface PageState {
 
 export default function PostsPage() {
   const { showError, showSuccess } = useAdminError();
+  const { refreshKey } = useDataRefresh();
   const [state, setState] = useState<PageState>({
     posts: [],
     categories: [],
@@ -47,7 +49,7 @@ export default function PostsPage() {
     error: null,
   });
 
-  // Fetch categories on mount
+  // Fetch categories on mount and when data is refreshed
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -69,9 +71,9 @@ export default function PostsPage() {
     };
 
     fetchCategories();
-  }, []);
+  }, [refreshKey]);
 
-  // Fetch posts when filters or page changes
+  // Fetch posts when filters or page changes, or when data is refreshed
   useEffect(() => {
     const fetchPosts = async () => {
       setState((prev) => ({ ...prev, isLoading: true, error: null }));
@@ -97,7 +99,7 @@ export default function PostsPage() {
 
     fetchPosts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.filters, showError]);
+  }, [state.filters, showError, refreshKey]);
 
   // Handle filter changes
   const handleFilterChange = useCallback((newFilters: PostFilters) => {
