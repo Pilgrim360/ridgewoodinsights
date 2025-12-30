@@ -18,9 +18,10 @@ export function useSupabaseSessionManager() {
 
   const refreshSession = useCallback(async () => {
     try {
-      // Calling getUser() forces a session refresh behind the scenes.
-      // We don't need to do anything with the result, just trigger the call.
+      // Calling getUser() forces a session refresh.
       await supabase.auth.getUser();
+      // In addition, ping the database to re-establish the connection.
+      await supabase.from('categories').select('id').limit(1);
     } catch (error) {
       console.error('Error refreshing Supabase session:', error);
     }
