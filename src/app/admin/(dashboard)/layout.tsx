@@ -8,6 +8,7 @@ import {
   useAdminHeaderSlots,
 } from '@/contexts/AdminHeaderSlotsContext';
 import { useSidebarState } from '@/hooks/useSidebarState';
+import { useSupabaseSessionManager } from '@/hooks/useSupabaseSessionManager';
 
 /**
  * Admin Dashboard Layout
@@ -21,6 +22,9 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const sidebarState = useSidebarState();
+
+  // Ensures the Supabase session is refreshed when the tab becomes visible
+  useSupabaseSessionManager();
 
   return (
     <AdminHeaderSlotsProvider>
