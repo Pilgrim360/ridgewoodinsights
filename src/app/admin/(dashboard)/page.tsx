@@ -5,44 +5,19 @@
 
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { DashboardStats, RecentActivity } from '@/types/admin';
-import { getPostStats, getRecentActivity } from '@/lib/admin/posts';
-import { getErrorMessage } from '@/lib/admin/supabase';
+import React from 'react';
 import { StatsCard } from '@/components/admin/Dashboard/StatsCard';
 import { ActivityFeed } from '@/components/admin/Dashboard/ActivityFeed';
 import { QuickActions } from '@/components/admin/Dashboard/QuickActions';
-import { useAdminError } from '@/contexts/AdminErrorContext';
+import { usePostStats, useRecentActivity } from '@/hooks/queries/usePostsQueries';
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [activities, setActivities] = useState<RecentActivity[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const { showError } = useAdminError();
+  const statsQuery = usePostStats();
+  const activityQuery = useRecentActivity(8);
 
-  useEffect(() => {
-    const loadDashboardData = async () => {
-      try {
-        setIsLoading(true);
-        
-        // Fetch stats and activities in parallel
-        const [statsData, activitiesData] = await Promise.all([
-          getPostStats(),
-          getRecentActivity(8),
-        ]);
-
-        setStats(statsData);
-        setActivities(activitiesData);
-      } catch (error) {
-        showError(`Failed to load dashboard: ${getErrorMessage(error)}`);
-        console.error('Dashboard load error:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadDashboardData();
-  }, [showError]);
+  const isLoading = statsQuery.isLoading || activityQuery.isLoading;
+  const stats = statsQuery.data ?? null;
+  const activities = activityQuery.data ?? [];
 
   return (
     <div className="space-y-8">
@@ -98,8 +73,8 @@ export default function AdminDashboard() {
       <section>
         <ActivityFeed
           activities={activities}
-          isLoading={isLoading}
-          isEmpty={activities.length === 0}
+          isLoading={isLoading || activityQuery.isFetching}
+          isEmpty={!isLoading && activities.length === 0}
         />
       </section>
     </div>

@@ -1,17 +1,19 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Search, Image as ImageIcon, Tag, Trash2, ExternalLink } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { Heading } from '@/components/ui/Heading';
 import { Text } from '@/components/ui/Text';
 import { Select } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
-import { getMediaItems, MediaItem, deleteMedia } from '@/lib/admin/media';
+import { MediaItem } from '@/lib/admin/media';
 import { formatFileSize, formatDate } from '@/lib/admin/dates';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 import { cn } from '@/lib/utils';
 import { ImageConfig } from './MediaModal';
+import { useMediaLibrary } from '@/hooks/queries/useMediaQueries';
+import { useDeleteMedia } from '@/hooks/queries/useAdminMutations';
 
 interface MediaBrowserProps {
   onSelect?: (media: MediaItem) => void;
@@ -20,15 +22,24 @@ interface MediaBrowserProps {
   isModal?: boolean;
 }
 
-export function MediaBrowser({ onSelect, selectedMedia = [], onInsert, isModal }: MediaBrowserProps) {
+export function MediaBrowser({
+  onSelect,
+  selectedMedia = [],
+  onInsert,
+  isModal,
+}: MediaBrowserProps) {
   const { user } = useAdminAuth();
-  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
+
+  const mediaQuery = useMediaLibrary({ userId: user?.id });
+  const deleteMutation = useDeleteMedia(user?.id);
+
+  const mediaItems = mediaQuery.data ?? [];
+  const isLoading = mediaQuery.isLoading || mediaQuery.isFetching;
+
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState<'all' | 'image' | 'document' | 'other'>('all');
   const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'name'>('newest');
-  const [isLoading, setIsLoading] = useState(true);
-  
-  // Selection details state
+
   const [config, setConfig] = useState<Omit<ImageConfig, 'url'>>({
     alt: '',
     title: '',
@@ -37,34 +48,17 @@ export function MediaBrowser({ onSelect, selectedMedia = [], onInsert, isModal }
     link: '',
   });
 
-  const selectedItem = useMemo(() => 
-    mediaItems.find(item => selectedMedia.includes(item.path)) || null
-  , [mediaItems, selectedMedia]);
+  const selectedItem = useMemo(
+    () => mediaItems.find((item) => selectedMedia.includes(item.path)) || null,
+    [mediaItems, selectedMedia]
+  );
 
-  const loadMedia = useCallback(async () => {
-    if (!user) return;
-    try {
-      setIsLoading(true);
-      const items = await getMediaItems(user.id);
-      setMediaItems(items);
-    } catch (err) {
-      console.error('Failed to load media:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [user]);
-
-  useEffect(() => {
-    loadMedia();
-  }, [loadMedia]);
-
-  // Update config when selection changes
   useEffect(() => {
     if (selectedItem) {
-      setConfig(prev => ({
+      setConfig((prev) => ({
         ...prev,
         title: selectedItem.name.split('-').slice(1).join('-') || selectedItem.name,
-        alt: prev.alt || '', // Keep alt if user typed it, otherwise blank
+        alt: prev.alt || '',
       }));
     }
   }, [selectedItem]);
@@ -74,17 +68,23 @@ export function MediaBrowser({ onSelect, selectedMedia = [], onInsert, isModal }
 
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      items = items.filter(item => item.name.toLowerCase().includes(term));
+      items = items.filter((item) => item.name.toLowerCase().includes(term));
     }
 
     if (typeFilter !== 'all') {
-      items = items.filter(item => item.type === typeFilter);
+      items = items.filter((item) => item.type === typeFilter);
     }
 
     items.sort((a, b) => {
-      if (sortBy === 'newest') return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-      if (sortBy === 'oldest') return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
-      if (sortBy === 'name') return a.name.localeCompare(b.name);
+      if (sortBy === 'newest') {
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      }
+      if (sortBy === 'oldest') {
+        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+      }
+      if (sortBy === 'name') {
+        return a.name.localeCompare(b.name);
+      }
       return 0;
     });
 
@@ -93,20 +93,22 @@ export function MediaBrowser({ onSelect, selectedMedia = [], onInsert, isModal }
 
   const handleDelete = async (path: string) => {
     if (!window.confirm('Are you sure you want to delete this file?')) return;
+
     try {
-      await deleteMedia(path);
-      setMediaItems(prev => prev.filter(item => item.path !== path));
-    } catch (err) {
-      console.error('Delete error:', err);
-      alert('Failed to delete media');
+      await deleteMutation.mutateAsync(path);
+    } catch {
+      // errors are handled by the global admin toast system
     }
   };
 
   const getMediaTypeIcon = (type: string) => {
     switch (type) {
-      case 'image': return <ImageIcon className="h-8 w-8 text-primary/60" />;
-      case 'document': return <Tag className="h-8 w-8 text-blue-500/60" />;
-      default: return <Tag className="h-8 w-8 text-gray-400" />;
+      case 'image':
+        return <ImageIcon className="h-8 w-8 text-primary/60" />;
+      case 'document':
+        return <Tag className="h-8 w-8 text-blue-500/60" />;
+      default:
+        return <Tag className="h-8 w-8 text-gray-400" />;
     }
   };
 
@@ -120,9 +122,7 @@ export function MediaBrowser({ onSelect, selectedMedia = [], onInsert, isModal }
 
   return (
     <div className="flex h-full w-full overflow-hidden relative min-h-0">
-      {/* Main Content */}
       <div className="flex flex-1 flex-col min-h-0 overflow-hidden bg-background">
-        {/* Toolbar */}
         <div className="flex flex-wrap items-center gap-4 border-b border-surface p-4 bg-white">
           <div className="relative flex-1 min-w-[200px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text/40" />
@@ -135,7 +135,9 @@ export function MediaBrowser({ onSelect, selectedMedia = [], onInsert, isModal }
           </div>
           <Select
             value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value as 'all' | 'image' | 'document' | 'other')}
+            onChange={(e) =>
+              setTypeFilter(e.target.value as 'all' | 'image' | 'document' | 'other')
+            }
             className="w-40"
           >
             <option value="all">All Types</option>
@@ -151,12 +153,11 @@ export function MediaBrowser({ onSelect, selectedMedia = [], onInsert, isModal }
             <option value="oldest">Oldest first</option>
             <option value="name">A-Z</option>
           </Select>
-          <Button variant="outline" size="sm" onClick={loadMedia}>
+          <Button variant="outline" size="sm" onClick={() => void mediaQuery.refetch()}>
             Refresh
           </Button>
         </div>
 
-        {/* Grid */}
         <div className="flex-1 overflow-y-auto p-4">
           {filteredAndSortedItems.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center text-center">
@@ -170,13 +171,14 @@ export function MediaBrowser({ onSelect, selectedMedia = [], onInsert, isModal }
                   key={item.path}
                   onClick={() => onSelect?.(item)}
                   className={cn(
-                    "group relative aspect-square cursor-pointer overflow-hidden rounded-lg border-2 transition-all",
+                    'group relative aspect-square cursor-pointer overflow-hidden rounded-lg border-2 transition-all',
                     selectedMedia.includes(item.path)
-                      ? "border-primary ring-2 ring-primary/20"
-                      : "border-transparent bg-white hover:border-surface"
+                      ? 'border-primary ring-2 ring-primary/20'
+                      : 'border-transparent bg-white hover:border-surface'
                   )}
                 >
                   {item.type === 'image' ? (
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={item.url}
                       alt={item.name}
@@ -199,15 +201,17 @@ export function MediaBrowser({ onSelect, selectedMedia = [], onInsert, isModal }
         </div>
       </div>
 
-      {/* Sidebar */}
       {selectedItem && (
         <div className="w-80 flex-none border-l border-surface bg-white flex flex-col min-h-0 h-full">
           <div className="flex-1 overflow-y-auto p-6 space-y-6 min-h-0">
             <div>
-              <Heading as={4} className="mb-4">Attachment Details</Heading>
+              <Heading as={4} className="mb-4">
+                Attachment Details
+              </Heading>
               <div className="flex gap-4 mb-4">
                 <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-md border border-surface bg-background">
                   {selectedItem.type === 'image' ? (
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img src={selectedItem.url} alt="" className="h-full w-full object-cover" />
                   ) : (
                     <div className="flex h-full items-center justify-center">
@@ -219,12 +223,18 @@ export function MediaBrowser({ onSelect, selectedMedia = [], onInsert, isModal }
                   <Text className="font-medium truncate text-sm" title={selectedItem.name}>
                     {selectedItem.name.split('-').slice(1).join('-') || selectedItem.name}
                   </Text>
-                  <Text muted className="text-xs uppercase">{selectedItem.type}</Text>
-                  <Text muted className="text-xs">{formatDate(selectedItem.created_at)}</Text>
-                  <Text muted className="text-xs">{formatFileSize(selectedItem.size)}</Text>
+                  <Text muted className="text-xs uppercase">
+                    {selectedItem.type}
+                  </Text>
+                  <Text muted className="text-xs">
+                    {formatDate(selectedItem.created_at)}
+                  </Text>
+                  <Text muted className="text-xs">
+                    {formatFileSize(selectedItem.size)}
+                  </Text>
                 </div>
               </div>
-              
+
               <div className="flex gap-2">
                 <Button
                   variant="outline"
@@ -238,7 +248,7 @@ export function MediaBrowser({ onSelect, selectedMedia = [], onInsert, isModal }
                   variant="outline"
                   size="sm"
                   className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                  onClick={() => handleDelete(selectedItem.path)}
+                  onClick={() => void handleDelete(selectedItem.path)}
                 >
                   <Trash2 className="h-3 w-3" />
                 </Button>
@@ -249,27 +259,38 @@ export function MediaBrowser({ onSelect, selectedMedia = [], onInsert, isModal }
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-text/60 uppercase mb-1">Alt Text</label>
+                <label className="block text-xs font-semibold text-text/60 uppercase mb-1">
+                  Alt Text
+                </label>
                 <Input
                   value={config.alt}
-                  onChange={e => setConfig(prev => ({ ...prev, alt: e.target.value }))}
+                  onChange={(e) => setConfig((prev) => ({ ...prev, alt: e.target.value }))}
                   placeholder="Describe this image..."
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-text/60 uppercase mb-1">Title</label>
+                <label className="block text-xs font-semibold text-text/60 uppercase mb-1">
+                  Title
+                </label>
                 <Input
                   value={config.title}
-                  onChange={e => setConfig(prev => ({ ...prev, title: e.target.value }))}
+                  onChange={(e) => setConfig((prev) => ({ ...prev, title: e.target.value }))}
                 />
               </div>
               {selectedItem.type === 'image' && (
                 <>
                   <div>
-                    <label className="block text-xs font-semibold text-text/60 uppercase mb-1">Alignment</label>
+                    <label className="block text-xs font-semibold text-text/60 uppercase mb-1">
+                      Alignment
+                    </label>
                     <Select
                       value={config.alignment}
-                      onChange={e => setConfig(prev => ({ ...prev, alignment: e.target.value as 'left' | 'center' | 'right' | 'full' }))}
+                      onChange={(e) =>
+                        setConfig((prev) => ({
+                          ...prev,
+                          alignment: e.target.value as 'left' | 'center' | 'right' | 'full',
+                        }))
+                      }
                     >
                       <option value="left">Left</option>
                       <option value="center">Center</option>
@@ -278,10 +299,17 @@ export function MediaBrowser({ onSelect, selectedMedia = [], onInsert, isModal }
                     </Select>
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-text/60 uppercase mb-1">Size</label>
+                    <label className="block text-xs font-semibold text-text/60 uppercase mb-1">
+                      Size
+                    </label>
                     <Select
                       value={config.size}
-                      onChange={e => setConfig(prev => ({ ...prev, size: e.target.value as 'thumbnail' | 'medium' | 'large' | 'full' }))}
+                      onChange={(e) =>
+                        setConfig((prev) => ({
+                          ...prev,
+                          size: e.target.value as 'thumbnail' | 'medium' | 'large' | 'full',
+                        }))
+                      }
                     >
                       <option value="thumbnail">Thumbnail (150px)</option>
                       <option value="medium">Medium (300px)</option>
@@ -292,10 +320,12 @@ export function MediaBrowser({ onSelect, selectedMedia = [], onInsert, isModal }
                 </>
               )}
               <div>
-                <label className="block text-xs font-semibold text-text/60 uppercase mb-1">Link To</label>
+                <label className="block text-xs font-semibold text-text/60 uppercase mb-1">
+                  Link To
+                </label>
                 <Input
                   value={config.link}
-                  onChange={e => setConfig(prev => ({ ...prev, link: e.target.value }))}
+                  onChange={(e) => setConfig((prev) => ({ ...prev, link: e.target.value }))}
                   placeholder="https://..."
                 />
               </div>
@@ -303,10 +333,7 @@ export function MediaBrowser({ onSelect, selectedMedia = [], onInsert, isModal }
           </div>
           {isModal && (
             <div className="p-6 border-t border-surface bg-white">
-              <Button
-                className="w-full"
-                onClick={() => onInsert?.({ ...config, url: selectedItem.url })}
-              >
+              <Button className="w-full" onClick={() => onInsert?.({ ...config, url: selectedItem.url })}>
                 Insert into Post
               </Button>
             </div>

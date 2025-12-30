@@ -1,13 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { EditorState } from '@/hooks/usePostEditor';
-import { MediaModal } from '../Media/MediaModal';
-import { Button } from '@/components/ui/Button';
+import { useState } from 'react';
 import { Image as ImageIcon } from 'lucide-react';
-import { getCategories } from '@/lib/admin/categories';
 
-import { CategoryData } from '@/types/admin';
+import { Button } from '@/components/ui/Button';
+import { MediaModal } from '../Media/MediaModal';
+import { EditorState } from '@/hooks/usePostEditor';
+import { useCategories } from '@/hooks/queries/useCategoriesQueries';
 
 interface EditorSidebarProps {
   state: EditorState;
@@ -18,38 +17,18 @@ interface EditorSidebarProps {
   disabled?: boolean;
 }
 
-export function EditorSidebar({
-  state,
-  updateField,
-  disabled,
-}: EditorSidebarProps) {
-  const [categories, setCategories] = useState<CategoryData[]>([]);
-  const [loadingCategories, setLoadingCategories] = useState(true);
+export function EditorSidebar({ state, updateField, disabled }: EditorSidebarProps) {
+  const categoriesQuery = useCategories();
+  const categories = categoriesQuery.data ?? [];
+  const loadingCategories = categoriesQuery.isLoading || categoriesQuery.isFetching;
+
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
-
-  useEffect(() => {
-    async function fetchCategories() {
-      try {
-        const data = await getCategories();
-        const cats = Array.isArray(data) ? data : [];
-        setCategories(cats);
-      } catch (error) {
-        console.error('Failed to load categories:', error);
-      } finally {
-        setLoadingCategories(false);
-      }
-    }
-
-    fetchCategories();
-  }, []);
 
   return (
     <div className="space-y-6">
       {/* Status */}
       <div>
-        <label className="block text-sm font-medium text-secondary mb-2">
-          Status
-        </label>
+        <label className="block text-sm font-medium text-secondary mb-2">Status</label>
         <select
           value={state.status}
           onChange={(e) =>
@@ -66,9 +45,7 @@ export function EditorSidebar({
 
       {/* Disclaimer Type */}
       <div>
-        <label className="block text-sm font-medium text-secondary mb-2">
-          Disclaimer
-        </label>
+        <label className="block text-sm font-medium text-secondary mb-2">Disclaimer</label>
         <select
           value={state.disclaimer_type || 'none'}
           onChange={(e) =>
@@ -81,15 +58,16 @@ export function EditorSidebar({
           <option value="general">General Disclaimer</option>
           <option value="legal">Legal Disclaimer</option>
         </select>
-        <p className="text-xs text-text/60 mt-1">
-          Appends standard legal text to footer
-        </p>
+        <p className="text-xs text-text/60 mt-1">Appends standard legal text to footer</p>
       </div>
 
       {/* Scheduled Date - only show if status is scheduled */}
       {state.status === 'scheduled' && (
         <div>
-          <label htmlFor="scheduled-date" className="block text-sm font-medium text-secondary mb-2">
+          <label
+            htmlFor="scheduled-date"
+            className="block text-sm font-medium text-secondary mb-2"
+          >
             Schedule Date
           </label>
           <input
@@ -100,9 +78,7 @@ export function EditorSidebar({
             disabled={disabled}
             className="w-full px-3 py-2 border border-surface rounded-lg text-sm bg-white text-text focus:outline-none focus:ring-2 focus:ring-primary disabled:bg-background disabled:text-text/50"
           />
-          <p className="text-xs text-text/60 mt-1">
-            When this post should be published
-          </p>
+          <p className="text-xs text-text/60 mt-1">When this post should be published</p>
         </div>
       )}
 
@@ -120,9 +96,7 @@ export function EditorSidebar({
           placeholder="post-slug"
           className="w-full px-3 py-2 border border-surface rounded-lg text-sm bg-white text-text focus:outline-none focus:ring-2 focus:ring-primary disabled:bg-background disabled:text-text/50"
         />
-        <p className="text-xs text-text/60 mt-1">
-          Used in the post URL
-        </p>
+        <p className="text-xs text-text/60 mt-1">Used in the post URL</p>
       </div>
 
       {/* Category */}
@@ -133,9 +107,7 @@ export function EditorSidebar({
         <select
           id="category"
           value={state.category_id || ''}
-          onChange={(e) =>
-            updateField('category_id', e.target.value || null)
-          }
+          onChange={(e) => updateField('category_id', e.target.value || null)}
           disabled={disabled || loadingCategories}
           className="w-full px-3 py-2 border border-surface rounded-lg text-sm bg-white text-text focus:outline-none focus:ring-2 focus:ring-primary disabled:bg-background disabled:text-text/50"
         >
@@ -162,16 +134,12 @@ export function EditorSidebar({
           rows={3}
           className="w-full px-3 py-2 border border-surface rounded-lg text-sm bg-white text-text focus:outline-none focus:ring-2 focus:ring-primary disabled:bg-background disabled:text-text/50 resize-none"
         />
-        <p className="text-xs text-text/60 mt-1">
-          {state.excerpt.length}/200 characters
-        </p>
+        <p className="text-xs text-text/60 mt-1">{state.excerpt.length}/200 characters</p>
       </div>
 
       {/* Featured Image */}
       <div>
-        <label className="block text-sm font-medium text-secondary mb-3">
-          Featured Image
-        </label>
+        <label className="block text-sm font-medium text-secondary mb-3">Featured Image</label>
         {state.cover_image && (
           <div className="mb-3 relative">
             {/* eslint-disable-next-line @next/next/no-img-element */}

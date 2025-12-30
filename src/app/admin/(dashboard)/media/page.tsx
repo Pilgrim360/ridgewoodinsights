@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Button } from '@/components/ui/Button';
@@ -9,88 +9,41 @@ import { Card } from '@/components/ui/Card';
 import { Heading } from '@/components/ui/Heading';
 import { Text } from '@/components/ui/Text';
 import { Badge } from '@/components/ui/Badge';
-import { getMediaItems, uploadMedia, deleteMedia, searchMedia } from '@/lib/admin/media';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
-import { useAdminMutation } from '@/hooks/useAdminMutation';
 import { formatFileSize, formatDate } from '@/lib/admin/dates';
 import { ErrorBoundary } from '@/components/admin/ErrorBoundary';
-import { AdminError } from '@/types/admin';
+import { useMediaLibrary } from '@/hooks/queries/useMediaQueries';
+import { useDeleteMedia, useUploadMedia } from '@/hooks/queries/useAdminMutations';
 
 export default function MediaPage() {
   const { user } = useAdminAuth();
   const router = useRouter();
-  const [mediaItems, setMediaItems] = useState<Array<{
-    path: string;
-    name: string;
-    type: string;
-    size: number;
-    url: string;
-    created_at: string;
-  }>>([]);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [selectedMedia, setSelectedMedia] = useState<string[]>([]);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  const { mutate: handleDelete } = useAdminMutation(
-    async () => {
-      // This will be called for each selected item
-      if (selectedMedia.length === 0) return;
-
-      // Delete all selected items
-      for (const path of selectedMedia) {
-        await deleteMedia(path);
-      }
-      return selectedMedia;
-    },
-    {
-      onSuccess: () => {
-        setMediaItems(mediaItems.filter(item => !selectedMedia.includes(item.path)));
-        setSelectedMedia([]);
-      },
-      onError: (error: AdminError) => {
-        console.error('Delete failed:', error);
-      }
-    }
-  );
+  const mediaQuery = useMediaLibrary({ userId: user?.id, search: searchTerm });
+  const uploadMutation = useUploadMedia(user?.id);
+  const deleteMutation = useDeleteMedia(user?.id);
 
   useEffect(() => {
     if (!user) {
       router.push('/admin/login');
-      return;
     }
-
-    async function loadMedia() {
-      try {
-        if (user) {
-          const items = await getMediaItems(user.id);
-          setMediaItems(items);
-        }
-      } catch (error) {
-        console.error('Failed to load media:', error);
-      }
-    }
-
-    loadMedia();
   }, [user, router]);
 
-  const handleSearch = async (term: string) => {
-    setSearchTerm(term);
-    if (!user) return;
+  if (!user) return null;
 
-    if (term.trim() === '') {
-      const items = await getMediaItems(user.id);
-      setMediaItems(items);
-    } else {
-      const results = await searchMedia(user.id, term);
-      setMediaItems(results);
-    }
+  const mediaItems = mediaQuery.data ?? [];
+
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!user) return;
-
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
@@ -103,35 +56,42 @@ export default function MediaPage() {
         const progress = Math.round(((i + 1) / files.length) * 100);
         setUploadProgress(progress);
 
-        const uploadedItem = await uploadMedia(file, user.id);
-        setMediaItems(prev => [uploadedItem, ...prev]);
+        await uploadMutation.mutateAsync(file);
       }
-    } catch (error) {
-      console.error('Upload failed:', error);
     } finally {
       setIsUploading(false);
       setUploadProgress(0);
+      e.target.value = '';
     }
   };
 
-  const handleDeleteSelected = () => {
-    handleDelete();
-    setShowDeleteConfirm(false);
+  const handleDeleteSelected = async () => {
+    if (selectedMedia.length === 0) return;
+
+    try {
+      for (const path of selectedMedia) {
+        await deleteMutation.mutateAsync(path);
+      }
+      setSelectedMedia([]);
+    } finally {
+      setShowDeleteConfirm(false);
+    }
   };
 
   const toggleSelect = (path: string) => {
-    setSelectedMedia(prev =>
-      prev.includes(path)
-        ? prev.filter(p => p !== path)
-        : [...prev, path]
+    setSelectedMedia((prev) =>
+      prev.includes(path) ? prev.filter((p) => p !== path) : [...prev, path]
     );
   };
 
   const getMediaTypeIcon = (type: string) => {
     switch (type) {
-      case 'image': return '🖼️';
-      case 'document': return '📄';
-      default: return '📁';
+      case 'image':
+        return '🖼️';
+      case 'document':
+        return '📄';
+      default:
+        return '📁';
     }
   };
 
@@ -156,14 +116,9 @@ export default function MediaPage() {
               </Button>
             </label>
             {selectedMedia.length > 0 && (
-              <>
-                <Button
-                  variant="outline"
-                  onClick={() => setShowDeleteConfirm(true)}
-                >
-                  Delete Selected ({selectedMedia.length})
-                </Button>
-              </>
+              <Button variant="outline" onClick={() => setShowDeleteConfirm(true)}>
+                Delete Selected ({selectedMedia.length})
+              </Button>
             )}
           </div>
         </div>
@@ -178,7 +133,11 @@ export default function MediaPage() {
           />
         </div>
 
-        {mediaItems.length === 0 ? (
+        {mediaQuery.isLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-surface border-t-primary" />
+          </div>
+        ) : mediaItems.length === 0 ? (
           <div className="text-center py-12">
             <Text>No media items found</Text>
             <Text muted className="mt-2">
@@ -228,21 +187,17 @@ export default function MediaPage() {
         {showDeleteConfirm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <Card className="p-6 max-w-sm">
-              <Heading as={3} className="mb-4">Delete Media</Heading>
+              <Heading as={3} className="mb-4">
+                Delete Media
+              </Heading>
               <Text className="mb-4">
                 Are you sure you want to delete {selectedMedia.length} media item(s)?
               </Text>
               <div className="flex gap-2 justify-end">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowDeleteConfirm(false)}
-                >
+                <Button variant="outline" onClick={() => setShowDeleteConfirm(false)}>
                   Cancel
                 </Button>
-                <Button
-                  variant="primary"
-                  onClick={handleDeleteSelected}
-                >
+                <Button variant="primary" onClick={() => void handleDeleteSelected()}>
                   Delete
                 </Button>
               </div>

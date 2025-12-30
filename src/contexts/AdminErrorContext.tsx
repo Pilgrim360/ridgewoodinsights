@@ -1,6 +1,16 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  ReactNode,
+  useEffect,
+  useRef,
+} from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { AdminErrorHandler } from '@/lib/admin/error-handler';
 import { AdminErrorContextType } from '@/types/admin';
 
 /**
@@ -50,6 +60,8 @@ export const AdminErrorProvider: React.FC<AdminErrorProviderProps> = ({
     <AdminErrorContext.Provider
       value={{ error, success, showError, showSuccess, clearMessages }}
     >
+      <ReactQueryErrorBridge showError={showError} />
+
       {children}
       {/* Toast Notifications */}
       {error && (
@@ -65,3 +77,70 @@ export const AdminErrorProvider: React.FC<AdminErrorProviderProps> = ({
     </AdminErrorContext.Provider>
   );
 };
+
+function ReactQueryErrorBridge({
+  showError,
+}: {
+  showError: (message: string) => void;
+}) {
+  const queryClient = useQueryClient();
+  const shownErrorKeys = useRef<Set<string>>(new Set());
+
+  useEffect(() => {
+    const unsubscribeQueryCache = queryClient
+      .getQueryCache()
+      .subscribe((event) => {
+        if (event.type !== 'updated') return;
+
+        const { query } = event;
+        if (query.state.status !== 'error') return;
+
+        const errorKey = `${query.queryHash}:${query.state.errorUpdatedAt}`;
+        if (shownErrorKeys.current.has(errorKey)) return;
+
+        shownErrorKeys.current.add(errorKey);
+        if (shownErrorKeys.current.size > 50) {
+          shownErrorKeys.current.clear();
+        }
+
+        const parsed = AdminErrorHandler.parse(query.state.error);
+        if (process.env.NODE_ENV === 'development') {
+          AdminErrorHandler.log(parsed);
+        }
+        showError(parsed.message);
+      });
+
+    const unsubscribeMutationCache = queryClient
+      .getMutationCache()
+      .subscribe((event) => {
+        if (event.type !== 'updated') return;
+
+        const mutation = event.mutation;
+        if (mutation.state.status !== 'error') return;
+
+        const meta = mutation.options.meta as Record<string, unknown> | undefined;
+        if (meta?.toastHandled) return;
+
+        const errorKey = `${mutation.mutationId}:${mutation.state.submittedAt}:${mutation.state.failureCount}`;
+        if (shownErrorKeys.current.has(errorKey)) return;
+
+        shownErrorKeys.current.add(errorKey);
+        if (shownErrorKeys.current.size > 50) {
+          shownErrorKeys.current.clear();
+        }
+
+        const parsed = AdminErrorHandler.parse(mutation.state.error);
+        if (process.env.NODE_ENV === 'development') {
+          AdminErrorHandler.log(parsed);
+        }
+        showError(parsed.message);
+      });
+
+    return () => {
+      unsubscribeQueryCache();
+      unsubscribeMutationCache();
+    };
+  }, [queryClient, showError]);
+
+  return null;
+}

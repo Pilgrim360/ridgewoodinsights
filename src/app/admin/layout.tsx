@@ -1,36 +1,29 @@
 'use client';
 
-import React, { useCallback } from 'react';
+import React, { useState } from 'react';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { AdminAuthProvider } from '@/contexts/AdminAuthContext';
 import { AdminErrorProvider } from '@/contexts/AdminErrorContext';
-import { usePageVisibility } from '@/hooks/usePageVisibility';
-import { getSupabaseClient } from '@/lib/supabase/client';
+import { createAdminQueryClient } from '@/lib/queryClient';
 
 /**
  * Admin Root Layout
- * Provides auth context and error toasts for all admin routes (including login)
+ * Provides TanStack Query, auth context, and error toasts for all admin routes (including login)
  */
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const handleVisibilityChange = useCallback(() => {
-    const supabase = getSupabaseClient();
-    // A more active call to refresh the session and reconnect
-    supabase.auth.getUser().catch((error: unknown) => {
-      if (error instanceof Error) {
-        console.error('Error refreshing Supabase user on visibility change:', error.message);
-      } else {
-        console.error('An unknown error occurred refreshing Supabase user:', error);
-      }
-    });
-  }, []);
-
-  usePageVisibility(handleVisibilityChange);
+  const [queryClient] = useState(() => createAdminQueryClient());
 
   return (
-    <AdminAuthProvider>
-      <AdminErrorProvider>
-        {children}
-      </AdminErrorProvider>
-    </AdminAuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AdminAuthProvider>
+        <AdminErrorProvider>{children}</AdminErrorProvider>
+      </AdminAuthProvider>
+
+      {process.env.NODE_ENV === 'development' && (
+        <ReactQueryDevtools initialIsOpen={false} />
+      )}
+    </QueryClientProvider>
   );
 }

@@ -1,46 +1,33 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useAdminError } from '@/contexts/AdminErrorContext';
-import {
-  getCategoriesWithCount,
-  createCategory,
-  updateCategory,
-  deleteCategory,
-} from '@/lib/admin/categories';
-import { CategoryWithPostCount, CategoryData } from '@/types/admin';
+import { useState } from 'react';
+import { CategoryData, CategoryWithPostCount } from '@/types/admin';
 import { CategoriesHeader } from '@/components/admin/Categories/CategoriesHeader';
 import { CategoriesTable } from '@/components/admin/Categories/CategoriesTable';
 import { CategoryModal } from '@/components/admin/Categories/CategoryModal';
 import { DeleteConfirmModal } from '@/components/admin/Categories/DeleteConfirmModal';
+import { useCategoriesWithCount } from '@/hooks/queries/useCategoriesQueries';
+import {
+  useCreateCategory,
+  useDeleteCategory,
+  useUpdateCategory,
+} from '@/hooks/queries/useAdminMutations';
 
 export default function CategoriesPage() {
-  const { showError, showSuccess } = useAdminError();
-  const [categories, setCategories] = useState<CategoryWithPostCount[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const categoriesQuery = useCategoriesWithCount();
+
+  const createCategoryMutation = useCreateCategory();
+  const updateCategoryMutation = useUpdateCategory();
+  const deleteCategoryMutation = useDeleteCategory();
+
+  const categories = categoriesQuery.data ?? [];
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<CategoryData | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<CategoryWithPostCount | null>(null);
   const [isDeletingId, setIsDeletingId] = useState<string | undefined>();
 
-  // Load categories
-  useEffect(() => {
-    async function loadCategories() {
-      try {
-        setIsLoading(true);
-        const data = await getCategoriesWithCount();
-        setCategories(data);
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : 'Failed to load categories';
-        showError(errorMessage);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    loadCategories();
-  }, [showError]);
+  const isLoading = categoriesQuery.isLoading || categoriesQuery.isFetching;
 
   const handleNewCategory = () => {
     setEditingCategory(null);
@@ -62,52 +49,25 @@ export default function CategoriesPage() {
     setIsDeletingId(deleteTarget.id);
 
     try {
-      await deleteCategory(deleteTarget.id);
-      setCategories((prev) => prev.filter((c) => c.id !== deleteTarget.id));
-      showSuccess(`Category "${deleteTarget.name}" deleted successfully`);
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Failed to delete category';
-      showError(errorMessage);
+      await deleteCategoryMutation.mutateAsync({
+        id: deleteTarget.id,
+        name: deleteTarget.name,
+      });
     } finally {
       setDeleteTarget(null);
       setIsDeletingId(undefined);
     }
   };
 
-  const handleSaveCategory = async (
-    data: Omit<CategoryData, 'id' | 'created_at'>
-  ) => {
-    try {
-      if (editingCategory?.id) {
-        // Update existing
-        const updated = await updateCategory(editingCategory.id, data);
-        setCategories((prev) =>
-          prev.map((c) =>
-            c.id === editingCategory.id
-              ? { ...c, ...updated, post_count: c.post_count }
-              : c
-          )
-        );
-        showSuccess(`Category "${data.name}" updated successfully`);
-      } else {
-        // Create new
-        const created = await createCategory(data);
-        const newCat: CategoryWithPostCount = {
-          ...created,
-          post_count: 0,
-        };
-        setCategories((prev) => [...prev, newCat].sort((a, b) => a.name.localeCompare(b.name)));
-        showSuccess(`Category "${data.name}" created successfully`);
-      }
-
-      setIsModalOpen(false);
-      setEditingCategory(null);
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Failed to save category';
-      showError(errorMessage);
+  const handleSaveCategory = async (data: Omit<CategoryData, 'id' | 'created_at'>) => {
+    if (editingCategory?.id) {
+      await updateCategoryMutation.mutateAsync({ id: editingCategory.id, updates: data });
+    } else {
+      await createCategoryMutation.mutateAsync(data);
     }
+
+    setIsModalOpen(false);
+    setEditingCategory(null);
   };
 
   const existingSlugs = categories.map((c) => c.slug);

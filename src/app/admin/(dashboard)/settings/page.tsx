@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useAdminError } from '@/contexts/AdminErrorContext';
-import { getSettings, updateSettings } from '@/lib/admin/settings';
 import { SiteSettings } from '@/types/admin';
 import { SettingsHeader } from '@/components/admin/Settings/SettingsHeader';
 import { SettingsForm } from '@/components/admin/Settings/SettingsForm';
+import { useSiteSettings } from '@/hooks/queries/useSettingsQueries';
+import { useUpdateSettings } from '@/hooks/queries/useAdminMutations';
 
 const DEFAULT_SETTINGS: SiteSettings = {
   site_title: 'Ridgewood Insights',
@@ -14,42 +14,24 @@ const DEFAULT_SETTINGS: SiteSettings = {
 };
 
 export default function SettingsPage() {
-  const { showError, showSuccess } = useAdminError();
-  const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SETTINGS);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
+  const settingsQuery = useSiteSettings();
+  const updateSettingsMutation = useUpdateSettings();
+
   const [isDirty, setIsDirty] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
 
-  // Load settings on mount
   useEffect(() => {
-    async function loadSettings() {
-      try {
-        setIsLoading(true);
-        const data = await getSettings();
-        setSettings(data);
-        setIsDirty(false);
-        setLastSaved(null);
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : 'Failed to load settings';
-        showError(errorMessage);
-        setSaveError(errorMessage);
-      } finally {
-        setIsLoading(false);
-      }
-    }
+    if (!settingsQuery.data) return;
 
-    loadSettings();
-  }, [showError]);
+    setIsDirty(false);
+    setSaveError(null);
+  }, [settingsQuery.data]);
 
   const handleSave = async (newSettings: SiteSettings) => {
-    setIsSaving(true);
     setSaveError(null);
 
     try {
-      // Validate before saving
       if (!newSettings.site_title.trim()) {
         throw new Error('Site title is required');
       }
@@ -60,27 +42,17 @@ export default function SettingsPage() {
         throw new Error('Contact email is required');
       }
 
-      // Save to database
-      await updateSettings(newSettings);
-
-      // Update local state
-      setSettings(newSettings);
+      await updateSettingsMutation.mutateAsync(newSettings);
       setIsDirty(false);
       setLastSaved(new Date());
-      setSaveError(null);
-
-      showSuccess('Settings saved successfully');
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Failed to save settings';
       setSaveError(errorMessage);
-      showError(errorMessage);
-    } finally {
-      setIsSaving(false);
     }
   };
 
-  if (isLoading) {
+  if (settingsQuery.isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
         <div className="text-center">
@@ -91,18 +63,21 @@ export default function SettingsPage() {
     );
   }
 
+  const settings = settingsQuery.data ?? DEFAULT_SETTINGS;
+
   return (
     <div className="max-w-2xl">
       <SettingsHeader
         isDirty={isDirty}
-        isSaving={isSaving}
+        isSaving={updateSettingsMutation.isPending}
         lastSaved={lastSaved}
         saveError={saveError}
       />
 
       <SettingsForm
+        key={settingsQuery.dataUpdatedAt}
         settings={settings}
-        isSaving={isSaving}
+        isSaving={updateSettingsMutation.isPending}
         onSave={handleSave}
       />
     </div>
