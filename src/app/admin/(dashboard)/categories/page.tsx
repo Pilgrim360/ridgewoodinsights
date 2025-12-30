@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient, MutationFunction } from '@tanstack/react-query';
 import { useAdminError } from '@/contexts/AdminErrorContext';
 import {
   getCategoriesWithCount,
@@ -14,33 +15,84 @@ import { CategoriesTable } from '@/components/admin/Categories/CategoriesTable';
 import { CategoryModal } from '@/components/admin/Categories/CategoryModal';
 import { DeleteConfirmModal } from '@/components/admin/Categories/DeleteConfirmModal';
 
+type CategorySaveData = Omit<CategoryData, 'id' | 'created_at'>;
+
 export default function CategoriesPage() {
   const { showError, showSuccess } = useAdminError();
-  const [categories, setCategories] = useState<CategoryWithPostCount[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<CategoryData | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<CategoryWithPostCount | null>(null);
-  const [isDeletingId, setIsDeletingId] = useState<string | undefined>();
 
-  // Load categories
+  const {
+    data: categories = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery<CategoryWithPostCount[], Error>({
+    queryKey: ['categories'],
+    queryFn: getCategoriesWithCount,
+  });
+
   useEffect(() => {
-    async function loadCategories() {
-      try {
-        setIsLoading(true);
-        const data = await getCategoriesWithCount();
-        setCategories(data);
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : 'Failed to load categories';
-        showError(errorMessage);
-      } finally {
-        setIsLoading(false);
-      }
+    if (isError && error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load categories';
+      showError(errorMessage);
     }
+  }, [isError, error, showError]);
 
-    loadCategories();
-  }, [showError]);
+  const useApiMutation = <TData, TVariables>(
+    mutationFn: MutationFunction<TData, TVariables>,
+    queryKey: string[],
+    successMessage: (data: TData) => string,
+    errorMessage: string
+  ) => {
+    return useMutation<TData, Error, TVariables>({
+      mutationFn,
+      onSuccess: (data) => {
+        queryClient.invalidateQueries({ queryKey });
+        showSuccess(successMessage(data));
+      },
+      onError: (err) => {
+        const message = err instanceof Error ? err.message : errorMessage;
+        showError(message);
+      },
+    });
+  };
+
+  const deleteMutation = useMutation<void, Error, string>({
+    mutationFn: deleteCategory,
+    onSuccess: (_, deletedId) => {
+      const deletedCategory = categories.find((c) => c.id === deletedId);
+      showSuccess(`Category "${deletedCategory?.name}" deleted successfully`);
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
+    },
+    onError: (error) => {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete category';
+      showError(errorMessage);
+    },
+    onSettled: () => {
+      setDeleteTarget(null);
+    },
+  });
+
+  const createMutation = useApiMutation<CategoryData, CategorySaveData>(
+    createCategory,
+    ['categories'],
+    (data) => `Category "${data.name}" created successfully`,
+    'Failed to create category'
+  );
+
+  const updateMutation = useApiMutation<
+    CategoryData,
+    { id: string; category: CategorySaveData }
+  >(
+    (vars) => updateCategory(vars.id, vars.category),
+    ['categories'],
+    (data) => `Category "${data.name}" updated successfully`,
+    'Failed to update category'
+  );
 
   const handleNewCategory = () => {
     setEditingCategory(null);
@@ -56,61 +108,27 @@ export default function CategoriesPage() {
     setDeleteTarget(category);
   };
 
-  const handleConfirmDelete = async () => {
-    if (!deleteTarget?.id) return;
-
-    setIsDeletingId(deleteTarget.id);
-
-    try {
-      await deleteCategory(deleteTarget.id);
-      setCategories((prev) => prev.filter((c) => c.id !== deleteTarget.id));
-      showSuccess(`Category "${deleteTarget.name}" deleted successfully`);
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Failed to delete category';
-      showError(errorMessage);
-    } finally {
-      setDeleteTarget(null);
-      setIsDeletingId(undefined);
+  const handleConfirmDelete = () => {
+    if (deleteTarget?.id) {
+      deleteMutation.mutate(deleteTarget.id);
     }
   };
 
-  const handleSaveCategory = async (
-    data: Omit<CategoryData, 'id' | 'created_at'>
-  ) => {
+  const handleSaveCategory = async (data: CategorySaveData) => {
     try {
       if (editingCategory?.id) {
-        // Update existing
-        const updated = await updateCategory(editingCategory.id, data);
-        setCategories((prev) =>
-          prev.map((c) =>
-            c.id === editingCategory.id
-              ? { ...c, ...updated, post_count: c.post_count }
-              : c
-          )
-        );
-        showSuccess(`Category "${data.name}" updated successfully`);
+        await updateMutation.mutateAsync({ id: editingCategory.id, category: data });
       } else {
-        // Create new
-        const created = await createCategory(data);
-        const newCat: CategoryWithPostCount = {
-          ...created,
-          post_count: 0,
-        };
-        setCategories((prev) => [...prev, newCat].sort((a, b) => a.name.localeCompare(b.name)));
-        showSuccess(`Category "${data.name}" created successfully`);
+        await createMutation.mutateAsync(data);
       }
-
       setIsModalOpen(false);
       setEditingCategory(null);
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Failed to save category';
-      showError(errorMessage);
+    } catch (e) {
+      // Errors are handled by the mutation's onError callback
     }
   };
 
-  const existingSlugs = categories.map((c) => c.slug);
+  const existingSlugs = categories.map((c: CategoryWithPostCount) => c.slug);
 
   return (
     <div className="space-y-6">
@@ -120,7 +138,7 @@ export default function CategoriesPage() {
         categories={categories}
         onEdit={handleEditCategory}
         onDelete={handleDeleteCategory}
-        isDeletingId={isDeletingId}
+        isDeletingId={deleteMutation.isPending ? (deleteMutation.variables as string) : undefined}
         isLoading={isLoading}
       />
 
@@ -133,6 +151,7 @@ export default function CategoriesPage() {
           setIsModalOpen(false);
           setEditingCategory(null);
         }}
+        isSaving={createMutation.isPending || updateMutation.isPending}
       />
 
       <DeleteConfirmModal
@@ -140,6 +159,7 @@ export default function CategoriesPage() {
         category={deleteTarget}
         onConfirm={handleConfirmDelete}
         onCancel={() => setDeleteTarget(null)}
+        isDeleting={deleteMutation.isPending}
       />
     </div>
   );

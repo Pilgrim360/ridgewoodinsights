@@ -8,8 +8,8 @@ interface CategoryModalProps {
   isOpen: boolean;
   category: CategoryData | null;
   existingSlugs: string[];
-  isLoading?: boolean;
-  onSave: (category: Omit<CategoryData, 'id' | 'created_at'>) => Promise<void>;
+  isSaving?: boolean;
+  onSave: (category: Omit<CategoryData, 'id' | 'created_at'>) => void;
   onCancel: () => void;
 }
 
@@ -17,14 +17,13 @@ export function CategoryModal({
   isOpen,
   category,
   existingSlugs,
-  isLoading,
+  isSaving = false,
   onSave,
   onCancel,
 }: CategoryModalProps) {
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isSaving, setIsSaving] = useState(false);
 
   // Exclude current category's slug from duplicates check
   const slugsToCheck = category?.id
@@ -32,14 +31,16 @@ export function CategoryModal({
     : existingSlugs;
 
   useEffect(() => {
-    if (category) {
-      setName(category.name);
-      setSlug(category.slug);
-    } else {
-      setName('');
-      setSlug('');
+    if (isOpen) {
+      if (category) {
+        setName(category.name);
+        setSlug(category.slug);
+      } else {
+        setName('');
+        setSlug('');
+      }
+      setErrors({});
     }
-    setErrors({});
   }, [category, isOpen]);
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,7 +48,8 @@ export function CategoryModal({
     setName(newName);
 
     // Auto-generate slug if user hasn't modified it yet
-    if (!slug || slug === titleToSlug(name)) {
+    const currentSlugIsAuto = slug === titleToSlug(name);
+    if (!slug || currentSlugIsAuto) {
       setSlug(titleToSlug(newName));
     }
 
@@ -86,20 +88,13 @@ export function CategoryModal({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!validate()) return;
-
-    setIsSaving(true);
-
-    try {
-      await onSave({
+    if (validate()) {
+      onSave({
         name: name.trim(),
         slug: slug.trim(),
       });
-    } finally {
-      setIsSaving(false);
     }
   };
 
@@ -123,7 +118,7 @@ export function CategoryModal({
               type="text"
               value={name}
               onChange={handleNameChange}
-              disabled={isLoading || isSaving}
+              disabled={isSaving}
               placeholder="e.g., Tax Planning"
               maxLength={50}
               className="w-full px-3 py-2 border border-surface rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary disabled:bg-background"
@@ -133,9 +128,7 @@ export function CategoryModal({
                 {errors.name}
               </p>
             )}
-            <p className="text-xs text-text/60 mt-1">
-              {name.length}/50 characters
-            </p>
+            <p className="text-xs text-text/60 mt-1">{name.length}/50 characters</p>
           </div>
 
           {/* Slug */}
@@ -148,7 +141,7 @@ export function CategoryModal({
               type="text"
               value={slug}
               onChange={handleSlugChange}
-              disabled={isLoading || isSaving}
+              disabled={isSaving}
               placeholder="e.g., tax-planning"
               className="w-full px-3 py-2 border border-surface rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary disabled:bg-background"
             />
@@ -167,14 +160,14 @@ export function CategoryModal({
             <button
               type="button"
               onClick={onCancel}
-              disabled={isLoading || isSaving}
+              disabled={isSaving}
               className="px-4 py-2 rounded-lg border border-surface text-secondary hover:bg-surface transition-colors disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
-              disabled={isLoading || isSaving}
+              disabled={isSaving}
               className="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors disabled:opacity-50"
             >
               {isSaving ? 'Saving...' : 'Save Category'}

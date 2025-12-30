@@ -5,15 +5,15 @@ import { CategoryWithPostCount } from '@/types/admin';
 interface DeleteConfirmModalProps {
   isOpen: boolean;
   category: CategoryWithPostCount | null;
-  isLoading?: boolean;
-  onConfirm: () => Promise<void>;
+  isDeleting?: boolean;
+  onConfirm: () => void;
   onCancel: () => void;
 }
 
 export function DeleteConfirmModal({
   isOpen,
   category,
-  isLoading,
+  isDeleting = false,
   onConfirm,
   onCancel,
 }: DeleteConfirmModalProps) {
@@ -25,14 +25,18 @@ export function DeleteConfirmModal({
         <div>
           <h2 className="text-xl font-bold text-secondary">Delete Category?</h2>
           <p className="text-sm text-text/60 mt-2">
-           Are you sure you want to delete &quot;<strong>{category.name}</strong>&quot;?
+            Are you sure you want to delete &quot;<strong>{category.name}</strong>&quot;?
           </p>
         </div>
 
         {category.post_count > 0 && (
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
             <p className="text-sm text-amber-900">
-              ⚠️ This category has <strong>{category.post_count} post{category.post_count !== 1 ? 's' : ''}</strong>. Deleting it will not affect the posts, but they will lose this category assignment.
+              ⚠️ This category has{' '}
+              <strong>
+                {category.post_count} post{category.post_count !== 1 ? 's' : ''}
+              </strong>
+              . Deleting it will not affect the posts, but they will lose this category assignment.
             </p>
           </div>
         )}
@@ -41,7 +45,7 @@ export function DeleteConfirmModal({
           <button
             type="button"
             onClick={onCancel}
-            disabled={isLoading}
+            disabled={isDeleting}
             className="px-4 py-2 rounded-lg border border-surface text-secondary hover:bg-surface transition-colors disabled:opacity-50"
           >
             Cancel
@@ -49,10 +53,10 @@ export function DeleteConfirmModal({
           <button
             type="button"
             onClick={onConfirm}
-            disabled={isLoading}
+            disabled={isDeleting}
             className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors disabled:opacity-50"
           >
-            {isLoading ? 'Deleting...' : 'Delete'}
+            {isDeleting ? 'Deleting...' : 'Delete'}
           </button>
         </div>
       </div>

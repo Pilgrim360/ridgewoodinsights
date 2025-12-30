@@ -1,36 +1,20 @@
 'use client';
 
-import React, { useCallback } from 'react';
+import React from 'react';
 import { AdminAuthProvider } from '@/contexts/AdminAuthContext';
 import { AdminErrorProvider } from '@/contexts/AdminErrorContext';
-import { usePageVisibility } from '@/hooks/usePageVisibility';
-import { getSupabaseClient } from '@/lib/supabase/client';
+import ReactQueryClientProvider from '@/providers/ReactQueryClientProvider';
 
 /**
  * Admin Root Layout
  * Provides auth context and error toasts for all admin routes (including login)
  */
-
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const handleVisibilityChange = useCallback(() => {
-    const supabase = getSupabaseClient();
-    // A more active call to refresh the session and reconnect
-    supabase.auth.getUser().catch((error: unknown) => {
-      if (error instanceof Error) {
-        console.error('Error refreshing Supabase user on visibility change:', error.message);
-      } else {
-        console.error('An unknown error occurred refreshing Supabase user:', error);
-      }
-    });
-  }, []);
-
-  usePageVisibility(handleVisibilityChange);
-
   return (
-    <AdminAuthProvider>
-      <AdminErrorProvider>
-        {children}
-      </AdminErrorProvider>
-    </AdminAuthProvider>
+    <ReactQueryClientProvider>
+      <AdminAuthProvider>
+        <AdminErrorProvider>{children}</AdminErrorProvider>
+      </AdminAuthProvider>
+    </ReactQueryClientProvider>
   );
 }
