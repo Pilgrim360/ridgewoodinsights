@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { usePageVisibility } from './usePageVisibility';
 import { getSupabaseClient } from '@/lib/supabase/client';
 
@@ -15,17 +16,20 @@ import { getSupabaseClient } from '@/lib/supabase/client';
  */
 export function useSupabaseSessionManager() {
   const supabase = getSupabaseClient();
+  const router = useRouter();
 
-  const refreshSession = useCallback(async () => {
+  const refreshConnectionAndData = useCallback(async () => {
     try {
-      // Calling getUser() forces a session refresh.
+      // First, ensure the Supabase connection is active.
       await supabase.auth.getUser();
-      // In addition, ping the database to re-establish the connection.
       await supabase.from('categories').select('id').limit(1);
-    } catch (error) {
-      console.error('Error refreshing Supabase session:', error);
-    }
-  }, [supabase]);
 
-  usePageVisibility(refreshSession);
+      // Then, trigger a router refresh to re-fetch server components and data.
+      router.refresh();
+    } catch (error) {
+      console.error('Error refreshing session and data:', error);
+    }
+  }, [supabase, router]);
+
+  usePageVisibility(refreshConnectionAndData);
 }
