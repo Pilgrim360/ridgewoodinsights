@@ -7,6 +7,7 @@
 
 import { getSupabaseClient } from '@/lib/supabase/client';
 import { AdminError } from '@/types/admin';
+import { isAuthError } from './auth-interceptor';
 
 // Initialize Supabase client
 // Use the shared browser client to ensure cookie consistency with middleware
@@ -17,6 +18,15 @@ export const supabase = getSupabaseClient();
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function formatSupabaseError(error: any): AdminError {
+  // Check for auth errors first
+  if (isAuthError(error)) {
+    return {
+      type: 'RLS_VIOLATION',
+      message: 'Your session has expired. Please log in again.',
+      retryable: false,
+    };
+  }
+
   // Check for specific error codes
   if (error?.code === 'PGRST116') {
     return {

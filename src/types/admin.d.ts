@@ -88,6 +88,9 @@ export interface AdminContextType {
   user: AdminUser | null;
   isLoading: boolean;
   logout: () => Promise<void>;
+  refreshSession: () => Promise<boolean>;
+  checkAndRefreshSession: () => Promise<boolean>;
+  handleSessionExpired: () => void;
 }
 
 export interface AdminErrorContextType {

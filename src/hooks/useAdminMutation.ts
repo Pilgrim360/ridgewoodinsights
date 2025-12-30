@@ -4,10 +4,13 @@ import { useState, useCallback } from 'react';
 import { AdminErrorHandler } from '@/lib/admin/error-handler';
 import { AdminError } from '@/types/admin';
 import { useAdminError } from '@/contexts/AdminErrorContext';
+import { useAdminAuth } from '@/contexts/AdminAuthContext';
+import { isAuthError } from '@/lib/admin/auth-interceptor';
 
 /**
  * Hook for handling async admin operations with loading/error states
  * Auto-integrates with AdminErrorContext for toast notifications
+ * Handles auth errors by triggering session expiry flow
  */
 
 interface UseMutationOptions {
@@ -26,6 +29,7 @@ export function useAdminMutation<T, E = unknown>(
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<AdminError | null>(null);
   const { showError, showSuccess } = useAdminError();
+  const { handleSessionExpired } = useAdminAuth();
 
   const {
     onSuccess,
@@ -54,6 +58,13 @@ export function useAdminMutation<T, E = unknown>(
         setError(parsedError);
         AdminErrorHandler.log(parsedError);
 
+        // Handle auth errors specially - trigger session expiry
+        if (isAuthError(err)) {
+          console.warn('[useAdminMutation] Auth error detected - triggering session expiry');
+          handleSessionExpired();
+          return; // Don't continue with error handling
+        }
+
         if (autoShowError) {
           showError(parsedError.message);
         }
@@ -64,7 +75,7 @@ export function useAdminMutation<T, E = unknown>(
         setIsLoading(false);
       }
     },
-    [mutationFn, onSuccess, onError, autoShowError, autoShowSuccess, successMessage, showError, showSuccess]
+    [mutationFn, onSuccess, onError, autoShowError, autoShowSuccess, successMessage, showError, showSuccess, handleSessionExpired]
   );
 
   const reset = useCallback(() => {

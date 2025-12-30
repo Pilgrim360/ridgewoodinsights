@@ -1,4 +1,5 @@
 import { AdminError } from '@/types/admin';
+import { isAuthError } from './auth-interceptor';
 
 /**
  * Comprehensive error handler for admin CMS operations
@@ -7,13 +8,23 @@ import { AdminError } from '@/types/admin';
 
 export class AdminErrorHandler {
   static parse(error: unknown): AdminError {
+    // Check for auth errors first
+    if (isAuthError(error)) {
+      return {
+        type: 'RLS_VIOLATION',
+        message: 'Your session has expired. Please log in again.',
+        originalError: error as Error,
+        retryable: false,
+      };
+    }
+
     // Handle Supabase-specific errors
     if (error instanceof Error && 'status' in error) {
       const err = error as Error & { status?: number; message: string };
       const status = err.status;
 
-      // RLS violations
-      if (status === 403 || error.message?.includes('permission denied')) {
+      // Authentication/Authorization errors
+      if (status === 401 || status === 403 || error.message?.includes('permission denied')) {
         return {
           type: 'RLS_VIOLATION',
           message:
