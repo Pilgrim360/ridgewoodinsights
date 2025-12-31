@@ -22,7 +22,9 @@ function isAuthError(error: unknown): boolean {
 
   if (code === 'JWT_EXPIRED' || code === 'PGRST301') return true;
 
-  if (/jwt|token expired/i.test(message)) return true;
+  if (/jwt|token expired|auth session missing|session.*missing|not authenticated/i.test(message)) {
+    return true;
+  }
 
   return false;
 }
@@ -82,8 +84,7 @@ export function createAdminQueryClient(): QueryClient {
     defaultOptions: {
       queries: {
         staleTime: DEFAULT_QUERY_STALE_TIME_MS,
-        refetchOnWindowFocus: (query) =>
-          Date.now() - query.state.dataUpdatedAt > QUERY_DEDUPING_INTERVAL_MS,
+        refetchOnWindowFocus: 'always',
         refetchOnReconnect: true,
         retry: (failureCount, error) => {
           if (isAuthError(error)) return false;

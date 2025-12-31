@@ -27,7 +27,7 @@ export default function CategoriesPage() {
   const [deleteTarget, setDeleteTarget] = useState<CategoryWithPostCount | null>(null);
   const [isDeletingId, setIsDeletingId] = useState<string | undefined>();
 
-  const isLoading = categoriesQuery.isLoading || categoriesQuery.isFetching;
+  const isLoading = categoriesQuery.isLoading;
 
   const handleNewCategory = () => {
     setEditingCategory(null);

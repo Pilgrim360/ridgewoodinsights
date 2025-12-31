@@ -99,7 +99,7 @@ export default function PostsPage() {
     total_pages: 0,
   };
 
-  const isLoading = postsQuery.isLoading || postsQuery.isFetching;
+  const isLoading = postsQuery.isLoading;
 
   return (
     <div className="space-y-6">

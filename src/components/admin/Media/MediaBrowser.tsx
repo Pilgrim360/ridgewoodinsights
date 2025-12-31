@@ -34,7 +34,7 @@ export function MediaBrowser({
   const deleteMutation = useDeleteMedia(user?.id);
 
   const mediaItems = mediaQuery.data ?? [];
-  const isLoading = mediaQuery.isLoading || mediaQuery.isFetching;
+  const isLoading = mediaQuery.isLoading;
 
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState<'all' | 'image' | 'document' | 'other'>('all');

@@ -73,8 +73,8 @@ export default function AdminDashboard() {
       <section>
         <ActivityFeed
           activities={activities}
-          isLoading={isLoading || activityQuery.isFetching}
-          isEmpty={!isLoading && activities.length === 0}
+          isLoading={activityQuery.isLoading}
+          isEmpty={!activityQuery.isLoading && activities.length === 0}
         />
       </section>
     </div>
