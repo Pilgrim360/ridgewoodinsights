@@ -29,7 +29,7 @@ import {
 } from '@/types/admin';
 import { AdminErrorHandler } from '@/lib/admin/error-handler';
 import { useAdminError } from '@/contexts/AdminErrorContext';
-import { withSupabaseAuthRetry } from '@/lib/queryClient';
+import { withSupabaseAuthRetry, withTimeout } from '@/lib/queryClient';
 import { adminQueryKeys, type NormalizedPostFilters } from './queryKeys';
 
 type PostsListKey = ReturnType<typeof adminQueryKeys.posts.list>;
@@ -154,7 +154,8 @@ export function useUpdatePost() {
       previousPost: PostData | undefined;
     }
   >({
-    mutationFn: ({ id, updates }) => withSupabaseAuthRetry(() => updatePost(id, updates)),
+    mutationFn: ({ id, updates }) =>
+      withSupabaseAuthRetry(() => withTimeout(updatePost(id, updates))),
     meta: mutationMeta,
     networkMode: 'always',
     onMutate: async ({ id, updates }) => {
@@ -563,7 +564,8 @@ export function useUpdateCategory() {
       previousWithCount: CategoryWithPostCount[] | undefined;
     }
   >({
-    mutationFn: ({ id, updates }) => withSupabaseAuthRetry(() => updateCategory(id, updates)),
+    mutationFn: ({ id, updates }) =>
+      withSupabaseAuthRetry(() => withTimeout(updateCategory(id, updates))),
     meta: mutationMeta,
     onMutate: async ({ id, updates }) => {
       await queryClient.cancelQueries({ queryKey: adminQueryKeys.categories.all });

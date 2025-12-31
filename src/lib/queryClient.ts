@@ -5,6 +5,25 @@ import { AdminErrorHandler } from '@/lib/admin/error-handler';
 export const DEFAULT_QUERY_STALE_TIME_MS = 5 * 60 * 1000;
 export const REALTIME_QUERY_STALE_TIME_MS = 30 * 1000;
 export const QUERY_DEDUPING_INTERVAL_MS = 30 * 1000;
+export const ADMIN_REQUEST_TIMEOUT_MS = 20 * 1000;
+
+export function withTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs: number = ADMIN_REQUEST_TIMEOUT_MS,
+  message: string = 'Request timed out'
+): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => {
+      reject(new Error(message));
+    }, timeoutMs);
+  });
+
+  return Promise.race([promise, timeoutPromise]).finally(() => {
+    if (timeoutId) clearTimeout(timeoutId);
+  }) as Promise<T>;
+}
 
 function isAuthError(error: unknown): boolean {
   if (!error || typeof error !== 'object') return false;

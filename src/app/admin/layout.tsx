@@ -22,9 +22,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const handleResume = () => {
       if (typeof window === 'undefined') return;
 
-      if (document.visibilityState !== 'visible') return;
-
       onlineManager.setOnline(navigator.onLine);
+
+      if (document.visibilityState !== 'visible') {
+        focusManager.setFocused(false);
+        supabase.auth.stopAutoRefresh();
+        return;
+      }
+
+      supabase.auth.startAutoRefresh();
       focusManager.setFocused(true);
 
       void supabase.auth.getSession();
@@ -36,10 +42,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     document.addEventListener('visibilitychange', handleResume);
     window.addEventListener('online', handleResume);
+    window.addEventListener('offline', handleResume);
+    window.addEventListener('focus', handleResume);
 
     return () => {
       document.removeEventListener('visibilitychange', handleResume);
       window.removeEventListener('online', handleResume);
+      window.removeEventListener('offline', handleResume);
+      window.removeEventListener('focus', handleResume);
     };
   }, [queryClient]);
 
