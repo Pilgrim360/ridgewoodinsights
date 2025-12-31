@@ -1,0 +1,57 @@
+/* Theme variants */
+
+/* Default Theme */
+.tiptap-table.theme-default {
+  --table-border-style: solid;
+  --table-border-width: 1px;
+  --table-border-color: #E2E7ED;
+}
+
+/* Minimal Theme */
+.tiptap-table.theme-minimal {
+  --table-border-style: solid;
+  --table-border-width: 1px;
+  --table-border-color: #F8F9FB;
+}
+.tiptap-table.theme-minimal td,
+.tiptap-table.theme-minimal th {
+  border-color: #F8F9FB;
+}
+
+/* Striped Theme */
+.tiptap-table.theme-striped tr:nth-child(even) {
+  background-color: #F8F9FB;
+}
+.tiptap-table.theme-striped th {
+  background-color: #006466;
+  color: #FFFFFF;
+}
+
+/* Bordered Theme */
+.tiptap-table.theme-bordered {
+  --table-border-style: solid;
+  --table-border-width: 2px;
+  --table-border-color: #2C3E50;
+  --table-corner-radius: 4px;
+}
+.tiptap-table.theme-bordered th {
+  background-color: #2C3E50;
+  color: #FFFFFF;
+}
+
+/* Dark Theme */
+.tiptap-table.theme-dark {
+  --table-border-style: solid;
+  --table-border-width: 1px;
+  --table-border-color: #415161;
+  --table-background-color: #2C3E50;
+  color: #FFFFFF;
+}
+.tiptap-table.theme-dark th {
+  background-color: #1a252f;
+  color: #FFFFFF;
+}
+.tiptap-table.theme-dark td,
+.tiptap-table.theme-dark th {
+  border-color: #415161;
+}

@@ -1,0 +1,29 @@
+/* Responsive behavior */
+@media (max-width: 768px) {
+  .tiptap-table {
+    font-size: 0.875rem;
+    min-width: 600px; /* Force scroll on very small screens */
+  }
+}
+
+.tiptap-table-wrapper {
+  position: relative;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Custom scrollbar for tables */
+.tiptap-table-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+.tiptap-table-wrapper::-webkit-scrollbar-track {
+  background: #F8F9FB;
+}
+.tiptap-table-wrapper::-webkit-scrollbar-thumb {
+  background: #E2E7ED;
+  border-radius: 3px;
+}
+.tiptap-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #006466;
+}

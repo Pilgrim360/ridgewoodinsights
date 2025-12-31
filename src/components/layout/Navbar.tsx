@@ -31,7 +31,6 @@ export function Navbar({ className, mobileMenuOpen, setMobileMenuOpen, ...props 
     };
   }, []);
 
-  const isHome = pathname === '/';
   // We apply the transparent effect primarily on the home page or pages with Hero. 
   // Since all marketing pages seem to have a Hero, we can apply it globally or just check if we want it everywhere.
   // The user request implies this design is for "the header and the background image/video of the hero component".

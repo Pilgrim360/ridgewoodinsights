@@ -34,6 +34,8 @@ import {
 import { uploadPostAsset } from '@/lib/admin/storage';
 import { cn } from '@/lib/utils';
 import { MediaModal, type ImageConfig } from '../Media/MediaModal';
+import { InsertTableDialog } from './dialogs/InsertTableDialog';
+import { EditorTableToolbar } from './EditorTableToolbar';
 import { parseCsv } from '@/lib/tiptap/utils';
 import { getTocHeadings } from '@/lib/tiptap/toc';
 
@@ -73,6 +75,7 @@ export function EditorToolbar({
 
   const [isUploading, setIsUploading] = useState(false);
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
+  const [isTableDialogOpen, setIsTableDialogOpen] = useState(false);
 
 
   const headings = useMemo(
@@ -122,25 +125,7 @@ export function EditorToolbar({
 
   const handleMediaInsert = useCallback(
     (config: ImageConfig) => {
-      const { url, alt, title, alignment, size } = config;
-
-      // Map size to pixel widths (standard presets)
-      const sizeMap = {
-        thumbnail: 150,
-        medium: 300,
-        large: 1024,
-        full: null,
-      };
-
-      const width = sizeMap[size];
-
-      // Map alignment to Tailwind classes
-      const alignmentClasses = {
-        left: 'float-left mr-6 mb-4',
-        center: 'mx-auto block',
-        right: 'float-right ml-6 mb-4',
-        full: 'w-full block',
-      };
+      const { url, alt, title } = config;
 
       editor
         .chain()
@@ -210,6 +195,25 @@ export function EditorToolbar({
     },
     [editor, onError]
   );
+
+  const insertTable = useCallback(
+    (rows: number, cols: number, withHeader: boolean) => {
+      editor
+        .chain()
+        .focus()
+        .insertTable({ rows, cols, withHeaderRow: withHeader })
+        .run();
+    },
+    [editor]
+  );
+
+  if (editor.isActive('table')) {
+    return (
+      <div className={cn('w-full', className)}>
+        <EditorTableToolbar editor={editor} disabled={disabled} />
+      </div>
+    );
+  }
 
   return (
     <div
@@ -582,7 +586,7 @@ export function EditorToolbar({
           title="Insert table"
           aria-label="Insert table"
           disabled={disabled}
-          onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+          onClick={() => setIsTableDialogOpen(true)}
         >
           <TableIcon className="h-4 w-4" />
         </ToolbarButton>
@@ -635,6 +639,11 @@ export function EditorToolbar({
           isOpen={isMediaModalOpen}
           onClose={() => setIsMediaModalOpen(false)}
           onInsert={handleMediaInsert}
+        />
+        <InsertTableDialog
+          isOpen={isTableDialogOpen}
+          onClose={() => setIsTableDialogOpen(false)}
+          onConfirm={insertTable}
         />
         <ToolbarButton
           title="Embed YouTube"
@@ -711,7 +720,7 @@ export function EditorToolbar({
 }
 
 function Divider() {
-  return <div className="h-6 w-px bg-surface" aria-hidden />;
+  return <div className="mx-1 h-6 w-px bg-surface" aria-hidden />;
 }
 
 function escapeHtml(value: string): string {

@@ -26,13 +26,7 @@ function normalizeFilters(filters: PostFilters): NormalizedPostFilters {
 export function usePostsList(filters: PostFilters) {
   const normalized = useMemo(
     () => normalizeFilters(filters),
-    [
-      filters.search,
-      filters.status,
-      filters.category_id,
-      filters.page,
-      filters.per_page,
-    ]
+    [filters]
   );
 
   return useQuery<PaginatedResult<PostData>, Error>({

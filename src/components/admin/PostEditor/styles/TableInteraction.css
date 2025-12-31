@@ -1,0 +1,19 @@
+/* Selection & interaction states */
+.tiptap-table tr.row-selected td {
+  background-color: rgba(0, 100, 102, 0.05);
+}
+
+.tiptap-table td.cell-selected {
+  background-color: rgba(0, 100, 102, 0.1);
+  border: 2px solid #006466 !important;
+}
+
+.tiptap-table.table-selected {
+  outline: 2px solid #006466;
+}
+
+/* Hover effects for headers if we implement them as clickable areas */
+.table-header-control:hover {
+  background-color: rgba(0, 100, 102, 0.2);
+  cursor: pointer;
+}

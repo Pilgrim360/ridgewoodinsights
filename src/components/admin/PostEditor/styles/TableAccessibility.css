@@ -1,0 +1,20 @@
+/* Accessibility styling */
+.tiptap-table:focus-visible {
+  outline: 2px solid #006466;
+  outline-offset: 2px;
+}
+
+[aria-selected="true"] {
+  background-color: rgba(0, 100, 102, 0.1);
+}
+
+/* High contrast support */
+@media (prefers-contrast: high) {
+  .tiptap-table {
+    --table-border-color: #000000;
+  }
+  .tiptap-table th {
+    background-color: #000000;
+    color: #FFFFFF;
+  }
+}

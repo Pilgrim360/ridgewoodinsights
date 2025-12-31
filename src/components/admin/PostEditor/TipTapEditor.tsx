@@ -13,6 +13,12 @@ import { EditorImageBubbleMenu } from './EditorImageBubbleMenu';
 import { EditorTableBubbleMenu } from './EditorTableBubbleMenu';
 import { EditorToolbar } from './EditorToolbar';
 
+import './styles/TableStyles.css';
+import './styles/TableThemes.css';
+import './styles/TableInteraction.css';
+import './styles/TableResponsive.css';
+import './styles/TableAccessibility.css';
+
 export interface TipTapEditorProps {
   title: string;
   onTitleChange: (title: string) => void;
