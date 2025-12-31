@@ -582,7 +582,17 @@ export function EditorToolbar({
           title="Insert table"
           aria-label="Insert table"
           disabled={disabled}
-          onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+          onClick={() => {
+            const rowsInput = window.prompt('Rows', '3');
+            if (rowsInput === null) return;
+            const colsInput = window.prompt('Columns', '3');
+            if (colsInput === null) return;
+
+            const rows = clampTableSize(Number.parseInt(rowsInput, 10) || 3);
+            const cols = clampTableSize(Number.parseInt(colsInput, 10) || 3);
+
+            editor.chain().focus().insertTable({ rows, cols, withHeaderRow: true }).run();
+          }}
         >
           <TableIcon className="h-4 w-4" />
         </ToolbarButton>
@@ -706,8 +716,13 @@ export function EditorToolbar({
             </span>
           )}
         </div>
-    </div>
+      </div>
   );
+}
+
+function clampTableSize(value: number) {
+  if (!Number.isFinite(value)) return 3;
+  return Math.min(20, Math.max(1, value));
 }
 
 function Divider() {

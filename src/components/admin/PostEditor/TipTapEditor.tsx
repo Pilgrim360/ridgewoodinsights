@@ -11,6 +11,8 @@ import { useAdminHeaderSlots } from '@/contexts/AdminHeaderSlotsContext';
 
 import { EditorImageBubbleMenu } from './EditorImageBubbleMenu';
 import { EditorTableBubbleMenu } from './EditorTableBubbleMenu';
+import { TableToolbar } from './TableToolbar';
+import { TableContextMenu } from './TableContextMenu';
 import { EditorToolbar } from './EditorToolbar';
 
 export interface TipTapEditorProps {
@@ -167,6 +169,7 @@ export function TipTapEditor({
     <div className="space-y-3">
       <EditorImageBubbleMenu editor={editor} disabled={disabled} onError={onError} />
       <EditorTableBubbleMenu editor={editor} disabled={disabled} />
+      <TableContextMenu editor={editor} disabled={disabled} />
 
       <div className="overflow-hidden rounded-lg border border-surface bg-white">
         <div className="px-4 pt-4 pb-3">
@@ -185,6 +188,7 @@ export function TipTapEditor({
         </div>
 
         <div className="border-t border-surface">
+          <TableToolbar editor={editor} disabled={disabled} className="mx-4 my-2" />
           <EditorContent editor={editor} />
         </div>
 

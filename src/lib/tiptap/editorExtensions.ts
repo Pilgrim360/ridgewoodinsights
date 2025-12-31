@@ -10,10 +10,10 @@ import Highlight from '@tiptap/extension-highlight';
 import FontFamily from '@tiptap/extension-font-family';
 import CharacterCount from '@tiptap/extension-character-count';
 import Placeholder from '@tiptap/extension-placeholder';
-import Table from '@tiptap/extension-table';
-import TableRow from '@tiptap/extension-table-row';
-import TableHeader from '@tiptap/extension-table-header';
-import TableCell from '@tiptap/extension-table-cell';
+import { AdvancedTable } from './extensions/AdvancedTable';
+import { AdvancedTableRow } from './extensions/AdvancedTableRow';
+import { AdvancedTableHeader } from './extensions/AdvancedTableHeader';
+import { AdvancedTableCell } from './extensions/AdvancedTableCell';
 import Youtube from '@tiptap/extension-youtube';
 import Typography from '@tiptap/extension-typography';
 
@@ -68,12 +68,12 @@ export function createPostEditorExtensions({
     ImageExtended.configure({
       allowBase64: false,
     }),
-    Table.configure({
+    AdvancedTable.configure({
       resizable: true,
     }),
-    TableRow,
-    TableHeader,
-    TableCell,
+    AdvancedTableRow,
+    AdvancedTableHeader,
+    AdvancedTableCell,
     Youtube.configure({
       controls: true,
       nocookie: true,

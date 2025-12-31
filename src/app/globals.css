@@ -1,3 +1,5 @@
+@import '../styles/tables.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -25,16 +27,17 @@
     @apply overflow-x-auto;
   }
 
-  .ProseMirror table {
+  /* Legacy/basic tables (kept for backward-compat), advanced tables use .rw-table */
+  .ProseMirror table:not(.rw-table) {
     @apply w-full border-collapse;
   }
 
-  .ProseMirror th,
-  .ProseMirror td {
+  .ProseMirror table:not(.rw-table) th,
+  .ProseMirror table:not(.rw-table) td {
     @apply border border-surface px-3 py-2 align-top;
   }
 
-  .ProseMirror th {
+  .ProseMirror table:not(.rw-table) th {
     @apply bg-surface text-secondary;
   }
 
