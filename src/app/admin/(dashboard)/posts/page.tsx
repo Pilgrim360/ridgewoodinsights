@@ -5,255 +5,134 @@
 
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
-import { useAdminError } from '@/contexts/AdminErrorContext';
-import { getPosts, deletePost, bulkDeletePosts, bulkPublishPosts } from '@/lib/admin/posts';
+import React, { useCallback, useState } from 'react';
 import { FilterBar } from '@/components/admin/Posts/FilterBar';
 import { PostsTable } from '@/components/admin/Posts/PostsTable';
-import { PostData, PostFilters, CategoryData } from '@/types/admin';
-import { supabase } from '@/lib/admin/supabase';
-
-interface PageState {
-  posts: PostData[];
-  categories: CategoryData[];
-  filters: PostFilters;
-  pagination: {
-    total: number;
-    page: number;
-    per_page: number;
-    total_pages: number;
-  } | null;
-  isLoading: boolean;
-  isDeleting: boolean;
-  selectedPosts: string[];
-  error: string | null;
-}
+import { PostFilters } from '@/types/admin';
+import { useCategories } from '@/hooks/queries/useCategoriesQueries';
+import { usePostsList } from '@/hooks/queries/usePostsQueries';
+import {
+  useBulkDeletePosts,
+  useBulkPublishPosts,
+  useDeletePost,
+} from '@/hooks/queries/useAdminMutations';
 
 export default function PostsPage() {
-  const { showError, showSuccess } = useAdminError();
-  const [state, setState] = useState<PageState>({
-    posts: [],
-    categories: [],
-    filters: {
-      search: '',
-      status: 'all',
-      page: 1,
-      per_page: 10,
-    },
-    pagination: null,
-    isLoading: true,
-    isDeleting: false,
-    selectedPosts: [],
-    error: null,
+  const [filters, setFilters] = useState<PostFilters>({
+    search: '',
+    status: 'all',
+    page: 1,
+    per_page: 10,
   });
 
-  // Fetch categories on mount
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('categories')
-          .select('id, name, slug')
-          .order('name', { ascending: true });
+  const [selectedPosts, setSelectedPosts] = useState<string[]>([]);
 
-        if (error) throw error;
+  const categoriesQuery = useCategories();
+  const postsQuery = usePostsList(filters);
 
-        setState((prev) => ({
-          ...prev,
-          categories: data || [],
-        }));
-      } catch (err) {
-        console.error('Error fetching categories:', err);
-        // Don't show error to user - categories are optional
-      }
-    };
+  const deletePostMutation = useDeletePost();
+  const bulkDeleteMutation = useBulkDeletePosts();
+  const bulkPublishMutation = useBulkPublishPosts();
 
-    fetchCategories();
-  }, []);
+  const isDeleting =
+    deletePostMutation.isPending ||
+    bulkDeleteMutation.isPending ||
+    bulkPublishMutation.isPending;
 
-  // Fetch posts when filters or page changes
-  useEffect(() => {
-    const fetchPosts = async () => {
-      setState((prev) => ({ ...prev, isLoading: true, error: null }));
-
-      try {
-        const result = await getPosts(state.filters);
-        setState((prev) => ({
-          ...prev,
-          posts: result.data,
-          pagination: result.meta,
-          isLoading: false,
-        }));
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to fetch posts';
-        setState((prev) => ({
-          ...prev,
-          isLoading: false,
-          error: message,
-        }));
-        showError(message);
-      }
-    };
-
-    fetchPosts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.filters, showError]);
-
-  // Handle filter changes
   const handleFilterChange = useCallback((newFilters: PostFilters) => {
-    setState((prev) => ({
+    setFilters((prev) => ({
       ...prev,
-      filters: {
-        ...prev.filters,
-        ...newFilters,
-      },
+      ...newFilters,
     }));
   }, []);
 
-  // Handle page changes
   const handlePageChange = useCallback((page: number) => {
-    setState((prev) => ({
+    setFilters((prev) => ({
       ...prev,
-      filters: {
-        ...prev.filters,
-        page,
-      },
+      page,
     }));
   }, []);
 
-  // Handle post deletion
   const handleDeletePost = useCallback(
     async (postId: string) => {
-      setState((prev) => ({ ...prev, isDeleting: true }));
-
       try {
-        await deletePost(postId);
-        showSuccess('Post deleted successfully');
-
-        // Refresh posts list
-        const result = await getPosts(state.filters);
-        setState((prev) => ({
-          ...prev,
-          posts: result.data,
-          pagination: result.meta,
-          isDeleting: false,
-          selectedPosts: prev.selectedPosts.filter(id => id !== postId),
-        }));
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to delete post';
-        showError(message);
-        setState((prev) => ({ ...prev, isDeleting: false }));
+        await deletePostMutation.mutateAsync(postId);
+        setSelectedPosts((prev) => prev.filter((id) => id !== postId));
+      } catch {
+        // Errors are surfaced via the global admin toast system.
       }
     },
-    [state.filters, showError, showSuccess]
+    [deletePostMutation]
   );
 
-  // Handle bulk delete
   const handleBulkDelete = useCallback(
     async (postIds: string[]) => {
       if (postIds.length === 0) return;
-
-      setState((prev) => ({ ...prev, isDeleting: true }));
-
       try {
-        await bulkDeletePosts(postIds);
-        showSuccess(`${postIds.length} post(s) deleted successfully`);
-
-        // Refresh posts list
-        const result = await getPosts(state.filters);
-        setState((prev) => ({
-          ...prev,
-          posts: result.data,
-          pagination: result.meta,
-          isDeleting: false,
-          selectedPosts: [],
-        }));
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to delete posts';
-        showError(message);
-        setState((prev) => ({ ...prev, isDeleting: false }));
+        await bulkDeleteMutation.mutateAsync(postIds);
+        setSelectedPosts([]);
+      } catch {
+        // Errors are surfaced via the global admin toast system.
       }
     },
-    [state.filters, showError, showSuccess]
+    [bulkDeleteMutation]
   );
 
-  // Handle bulk publish
   const handleBulkPublish = useCallback(
     async (postIds: string[]) => {
       if (postIds.length === 0) return;
-
-      setState((prev) => ({ ...prev, isDeleting: true }));
-
       try {
-        await bulkPublishPosts(postIds);
-        showSuccess(`${postIds.length} post(s) published successfully`);
-
-        // Refresh posts list
-        const result = await getPosts(state.filters);
-        setState((prev) => ({
-          ...prev,
-          posts: result.data,
-          pagination: result.meta,
-          isDeleting: false,
-          selectedPosts: [],
-        }));
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to publish posts';
-        showError(message);
-        setState((prev) => ({ ...prev, isDeleting: false }));
+        await bulkPublishMutation.mutateAsync(postIds);
+        setSelectedPosts([]);
+      } catch {
+        // Errors are surfaced via the global admin toast system.
       }
     },
-    [state.filters, showError, showSuccess]
+    [bulkPublishMutation]
   );
 
-  // Handle post selection
   const handleSelectPost = useCallback((postId: string) => {
-    setState((prev) => ({
-      ...prev,
-      selectedPosts: prev.selectedPosts.includes(postId)
-        ? prev.selectedPosts.filter(id => id !== postId)
-        : [...prev.selectedPosts, postId],
-    }));
+    setSelectedPosts((prev) =>
+      prev.includes(postId) ? prev.filter((id) => id !== postId) : [...prev, postId]
+    );
   }, []);
 
-  // Handle select all
   const handleSelectAll = useCallback((postIds: string[]) => {
-    setState((prev) => ({
-      ...prev,
-      selectedPosts: postIds,
-    }));
+    setSelectedPosts(postIds);
   }, []);
 
-  // Fallback pagination if not loaded yet
-  const paginationMeta = state.pagination || {
+  const posts = postsQuery.data?.data ?? [];
+  const categories = categoriesQuery.data ?? [];
+
+  const paginationMeta = postsQuery.data?.meta ?? {
     total: 0,
     page: 1,
     per_page: 10,
     total_pages: 0,
   };
 
+  const isLoading = postsQuery.isLoading;
+
   return (
     <div className="space-y-6">
-      {/* Filter Bar with search and dropdowns */}
       <FilterBar
-        filters={state.filters}
-        categories={state.categories}
+        filters={filters}
+        categories={categories}
         onFilterChange={handleFilterChange}
-        isLoading={state.isLoading}
+        isLoading={isLoading}
       />
 
-      {/* Posts Table */}
       <PostsTable
-        posts={state.posts}
-        categories={state.categories}
+        posts={posts}
+        categories={categories}
         pagination={paginationMeta}
         onDelete={handleDeletePost}
         onBulkDelete={handleBulkDelete}
         onBulkPublish={handleBulkPublish}
         onPageChange={handlePageChange}
-        isLoading={state.isLoading}
-        isDeleting={state.isDeleting}
-        selectedPosts={state.selectedPosts}
+        isLoading={isLoading}
+        isDeleting={isDeleting}
+        selectedPosts={selectedPosts}
         onSelectChange={handleSelectPost}
         onSelectAll={handleSelectAll}
       />

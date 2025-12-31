@@ -1,36 +1,67 @@
 'use client';
 
-import React, { useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
+import { QueryClientProvider, focusManager, onlineManager } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { AdminAuthProvider } from '@/contexts/AdminAuthContext';
 import { AdminErrorProvider } from '@/contexts/AdminErrorContext';
-import { usePageVisibility } from '@/hooks/usePageVisibility';
+import { createAdminQueryClient } from '@/lib/queryClient';
 import { getSupabaseClient } from '@/lib/supabase/client';
 
 /**
  * Admin Root Layout
- * Provides auth context and error toasts for all admin routes (including login)
+ * Provides TanStack Query, auth context, and error toasts for all admin routes (including login)
  */
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const handleVisibilityChange = useCallback(() => {
-    const supabase = getSupabaseClient();
-    // A more active call to refresh the session and reconnect
-    supabase.auth.getUser().catch((error: unknown) => {
-      if (error instanceof Error) {
-        console.error('Error refreshing Supabase user on visibility change:', error.message);
-      } else {
-        console.error('An unknown error occurred refreshing Supabase user:', error);
-      }
-    });
-  }, []);
+  const [queryClient] = useState(() => createAdminQueryClient());
 
-  usePageVisibility(handleVisibilityChange);
+  useEffect(() => {
+    const supabase = getSupabaseClient();
+
+    const handleResume = () => {
+      if (typeof window === 'undefined') return;
+
+      onlineManager.setOnline(navigator.onLine);
+
+      if (document.visibilityState !== 'visible') {
+        focusManager.setFocused(false);
+        supabase.auth.stopAutoRefresh();
+        return;
+      }
+
+      supabase.auth.startAutoRefresh();
+      focusManager.setFocused(true);
+
+      void supabase.auth.getSession();
+      void queryClient.resumePausedMutations();
+      void queryClient.refetchQueries({ type: 'active' });
+    };
+
+    handleResume();
+
+    document.addEventListener('visibilitychange', handleResume);
+    window.addEventListener('online', handleResume);
+    window.addEventListener('offline', handleResume);
+    window.addEventListener('focus', handleResume);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleResume);
+      window.removeEventListener('online', handleResume);
+      window.removeEventListener('offline', handleResume);
+      window.removeEventListener('focus', handleResume);
+    };
+  }, [queryClient]);
 
   return (
-    <AdminAuthProvider>
-      <AdminErrorProvider>
-        {children}
-      </AdminErrorProvider>
-    </AdminAuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AdminAuthProvider>
+        <AdminErrorProvider>{children}</AdminErrorProvider>
+      </AdminAuthProvider>
+
+      {process.env.NODE_ENV === 'development' && (
+        <ReactQueryDevtools initialIsOpen={false} />
+      )}
+    </QueryClientProvider>
   );
 }

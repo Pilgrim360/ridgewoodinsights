@@ -1,7 +1,8 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import { getSupabaseClient } from '@/lib/supabase/client';
 import { AdminUser, AdminContextType } from '@/types/admin';
 
@@ -43,6 +44,8 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
   const [user, setUser] = useState<AdminUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const lastUserIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     // Initialize user from Supabase on mount
@@ -119,10 +122,22 @@ export const AdminAuthProvider: React.FC<AdminAuthProviderProps> = ({ children }
     };
   }, []);
 
+  useEffect(() => {
+    if (isLoading) return;
+
+    const currentUserId = user?.id ?? null;
+    if (lastUserIdRef.current !== currentUserId) {
+      queryClient.clear();
+      lastUserIdRef.current = currentUserId;
+    }
+  }, [isLoading, user?.id, queryClient]);
+
   const logout = async () => {
     try {
       const supabase = getSupabaseClient();
       await supabase.auth.signOut();
+      queryClient.clear();
+      lastUserIdRef.current = null;
       setUser(null);
       router.push('/admin/login');
     } catch (error) {

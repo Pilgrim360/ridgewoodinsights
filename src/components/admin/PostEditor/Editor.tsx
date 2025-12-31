@@ -7,7 +7,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAdminError } from '@/contexts/AdminErrorContext';
 import { useAdminHeaderSlots } from '@/contexts/AdminHeaderSlotsContext';
 import { usePostEditor, EditorState } from '@/hooks/usePostEditor';
-import { updatePost } from '@/lib/admin/posts';
+import { usePublishPost } from '@/hooks/queries/useAdminMutations';
 import { cn } from '@/lib/utils';
 
 import { EditorSidebar } from './EditorSidebar';
@@ -31,9 +31,11 @@ const DEFAULT_STATE: EditorState = {
 
 export function Editor({ postId, initialData }: EditorProps) {
   const router = useRouter();
-  const { showSuccess, showError } = useAdminError();
+  const { showError } = useAdminError();
   const { setActions } = useAdminHeaderSlots();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  const publishMutation = usePublishPost();
 
   const initialState: EditorState = {
     ...DEFAULT_STATE,
@@ -52,8 +54,6 @@ export function Editor({ postId, initialData }: EditorProps) {
   } = usePostEditor({
     postId,
     initialState,
-    onError: (error) => showError(error),
-    onSuccess: (message) => showSuccess(message),
   });
 
   const handlePublish = useCallback(async () => {
@@ -65,29 +65,24 @@ export function Editor({ postId, initialData }: EditorProps) {
     try {
       let currentPostId = postId;
 
-      if (!currentPostId) {
-        const savedPost = await performSave(state);
-        if (savedPost && savedPost.id) {
-          currentPostId = savedPost.id;
-        } else {
-          throw new Error('Failed to create post before publishing');
-        }
+      const savedPost = await performSave(state);
+      if (!currentPostId && savedPost?.id) {
+        currentPostId = savedPost.id;
       }
 
-      await updatePost(currentPostId!, {
-        ...state,
-        status: 'published',
+      if (!currentPostId) return;
+
+      await publishMutation.mutateAsync({
+        id: currentPostId,
+        published_at: state.published_at,
       });
 
-      showSuccess('Post published successfully');
       router.refresh();
-      router.push(`/admin/posts`);
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Failed to publish post';
-      showError(errorMessage);
+      router.push('/admin/posts');
+    } catch {
+      // Errors are already surfaced via the global admin toast system.
     }
-  }, [postId, state, showSuccess, showError, router, performSave]);
+  }, [performSave, postId, publishMutation, router, showError, state]);
 
   const updateFieldWithNull = <K extends keyof EditorState>(
     field: K,
@@ -99,11 +94,14 @@ export function Editor({ postId, initialData }: EditorProps) {
   const canPublish = Boolean(state.title.trim()) && Boolean(state.slug.trim());
   const publishDisabledReason = canPublish ? undefined : 'Title and slug are required';
 
+  const isBusy = isSaving || publishMutation.isPending;
+  const editorDisabled = publishMutation.isPending;
+
   useEffect(() => {
     setActions(
       <EditorHeaderActions
         isDirty={isDirty}
-        isSaving={isSaving}
+        isSaving={isBusy}
         lastSaved={lastSaved}
         saveError={saveError}
         onSave={explicitSave}
@@ -118,7 +116,7 @@ export function Editor({ postId, initialData }: EditorProps) {
       setActions(null);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDirty, isSaving, lastSaved, saveError, state.status]);
+  }, [isDirty, isBusy, lastSaved, saveError, state.status]);
 
   return (
     <div className="h-full flex flex-col bg-background pointer-events-auto">
@@ -130,7 +128,7 @@ export function Editor({ postId, initialData }: EditorProps) {
               onTitleChange={(value) => updateField('title', value)}
               content={state.content}
               onChange={(value) => updateField('content', value)}
-              disabled={isSaving}
+              disabled={editorDisabled}
               onError={showError}
             />
           </div>
@@ -176,7 +174,7 @@ export function Editor({ postId, initialData }: EditorProps) {
                 <EditorSidebar
                   state={state}
                   updateField={updateFieldWithNull}
-                  disabled={isSaving}
+                  disabled={editorDisabled}
                 />
               </div>
             </div>
