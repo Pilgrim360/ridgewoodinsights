@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
-import { QueryClientProvider } from '@tanstack/react-query';
+import React, { useEffect, useState } from 'react';
+import { QueryClientProvider, focusManager, onlineManager } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { AdminAuthProvider } from '@/contexts/AdminAuthContext';
 import { AdminErrorProvider } from '@/contexts/AdminErrorContext';
 import { createAdminQueryClient } from '@/lib/queryClient';
+import { getSupabaseClient } from '@/lib/supabase/client';
 
 /**
  * Admin Root Layout
@@ -14,6 +15,33 @@ import { createAdminQueryClient } from '@/lib/queryClient';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => createAdminQueryClient());
+
+  useEffect(() => {
+    const supabase = getSupabaseClient();
+
+    const handleResume = () => {
+      if (typeof window === 'undefined') return;
+
+      if (document.visibilityState !== 'visible') return;
+
+      onlineManager.setOnline(navigator.onLine);
+      focusManager.setFocused(true);
+
+      void supabase.auth.getSession();
+      void queryClient.resumePausedMutations();
+      void queryClient.refetchQueries({ type: 'active' });
+    };
+
+    handleResume();
+
+    document.addEventListener('visibilitychange', handleResume);
+    window.addEventListener('online', handleResume);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleResume);
+      window.removeEventListener('online', handleResume);
+    };
+  }, [queryClient]);
 
   return (
     <QueryClientProvider client={queryClient}>

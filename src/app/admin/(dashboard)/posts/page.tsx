@@ -55,8 +55,12 @@ export default function PostsPage() {
 
   const handleDeletePost = useCallback(
     async (postId: string) => {
-      await deletePostMutation.mutateAsync(postId);
-      setSelectedPosts((prev) => prev.filter((id) => id !== postId));
+      try {
+        await deletePostMutation.mutateAsync(postId);
+        setSelectedPosts((prev) => prev.filter((id) => id !== postId));
+      } catch {
+        // Errors are surfaced via the global admin toast system.
+      }
     },
     [deletePostMutation]
   );
@@ -64,8 +68,12 @@ export default function PostsPage() {
   const handleBulkDelete = useCallback(
     async (postIds: string[]) => {
       if (postIds.length === 0) return;
-      await bulkDeleteMutation.mutateAsync(postIds);
-      setSelectedPosts([]);
+      try {
+        await bulkDeleteMutation.mutateAsync(postIds);
+        setSelectedPosts([]);
+      } catch {
+        // Errors are surfaced via the global admin toast system.
+      }
     },
     [bulkDeleteMutation]
   );
@@ -73,8 +81,12 @@ export default function PostsPage() {
   const handleBulkPublish = useCallback(
     async (postIds: string[]) => {
       if (postIds.length === 0) return;
-      await bulkPublishMutation.mutateAsync(postIds);
-      setSelectedPosts([]);
+      try {
+        await bulkPublishMutation.mutateAsync(postIds);
+        setSelectedPosts([]);
+      } catch {
+        // Errors are surfaced via the global admin toast system.
+      }
     },
     [bulkPublishMutation]
   );

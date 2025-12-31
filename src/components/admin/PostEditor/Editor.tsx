@@ -94,11 +94,14 @@ export function Editor({ postId, initialData }: EditorProps) {
   const canPublish = Boolean(state.title.trim()) && Boolean(state.slug.trim());
   const publishDisabledReason = canPublish ? undefined : 'Title and slug are required';
 
+  const isBusy = isSaving || publishMutation.isPending;
+  const editorDisabled = publishMutation.isPending;
+
   useEffect(() => {
     setActions(
       <EditorHeaderActions
         isDirty={isDirty}
-        isSaving={isSaving}
+        isSaving={isBusy}
         lastSaved={lastSaved}
         saveError={saveError}
         onSave={explicitSave}
@@ -113,7 +116,7 @@ export function Editor({ postId, initialData }: EditorProps) {
       setActions(null);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDirty, isSaving, lastSaved, saveError, state.status]);
+  }, [isDirty, isBusy, lastSaved, saveError, state.status]);
 
   return (
     <div className="h-full flex flex-col bg-background pointer-events-auto">
@@ -125,7 +128,7 @@ export function Editor({ postId, initialData }: EditorProps) {
               onTitleChange={(value) => updateField('title', value)}
               content={state.content}
               onChange={(value) => updateField('content', value)}
-              disabled={isSaving}
+              disabled={editorDisabled}
               onError={showError}
             />
           </div>
@@ -171,7 +174,7 @@ export function Editor({ postId, initialData }: EditorProps) {
                 <EditorSidebar
                   state={state}
                   updateField={updateFieldWithNull}
-                  disabled={isSaving}
+                  disabled={editorDisabled}
                 />
               </div>
             </div>

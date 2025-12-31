@@ -53,6 +53,8 @@ export default function CategoriesPage() {
         id: deleteTarget.id,
         name: deleteTarget.name,
       });
+    } catch {
+      // Errors are surfaced via the global admin toast system.
     } finally {
       setDeleteTarget(null);
       setIsDeletingId(undefined);
@@ -60,14 +62,18 @@ export default function CategoriesPage() {
   };
 
   const handleSaveCategory = async (data: Omit<CategoryData, 'id' | 'created_at'>) => {
-    if (editingCategory?.id) {
-      await updateCategoryMutation.mutateAsync({ id: editingCategory.id, updates: data });
-    } else {
-      await createCategoryMutation.mutateAsync(data);
-    }
+    try {
+      if (editingCategory?.id) {
+        await updateCategoryMutation.mutateAsync({ id: editingCategory.id, updates: data });
+      } else {
+        await createCategoryMutation.mutateAsync(data);
+      }
 
-    setIsModalOpen(false);
-    setEditingCategory(null);
+      setIsModalOpen(false);
+      setEditingCategory(null);
+    } catch {
+      // Keep the modal open; errors are surfaced via the global admin toast system.
+    }
   };
 
   const existingSlugs = categories.map((c) => c.slug);

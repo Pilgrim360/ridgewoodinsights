@@ -86,6 +86,7 @@ export function createAdminQueryClient(): QueryClient {
         staleTime: DEFAULT_QUERY_STALE_TIME_MS,
         refetchOnWindowFocus: 'always',
         refetchOnReconnect: true,
+        networkMode: 'always',
         retry: (failureCount, error) => {
           if (isAuthError(error)) return false;
           return failureCount < 3;
@@ -96,6 +97,7 @@ export function createAdminQueryClient(): QueryClient {
         },
       },
       mutations: {
+        networkMode: 'always',
         retry: (failureCount, error) => {
           if (isAuthError(error)) return false;
           return failureCount < 3;
