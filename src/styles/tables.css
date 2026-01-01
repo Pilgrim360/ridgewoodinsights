@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  /* Table wrapper for overflow handling */
+  .ProseMirror .tableWrapper {
+    @apply overflow-x-auto;
+  }
+
+  /* Base table styling */
+  .ProseMirror table {
+    @apply w-full border-collapse;
+  }
+
+  /* Table cell styling */
+  .ProseMirror th,
+  .ProseMirror td {
+    @apply border border-surface px-3 py-2 align-top;
+  }
+
+  /* Header cell styling */
+  .ProseMirror th {
+    @apply bg-surface text-secondary font-medium;
+  }
+
+  /* Row styling */
+  .ProseMirror tr {
+    @apply border-b border-surface;
+  }
+
+  /* Alternating row backgrounds */
+  .ProseMirror tr:nth-child(even) {
+    @apply bg-background;
+  }
+
+  .ProseMirror tr:nth-child(odd) {
+    @apply bg-white;
+  }
+
+  /* Selected cell/row states for editor */
+  .ProseMirror .selectedCell {
+    @apply bg-primary/10 border-primary/30;
+  }
+
+  .ProseMirror .selectedRow {
+    @apply bg-primary/5;
+  }
+
+  /* Resizable column handles */
+  .ProseMirror .column-resize-handle {
+    @apply absolute right-0 top-0 bottom-0 w-1 cursor-col-resize bg-primary/20;
+    transition: background-color 0.2s ease;
+  }
+
+  .ProseMirror .column-resize-handle:hover {
+    @apply bg-primary/40;
+  }
+
+  .ProseMirror .column-resize-handle:active {
+    @apply bg-primary/60;
+  }
+
+  /* Table with selection states */
+  .ProseMirror .table-with-selection {
+    @apply relative;
+  }
+
+  /* Selection overlay for multi-cell selection */
+  .ProseMirror .table-selection {
+    @apply absolute bg-primary/20 border border-primary/50 pointer-events-none;
+  }
+
+  /* Resizing indicator */
+  .ProseMirror .resizing-indicator {
+    @apply absolute bg-primary text-white px-2 py-1 text-xs rounded;
+    z-index: 50;
+  }
+
+  /* Public markdown/prose table rendering */
+  .markdown-content table {
+    @apply w-full border-collapse;
+  }
+
+  .markdown-content th,
+  .markdown-content td {
+    @apply border border-surface px-3 py-2 align-top;
+  }
+
+  .markdown-content th {
+    @apply bg-surface text-secondary font-medium;
+  }
+
+  .markdown-content tr:nth-child(even) {
+    @apply bg-background;
+  }
+
+  .markdown-content tr:nth-child(odd) {
+    @apply bg-white;
+  }
+
+  /* Editor-specific table controls */
+  .ProseMirror .table-controls {
+    @apply flex gap-2 p-2 bg-surface rounded-b;
+  }
+
+  .ProseMirror .table-control-button {
+    @apply px-2 py-1 text-sm rounded hover:bg-primary/10;
+  }
+
+  /* Focused table state */
+  .ProseMirror .table-focused {
+    @apply outline outline-2 outline-primary/30;
+  }
+
+  /* Empty cell state */
+  .ProseMirror .empty-cell {
+    @apply bg-surface/50;
+  }
+
+  /* Header cell controls */
+  .ProseMirror .header-controls {
+    @apply flex gap-1 absolute right-2 top-2;
+  }
+
+  .ProseMirror .header-control-button {
+    @apply w-6 h-6 flex items-center justify-center rounded hover:bg-primary/10;
+  }
+}

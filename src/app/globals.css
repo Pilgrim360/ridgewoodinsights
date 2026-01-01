@@ -18,24 +18,7 @@
   }
 
   .ProseMirror > * + * {
-    @apply mt-4;
-  }
-
-  .ProseMirror .tableWrapper {
-    @apply overflow-x-auto;
-  }
-
-  .ProseMirror table {
-    @apply w-full border-collapse;
-  }
-
-  .ProseMirror th,
-  .ProseMirror td {
-    @apply border border-surface px-3 py-2 align-top;
-  }
-
-  .ProseMirror th {
-    @apply bg-surface text-secondary;
+   @apply mt-4;
   }
 
   .ProseMirror .page-break {
