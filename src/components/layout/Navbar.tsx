@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Menu } from 'lucide-react';
 import { Container, Button } from '@/components/ui';
-import { NAV_LINKS, SITE_NAME } from '@/constants';
+import { NAV_LINKS, SITE_NAME, LOGOS } from '@/constants';
 import { MobileMenu } from './MobileMenu';
 
 export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
@@ -67,12 +68,16 @@ export function Navbar({ className, mobileMenuOpen, setMobileMenuOpen, ...props 
           <nav className="flex h-20 items-center justify-between" aria-label="Main navigation">
             <Link
               href="/"
-              className={cn(
-                'flex items-center gap-2 font-bold transition-colors text-base sm:text-lg md:text-xl lg:text-2xl',
-                isScrolled ? 'text-primary hover:text-primary/80' : 'text-white hover:text-white/90'
-              )}
+              className="flex items-center gap-2 transition-opacity hover:opacity-80"
             >
-              {SITE_NAME}
+              <Image
+                src={isScrolled ? LOGOS.scrolling : LOGOS.fixed}
+                alt={SITE_NAME}
+                width={40}
+                height={40}
+                className="h-10 w-auto"
+                priority
+              />
             </Link>
 
             {/* Desktop Navigation */}

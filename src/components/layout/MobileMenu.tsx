@@ -3,10 +3,11 @@
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { SITE_NAME } from '@/constants';
+import { SITE_NAME, LOGOS } from '@/constants';
 import { Button } from '../ui/Button';
 
 export interface NavLink {
@@ -75,8 +76,17 @@ export function MobileMenu({ isOpen, onClose, navLinks }: MobileMenuProps) {
         className="fixed inset-y-0 right-0 w-full max-w-xs bg-white shadow-2xl transform transition-transform duration-300 ease-in-out"
       >
         <div className="flex h-20 items-center justify-between border-b border-surface px-6">
-          <span className="text-xl font-bold text-primary">{SITE_NAME}</span>
-          <button
+           <Link href="/" className="flex items-center transition-opacity hover:opacity-80">
+             <Image
+               src={LOGOS.scrolling}
+               alt={SITE_NAME}
+               width={40}
+               height={40}
+               className="h-10 w-auto"
+               priority
+             />
+           </Link>
+           <button
             ref={closeButtonRef}
             type="button"
             className="inline-flex items-center justify-center rounded-md p-2 text-secondary hover:bg-background hover:text-primary focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
