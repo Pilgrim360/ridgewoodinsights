@@ -10,6 +10,8 @@ import {
   Split,
   Trash2,
   SeparatorHorizontal,
+  MinusCircle,
+  MinusSquare,
 } from 'lucide-react';
 import { ToolbarButton } from './ToolbarButton';
 
@@ -83,6 +85,22 @@ export function EditorTableToolbar({
         onClick={() => editor.chain().focus().toggleHeaderRow().run()}
       >
         <SeparatorHorizontal className="h-4 w-4" />
+      </ToolbarButton>
+      <ToolbarButton
+        title="Delete column"
+        aria-label="Delete column"
+        disabled={disabled || !editor.can().deleteColumn()}
+        onClick={() => editor.chain().focus().deleteColumn().run()}
+      >
+        <MinusCircle className="h-4 w-4" />
+      </ToolbarButton>
+      <ToolbarButton
+        title="Delete row"
+        aria-label="Delete row"
+        disabled={disabled || !editor.can().deleteRow()}
+        onClick={() => editor.chain().focus().deleteRow().run()}
+      >
+        <MinusSquare className="h-4 w-4" />
       </ToolbarButton>
       <ToolbarButton
         title="Delete table"
