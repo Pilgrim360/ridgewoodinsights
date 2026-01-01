@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@ai-sdk/xai": "^3.0.3",
     "@headlessui/react": "^2.2.9",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-slot": "^1.2.4",
@@ -39,12 +40,15 @@
     "@tiptap/pm": "^2.27.1",
     "@tiptap/react": "^2.27.1",
     "@tiptap/starter-kit": "^2.27.1",
+    "ai": "^6.0.5",
     "clsx": "^2.1.1",
+    "dotenv": "^17.2.3",
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.556.0",
     "next": "^15.5.7",
+    "openai": "^6.15.0",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
     "react-hook-form": "^7.68.0",
