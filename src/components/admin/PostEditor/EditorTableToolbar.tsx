@@ -1,6 +1,6 @@
 'use client';
 
-import { BubbleMenu, type Editor } from '@tiptap/react';
+import { type Editor } from '@tiptap/react';
 import {
   Columns2,
   Columns3,
@@ -9,29 +9,27 @@ import {
   Merge,
   Split,
   Trash2,
+  SeparatorHorizontal,
+  MinusCircle,
+  MinusSquare,
 } from 'lucide-react';
 import { ToolbarButton } from './ToolbarButton';
 
-export interface EditorTableBubbleMenuProps {
+export interface EditorTableToolbarProps {
   editor: Editor;
   disabled?: boolean;
 }
 
-export function EditorTableBubbleMenu({
+export function EditorTableToolbar({
   editor,
   disabled,
-}: EditorTableBubbleMenuProps) {
+}: EditorTableToolbarProps) {
+  if (!editor.isActive('table')) {
+    return null;
+  }
+
   return (
-    <BubbleMenu
-      editor={editor}
-      tippyOptions={{
-        duration: 150,
-        placement: 'bottom',
-        maxWidth: 'calc(100vw - 400px)',
-      }}
-      shouldShow={() => editor.isActive('table')}
-      className="flex items-center gap-1 rounded-lg border border-surface bg-white p-1 shadow-sm"
-    >
+    <>
       <ToolbarButton
         title="Add column before"
         aria-label="Add column before"
@@ -67,7 +65,7 @@ export function EditorTableBubbleMenu({
       <ToolbarButton
         title="Merge cells"
         aria-label="Merge cells"
-        disabled={disabled}
+        disabled={disabled || !editor.can().mergeCells()}
         onClick={() => editor.chain().focus().mergeCells().run()}
       >
         <Merge className="h-4 w-4" />
@@ -75,10 +73,34 @@ export function EditorTableBubbleMenu({
       <ToolbarButton
         title="Split cell"
         aria-label="Split cell"
-        disabled={disabled}
+        disabled={disabled || !editor.can().splitCell()}
         onClick={() => editor.chain().focus().splitCell().run()}
       >
         <Split className="h-4 w-4" />
+      </ToolbarButton>
+      <ToolbarButton
+        title="Toggle header row"
+        aria-label="Toggle header row"
+        disabled={disabled}
+        onClick={() => editor.chain().focus().toggleHeaderRow().run()}
+      >
+        <SeparatorHorizontal className="h-4 w-4" />
+      </ToolbarButton>
+      <ToolbarButton
+        title="Delete column"
+        aria-label="Delete column"
+        disabled={disabled || !editor.can().deleteColumn()}
+        onClick={() => editor.chain().focus().deleteColumn().run()}
+      >
+        <MinusCircle className="h-4 w-4" />
+      </ToolbarButton>
+      <ToolbarButton
+        title="Delete row"
+        aria-label="Delete row"
+        disabled={disabled || !editor.can().deleteRow()}
+        onClick={() => editor.chain().focus().deleteRow().run()}
+      >
+        <MinusSquare className="h-4 w-4" />
       </ToolbarButton>
       <ToolbarButton
         title="Delete table"
@@ -88,6 +110,6 @@ export function EditorTableBubbleMenu({
       >
         <Trash2 className="h-4 w-4" />
       </ToolbarButton>
-    </BubbleMenu>
+    </>
   );
 }

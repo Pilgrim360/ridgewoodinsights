@@ -10,7 +10,6 @@ import { sanitizePastedHtml } from '@/lib/tiptap/sanitize';
 import { useAdminHeaderSlots } from '@/contexts/AdminHeaderSlotsContext';
 
 import { EditorImageBubbleMenu } from './EditorImageBubbleMenu';
-import { EditorTableBubbleMenu } from './EditorTableBubbleMenu';
 import { EditorToolbar } from './EditorToolbar';
 
 export interface TipTapEditorProps {
@@ -147,7 +146,7 @@ export function TipTapEditor({
     return () => {
       setSubHeader(null);
     };
-  }, [editor, disabled, onError, setSubHeader]);
+  }, [editor, disabled, onError, setSubHeader, editor?.state]);
 
   const stats = useMemo(() => {
     if (!editor) {
@@ -166,7 +165,6 @@ export function TipTapEditor({
   return (
     <div className="space-y-3">
       <EditorImageBubbleMenu editor={editor} disabled={disabled} onError={onError} />
-      <EditorTableBubbleMenu editor={editor} disabled={disabled} />
 
       <div className="overflow-hidden rounded-lg border border-surface bg-white">
         <div className="px-4 pt-4 pb-3">
