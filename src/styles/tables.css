@@ -3,6 +3,12 @@
   @apply overflow-x-auto;
 }
 
+/* Rounded corners look best when the wrapper can clip cell borders (public rendering) */
+.rw-table-wrapper:not(.rw-table-nodeview) {
+  border-radius: var(--rw-table-radius, 0px);
+  overflow-y: hidden;
+}
+
 .rw-table {
   @apply w-full text-sm text-text;
   border-collapse: separate;
@@ -106,6 +112,21 @@
 }
 
 /* Editor-only: selection styles + resize handles + row/col grips */
+.ProseMirror .rw-table-selection-table > table {
+  outline: 2px solid #93C5FD;
+  outline-offset: 2px;
+}
+
+.ProseMirror .rw-table-selection-row > table {
+  outline: 1px solid rgba(147, 197, 253, 0.8);
+  outline-offset: 2px;
+}
+
+.ProseMirror .rw-table-selection-column > table {
+  outline: 1px solid rgba(147, 197, 253, 0.8);
+  outline-offset: 2px;
+}
+
 .ProseMirror .rw-table .selectedCell {
   background-color: #DBEAFE !important;
   box-shadow: inset 0 0 0 1px #2563eb;
@@ -128,6 +149,44 @@
   --rw-table-grip-size: 18px;
   padding-top: var(--rw-table-grip-size);
   padding-left: var(--rw-table-grip-size);
+}
+
+.ProseMirror .rw-table-col-resize-handle-left {
+  position: absolute;
+  top: var(--rw-table-grip-size);
+  left: var(--rw-table-grip-size);
+  width: 10px;
+  transform: translateX(-50%);
+  cursor: col-resize;
+  z-index: 3;
+}
+
+.ProseMirror .rw-table-col-resize-handle-left:hover {
+  background-color: rgba(0, 100, 102, 0.12);
+}
+
+.ProseMirror .rw-table-row-resize-handles {
+  position: absolute;
+  top: var(--rw-table-grip-size);
+  left: var(--rw-table-grip-size);
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.ProseMirror .rw-table-row-resize-handle {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 10px;
+  transform: translateY(-50%);
+  cursor: row-resize;
+  pointer-events: auto;
+}
+
+.ProseMirror .rw-table-row-resize-handle:hover {
+  background-color: rgba(0, 100, 102, 0.12);
 }
 
 .ProseMirror .rw-table-nodeview > table {

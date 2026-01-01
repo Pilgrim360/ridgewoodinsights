@@ -1,11 +1,16 @@
 import Table from '@tiptap/extension-table';
 import { mergeAttributes } from '@tiptap/core';
+import { Plugin } from '@tiptap/pm/state';
+import { Decoration, DecorationSet } from '@tiptap/pm/view';
+import { CellSelection, cellAround } from '@tiptap/pm/tables';
 
 import { createAdvancedTableNodeView } from '@/components/admin/PostEditor/TableNodeView';
 
 import {
   DEFAULT_BORDER_ATTRIBUTES,
   DEFAULT_BORDER_COLOR,
+  findParentTable,
+  getTableSelectionType,
   normalizeHexColor,
   type BorderRadius,
   type BorderStyle,
@@ -104,6 +109,94 @@ export const AdvancedTable = Table.extend({
         },
       },
     };
+  },
+
+  addProseMirrorPlugins() {
+    const parentPlugins = this.parent?.() ?? [];
+
+    return [
+      ...parentPlugins,
+      new Plugin({
+        props: {
+          decorations: (state) => {
+            const selectionType = getTableSelectionType(state);
+            if (!selectionType) return null;
+
+            const table = findParentTable(state);
+            if (!table) return null;
+
+            return DecorationSet.create(state.doc, [
+              Decoration.node(table.pos, table.pos + table.node.nodeSize, {
+                class: `rw-table-selection-${selectionType}`,
+              }),
+            ]);
+          },
+
+          handleDOMEvents: {
+            mousedown: (view, event) => {
+              const mouseEvent = event as MouseEvent;
+              if (mouseEvent.detail < 4) return false;
+
+              const target = mouseEvent.target as HTMLElement | null;
+              const cellDom = target?.closest('td,th');
+              if (!cellDom) return false;
+
+              const pos = view.posAtDOM(cellDom, 0);
+              const $pos = view.state.doc.resolve(pos);
+              const $cell = cellAround($pos);
+              if (!$cell) return false;
+
+              const tr = view.state.tr.setSelection(CellSelection.create(view.state.doc, $cell.pos));
+              view.dispatch(tr);
+              view.focus();
+
+              mouseEvent.preventDefault();
+              mouseEvent.stopPropagation();
+
+              return true;
+            },
+
+            mouseup: (view, event) => {
+              const selection =
+                'getSelection' in view.root ? view.root.getSelection() : window.getSelection();
+              if (!selection || selection.isCollapsed) return false;
+
+              const anchorEl =
+                (selection.anchorNode instanceof Element
+                  ? selection.anchorNode
+                  : selection.anchorNode?.parentElement) ?? null;
+              const headEl =
+                (selection.focusNode instanceof Element
+                  ? selection.focusNode
+                  : selection.focusNode?.parentElement) ?? null;
+
+              const anchorCell = anchorEl?.closest?.('td,th') ?? null;
+              const headCell = headEl?.closest?.('td,th') ?? null;
+
+              if (!anchorCell || !headCell || anchorCell === headCell) return false;
+
+              const anchorPos = view.posAtDOM(anchorCell, 0);
+              const headPos = view.posAtDOM(headCell, 0);
+
+              const $anchor = cellAround(view.state.doc.resolve(anchorPos));
+              const $head = cellAround(view.state.doc.resolve(headPos));
+
+              if (!$anchor || !$head) return false;
+
+              const tr = view.state.tr.setSelection(new CellSelection($anchor, $head));
+              view.dispatch(tr);
+              view.focus();
+
+              selection.removeAllRanges();
+
+              (event as MouseEvent).preventDefault();
+
+              return true;
+            },
+          },
+        },
+      }),
+    ];
   },
 
   addNodeView() {

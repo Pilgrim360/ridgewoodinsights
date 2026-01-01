@@ -65,6 +65,7 @@ export function sanitizePastedHtml(html: string): string {
       ],
       colgroup: ['span'],
       col: ['style', 'width'],
+      tr: ['style'],
       th: ['colspan', 'rowspan', 'style'],
       td: ['colspan', 'rowspan', 'style'],
       div: ['data-page-break', 'class'],
@@ -122,6 +123,9 @@ export function sanitizePastedHtml(html: string): string {
       },
       col: {
         width: [/^\d+px$/],
+      },
+      tr: {
+        height: [/^\d+px$/],
       },
       th: {
         'text-align': [/^(left|center|right|justify)$/],
