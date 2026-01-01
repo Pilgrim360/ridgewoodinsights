@@ -146,7 +146,7 @@ export function TipTapEditor({
     return () => {
       setSubHeader(null);
     };
-  }, [editor, disabled, onError, setSubHeader]);
+  }, [editor, disabled, onError, setSubHeader, editor?.state]);
 
   const stats = useMemo(() => {
     if (!editor) {
