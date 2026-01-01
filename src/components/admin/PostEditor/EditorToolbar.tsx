@@ -39,6 +39,7 @@ import { getTocHeadings } from '@/lib/tiptap/toc';
 
 import { ToolbarButton } from './ToolbarButton';
 import { ToolbarSelect } from './ToolbarSelect';
+import { EditorTableToolbar } from './EditorTableToolbar';
 
 const FONT_FAMILIES: Array<{ label: string; value: string }> = [
   { label: 'Default', value: '' },
@@ -586,22 +587,8 @@ export function EditorToolbar({
         >
           <TableIcon className="h-4 w-4" />
         </ToolbarButton>
-        <ToolbarButton
-          title="Toggle header row"
-          aria-label="Toggle header row"
-          disabled={disabled || !editor.isActive('table')}
-          onClick={() => editor.chain().focus().toggleHeaderRow().run()}
-        >
-          <SeparatorHorizontal className="h-4 w-4" />
-        </ToolbarButton>
-        <ToolbarButton
-          title="Delete table"
-          aria-label="Delete table"
-          disabled={disabled || !editor.isActive('table')}
-          onClick={() => editor.chain().focus().deleteTable().run()}
-        >
-          <TrashButtonIcon />
-        </ToolbarButton>
+
+        <EditorTableToolbar editor={editor} disabled={disabled} />
 
         <input
           ref={csvInputRef}
@@ -723,18 +710,3 @@ function escapeHtml(value: string): string {
     .replace(/'/g, '&#039;');
 }
 
-function TrashButtonIcon() {
-  return <TrashIcon />;
-}
-
-function TrashIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M3 6h18" />
-      <path d="M8 6V4h8v2" />
-      <path d="M6 6l1 16h10l1-16" />
-      <path d="M10 11v6" />
-      <path d="M14 11v6" />
-    </svg>
-  );
-}
