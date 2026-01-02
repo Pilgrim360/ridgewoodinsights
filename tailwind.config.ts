@@ -36,7 +36,7 @@ const config: Config = {
         background: '#F8F9FB',
         white: '#FFFFFF',
       },
-      typography: ({ theme }) => ({
+      typography: ({ theme }: { theme: any }) => ({
         DEFAULT: {
           css: {
             table: {
