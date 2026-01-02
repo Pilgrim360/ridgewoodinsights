@@ -36,6 +36,21 @@ const config: Config = {
         background: '#F8F9FB',
         white: '#FFFFFF',
       },
+      typography: ({ theme }) => ({
+        DEFAULT: {
+          css: {
+            table: {
+              width: '100%',
+              borderCollapse: 'collapse',
+              overflow: 'hidden',
+            },
+            'th, td': {
+              border: `1px solid ${theme('colors.surface')}`,
+              padding: '0.5rem',
+            },
+          },
+        },
+      }),
     },
   },
   plugins: [typography],
