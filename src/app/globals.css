@@ -118,3 +118,7 @@
   }
 }
 
+/* Reduce the default height of empty Tiptap table rows */
+.ProseMirror table p {
+  margin: 0;
+}
