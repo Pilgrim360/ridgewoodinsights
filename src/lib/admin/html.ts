@@ -125,7 +125,7 @@ export function sanitizeContent(html: string): string {
       },
     },
     allowedClasses: {
-      div: ['page-break', 'embed-wrapper'],
+      div: ['page-break', 'embed-wrapper', 'tableWrapper'],
       iframe: ['embed-iframe'],
     },
     allowedSchemes: ['http', 'https', 'mailto'],

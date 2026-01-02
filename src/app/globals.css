@@ -21,55 +21,69 @@
     @apply mt-4;
   }
 
-  .ProseMirror .tableWrapper {
-    @apply max-w-full overflow-x-auto overflow-y-hidden rounded-lg border border-surface bg-white;
+  /* Tables (editor + public rendering) */
+  .ProseMirror.prose .tableWrapper,
+  .prose .tableWrapper {
+    @apply max-w-full overflow-x-auto overflow-y-hidden rounded-lg border border-surface bg-white shadow-sm;
   }
 
-  .ProseMirror table {
+  .ProseMirror.prose .tableWrapper > table,
+  .prose .tableWrapper > table {
     @apply border-separate border-spacing-0;
+    width: max-content;
   }
 
-  .ProseMirror table[align='left'] {
+  .ProseMirror.prose .tableWrapper > table[align='left'],
+  .prose .tableWrapper > table[align='left'] {
     margin-left: 0;
     margin-right: auto;
     float: none;
   }
 
-  .ProseMirror table[align='center'] {
+  .ProseMirror.prose .tableWrapper > table[align='center'],
+  .prose .tableWrapper > table[align='center'] {
     margin: 0 auto;
     float: none;
   }
 
-  .ProseMirror table[align='right'] {
+  .ProseMirror.prose .tableWrapper > table[align='right'],
+  .prose .tableWrapper > table[align='right'] {
     float: right;
     margin-left: 1rem;
     margin-right: 0;
   }
 
-
-  .ProseMirror th,
-  .ProseMirror td {
-    @apply border-b border-r border-surface px-3 py-2.5 align-top;
+  .ProseMirror.prose .tableWrapper th,
+  .ProseMirror.prose .tableWrapper td,
+  .prose .tableWrapper th,
+  .prose .tableWrapper td {
+    @apply border-b border-r border-surface px-3 py-2 text-sm leading-snug align-top;
   }
 
-  .ProseMirror tr > :last-child {
+  .ProseMirror.prose .tableWrapper tr > :last-child,
+  .prose .tableWrapper tr > :last-child {
     @apply border-r-0;
   }
 
-  .ProseMirror tr:last-child > th,
-  .ProseMirror tr:last-child > td {
+  .ProseMirror.prose .tableWrapper tr:last-child > th,
+  .ProseMirror.prose .tableWrapper tr:last-child > td,
+  .prose .tableWrapper tr:last-child > th,
+  .prose .tableWrapper tr:last-child > td {
     @apply border-b-0;
   }
 
-  .ProseMirror th {
+  .ProseMirror.prose .tableWrapper th,
+  .prose .tableWrapper th {
     @apply bg-primary text-white font-semibold;
   }
 
-  .ProseMirror tbody tr:nth-child(even) td {
+  .ProseMirror.prose .tableWrapper tbody tr:nth-child(even) td,
+  .prose .tableWrapper tbody tr:nth-child(even) td {
     @apply bg-surface/50;
   }
 
-  .ProseMirror tbody tr:hover td {
+  .ProseMirror.prose .tableWrapper tbody tr:hover td,
+  .prose .tableWrapper tbody tr:hover td {
     @apply bg-surface/40;
   }
 

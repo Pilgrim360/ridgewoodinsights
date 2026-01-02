@@ -53,6 +53,7 @@ export function sanitizePastedHtml(html: string): string {
       h4: ['id', 'style'],
       h5: ['id', 'style'],
       h6: ['id', 'style'],
+      table: ['align'],
       th: ['colspan', 'rowspan', 'style'],
       td: ['colspan', 'rowspan', 'style'],
       div: ['data-page-break', 'class'],

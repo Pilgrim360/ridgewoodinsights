@@ -68,12 +68,13 @@ const TableWithAlignment = Table.extend({
           const table = findParentNodeClosestToPos(tr.selection.$from, (node) => node.type.name === 'table');
           if (!table) return false;
 
-          tr.setNodeMarkup(table.pos, undefined, {
-            ...table.node.attrs,
-            align: alignment,
-          });
+          if (dispatch) {
+            tr.setNodeMarkup(table.pos, undefined, {
+              ...table.node.attrs,
+              align: alignment,
+            });
+          }
 
-          if (dispatch) dispatch(tr);
           return true;
         },
       toggleTableAlignment:
@@ -85,12 +86,13 @@ const TableWithAlignment = Table.extend({
           const current = (table.node.attrs.align as TableAlignment | undefined) ?? 'center';
           const next: TableAlignment = current === alignment ? 'center' : alignment;
 
-          tr.setNodeMarkup(table.pos, undefined, {
-            ...table.node.attrs,
-            align: next,
-          });
+          if (dispatch) {
+            tr.setNodeMarkup(table.pos, undefined, {
+              ...table.node.attrs,
+              align: next,
+            });
+          }
 
-          if (dispatch) dispatch(tr);
           return true;
         },
     };
