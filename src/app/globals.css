@@ -116,5 +116,15 @@
   .ProseMirror .rw-image-resize-handle--active {
     @apply ring-2 ring-primary/30;
   }
+
+  /* TipTap table resizing handles */
+  .ProseMirror .column-resize-handle {
+    @apply absolute top-0 bottom-0 right-[-3px] w-1.5 z-20 cursor-col-resize;
+  }
+
+  /* Add a visual indicator on hover */
+  .ProseMirror .column-resize-handle:hover {
+    @apply bg-primary/40;
+  }
 }
 
