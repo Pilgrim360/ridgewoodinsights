@@ -13,6 +13,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 import Table from '@tiptap/extension-table';
 import TableRow from '@tiptap/extension-table-row';
 import TableHeader from '@tiptap/extension-table-header';
+import { columnResizing } from '@tiptap/pm/tables';
 import TableCell from '@tiptap/extension-table-cell';
 import Youtube from '@tiptap/extension-youtube';
 import Typography from '@tiptap/extension-typography';
@@ -68,8 +69,18 @@ export function createPostEditorExtensions({
     ImageExtended.configure({
       allowBase64: false,
     }),
-    Table.configure({
-      resizable: true,
+    Table.extend({
+      addProseMirrorPlugins() {
+        return [
+          columnResizing({
+            handleWidth: 6,
+            cellMinWidth: 50,
+            lastColumnResizable: true,
+          }),
+        ];
+      },
+    }).configure({
+      resizable: false,
     }),
     TableRow,
     TableHeader,
