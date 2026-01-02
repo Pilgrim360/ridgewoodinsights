@@ -22,20 +22,44 @@
   }
 
   .ProseMirror .tableWrapper {
-    @apply overflow-x-auto;
+    @apply overflow-x-auto rounded-lg;
   }
 
   .ProseMirror table {
     @apply w-full border-collapse;
+    border-radius: 0.5rem;
+    overflow: hidden;
   }
 
   .ProseMirror th,
   .ProseMirror td {
-    @apply border border-surface px-3 py-2 align-top;
+    @apply border border-surface/50 align-top;
+    padding: 0.625rem 0.75rem;
   }
 
   .ProseMirror th {
-    @apply bg-surface text-secondary;
+    @apply text-white font-semibold;
+    background-color: #006466;
+  }
+
+  .ProseMirror tbody tr:nth-child(even) {
+    background-color: rgba(226, 231, 237, 0.5);
+  }
+
+  .ProseMirror tbody tr:hover {
+    background-color: rgba(226, 231, 237, 0.7);
+  }
+
+  .ProseMirror table[align="left"] {
+    @apply block;
+  }
+
+  .ProseMirror table[align="center"] {
+    @apply mx-auto;
+  }
+
+  .ProseMirror table[align="right"] {
+    @apply float-right ml-8;
   }
 
   .ProseMirror .page-break {

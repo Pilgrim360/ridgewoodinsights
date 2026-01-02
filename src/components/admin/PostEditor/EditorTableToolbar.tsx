@@ -12,6 +12,9 @@ import {
   SeparatorHorizontal,
   MinusCircle,
   MinusSquare,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
 } from 'lucide-react';
 import { ToolbarButton } from './ToolbarButton';
 
@@ -109,6 +112,34 @@ export function EditorTableToolbar({
         onClick={() => editor.chain().focus().deleteTable().run()}
       >
         <Trash2 className="h-4 w-4" />
+      </ToolbarButton>
+      <div className="h-6 w-px bg-surface mx-1" />
+      <ToolbarButton
+        title="Align table left"
+        aria-label="Align table left"
+        disabled={disabled}
+        onClick={() => (editor.commands as any).setTableAlignment('left')}
+        isActive={editor.isActive('table', { align: 'left' })}
+      >
+        <AlignLeft className="h-4 w-4" />
+      </ToolbarButton>
+      <ToolbarButton
+        title="Align table center (default)"
+        aria-label="Align table center"
+        disabled={disabled}
+        onClick={() => (editor.commands as any).setTableAlignment('center')}
+        isActive={editor.isActive('table', { align: 'center' })}
+      >
+        <AlignCenter className="h-4 w-4" />
+      </ToolbarButton>
+      <ToolbarButton
+        title="Align table right"
+        aria-label="Align table right"
+        disabled={disabled}
+        onClick={() => (editor.commands as any).setTableAlignment('right')}
+        isActive={editor.isActive('table', { align: 'right' })}
+      >
+        <AlignRight className="h-4 w-4" />
       </ToolbarButton>
     </>
   );
