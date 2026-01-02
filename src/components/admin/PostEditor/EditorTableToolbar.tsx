@@ -118,7 +118,7 @@ export function EditorTableToolbar({
         title="Align table left"
         aria-label="Align table left"
         disabled={disabled}
-        onClick={() => (editor.commands as any).setTableAlignment('left')}
+        onClick={() => editor.commands.setTableAlignment('left')}
         isActive={editor.isActive('table', { align: 'left' })}
       >
         <AlignLeft className="h-4 w-4" />
@@ -127,7 +127,7 @@ export function EditorTableToolbar({
         title="Align table center (default)"
         aria-label="Align table center"
         disabled={disabled}
-        onClick={() => (editor.commands as any).setTableAlignment('center')}
+        onClick={() => editor.commands.setTableAlignment('center')}
         isActive={editor.isActive('table', { align: 'center' })}
       >
         <AlignCenter className="h-4 w-4" />
@@ -136,7 +136,7 @@ export function EditorTableToolbar({
         title="Align table right"
         aria-label="Align table right"
         disabled={disabled}
-        onClick={() => (editor.commands as any).setTableAlignment('right')}
+        onClick={() => editor.commands.setTableAlignment('right')}
         isActive={editor.isActive('table', { align: 'right' })}
       >
         <AlignRight className="h-4 w-4" />

@@ -1,10 +1,7 @@
 import Table from '@tiptap/extension-table';
-import { mergeAttributes } from '@tiptap/core';
+import { mergeAttributes, ChainedCommands } from '@tiptap/core';
 
-export interface TableAlignmentCommands {
-  setTableAlignment: (alignment: 'left' | 'center' | 'right') => any;
-}
-
+// Properly augment the Commands interface for table commands
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     setTableAlignment: (alignment: 'left' | 'center' | 'right') => ReturnType;
