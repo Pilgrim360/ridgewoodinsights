@@ -34,7 +34,7 @@ const config: Config = {
         secondary: '#2C3E50',
         text: '#415161',
         surface: '#E2E7ED',
-        'table-border': '#6B7C8D',
+        'table-border': '#c9cdd1',
         background: '#F8F9FB',
         white: '#FFFFFF',
       },
