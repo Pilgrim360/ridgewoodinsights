@@ -11,6 +11,7 @@ import { useAdminHeaderSlots } from '@/contexts/AdminHeaderSlotsContext';
 
 import { EditorImageBubbleMenu } from './EditorImageBubbleMenu';
 import { EditorToolbar } from './EditorToolbar';
+import { TableBubbleMenu } from './menus/TableBubbleMenu';
 
 export interface TipTapEditorProps {
   title: string;
@@ -165,6 +166,7 @@ export function TipTapEditor({
   return (
     <div className="space-y-3">
       <EditorImageBubbleMenu editor={editor} disabled={disabled} onError={onError} />
+      <TableBubbleMenu editor={editor} />
 
       <div className="overflow-hidden rounded-lg border border-surface bg-white">
         <div className="px-4 pt-4 pb-3">
