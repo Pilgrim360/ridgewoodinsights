@@ -118,7 +118,29 @@
   }
 }
 
-/* Reduce the default height of empty Tiptap table rows */
-.ProseMirror table p {
+/* Extend table styling to published posts for consistent row height control */
+.prose table {
+  @apply w-full border-collapse;
+}
+
+.prose th,
+.prose td {
+  @apply border border-surface px-3 py-2 align-top;
+}
+
+.prose th {
+  @apply bg-surface text-secondary;
+}
+
+/* Reduce paragraph margins inside table cells for better spacing */
+.ProseMirror table p,
+.prose table p {
   margin: 0;
+}
+
+/* Handle empty table cells specifically to reduce row height */
+.ProseMirror td:empty,
+.prose td:empty {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
 }
