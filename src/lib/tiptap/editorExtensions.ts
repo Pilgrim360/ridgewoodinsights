@@ -1,3 +1,4 @@
+import { findParentNodeClosestToPos } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
 import Underline from '@tiptap/extension-underline';
@@ -24,6 +25,77 @@ import { IframeEmbed } from './extensions/IframeEmbed';
 import { AudioEmbed } from './extensions/AudioEmbed';
 import { ImageExtended } from './extensions/ImageExtended';
 import { HeadingWithId } from './extensions/HeadingWithId';
+
+export type TableAlignment = 'left' | 'center' | 'right';
+
+declare module '@tiptap/core' {
+  interface Commands<ReturnType> {
+    tableAlignment: {
+      setTableAlignment: (alignment: TableAlignment) => ReturnType;
+      toggleTableAlignment: (alignment: TableAlignment) => ReturnType;
+    };
+  }
+}
+
+const TableWithAlignment = Table.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      align: {
+        default: 'center',
+        parseHTML: (element) => {
+          const value = (element as HTMLElement).getAttribute('align');
+          if (value === 'left' || value === 'center' || value === 'right') return value;
+          return 'center';
+        },
+        renderHTML: (attributes) => {
+          const value = attributes.align;
+          if (value === 'left' || value === 'center' || value === 'right') {
+            return { align: value };
+          }
+          return { align: 'center' };
+        },
+      },
+    };
+  },
+
+  addCommands() {
+    return {
+      ...this.parent?.(),
+      setTableAlignment:
+        (alignment) =>
+        ({ tr, dispatch }) => {
+          const table = findParentNodeClosestToPos(tr.selection.$from, (node) => node.type.name === 'table');
+          if (!table) return false;
+
+          tr.setNodeMarkup(table.pos, undefined, {
+            ...table.node.attrs,
+            align: alignment,
+          });
+
+          if (dispatch) dispatch(tr);
+          return true;
+        },
+      toggleTableAlignment:
+        (alignment) =>
+        ({ tr, dispatch }) => {
+          const table = findParentNodeClosestToPos(tr.selection.$from, (node) => node.type.name === 'table');
+          if (!table) return false;
+
+          const current = (table.node.attrs.align as TableAlignment | undefined) ?? 'center';
+          const next: TableAlignment = current === alignment ? 'center' : alignment;
+
+          tr.setNodeMarkup(table.pos, undefined, {
+            ...table.node.attrs,
+            align: next,
+          });
+
+          if (dispatch) dispatch(tr);
+          return true;
+        },
+    };
+  },
+});
 
 export interface PostEditorExtensionsOptions {
   placeholder?: string;
@@ -68,8 +140,11 @@ export function createPostEditorExtensions({
     ImageExtended.configure({
       allowBase64: false,
     }),
-    Table.configure({
+    TableWithAlignment.configure({
       resizable: true,
+      HTMLAttributes: {
+        align: 'center',
+      },
     }),
     TableRow,
     TableHeader,

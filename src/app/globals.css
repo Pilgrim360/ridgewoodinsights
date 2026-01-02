@@ -22,20 +22,55 @@
   }
 
   .ProseMirror .tableWrapper {
-    @apply overflow-x-auto;
+    @apply max-w-full overflow-x-auto overflow-y-hidden rounded-lg border border-surface bg-white;
   }
 
   .ProseMirror table {
-    @apply w-full border-collapse;
+    @apply border-separate border-spacing-0;
   }
+
+  .ProseMirror table[align='left'] {
+    margin-left: 0;
+    margin-right: auto;
+    float: none;
+  }
+
+  .ProseMirror table[align='center'] {
+    margin: 0 auto;
+    float: none;
+  }
+
+  .ProseMirror table[align='right'] {
+    float: right;
+    margin-left: 1rem;
+    margin-right: 0;
+  }
+
 
   .ProseMirror th,
   .ProseMirror td {
-    @apply border border-surface px-3 py-2 align-top;
+    @apply border-b border-r border-surface px-3 py-2.5 align-top;
+  }
+
+  .ProseMirror tr > :last-child {
+    @apply border-r-0;
+  }
+
+  .ProseMirror tr:last-child > th,
+  .ProseMirror tr:last-child > td {
+    @apply border-b-0;
   }
 
   .ProseMirror th {
-    @apply bg-surface text-secondary;
+    @apply bg-primary text-white font-semibold;
+  }
+
+  .ProseMirror tbody tr:nth-child(even) td {
+    @apply bg-surface/50;
+  }
+
+  .ProseMirror tbody tr:hover td {
+    @apply bg-surface/40;
   }
 
   .ProseMirror .page-break {
