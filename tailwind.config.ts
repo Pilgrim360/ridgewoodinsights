@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import type { PluginUtils } from 'tailwindcss/types/config';
 import typography from '@tailwindcss/typography';
 
 const config: Config = {
@@ -36,6 +37,21 @@ const config: Config = {
         background: '#F8F9FB',
         white: '#FFFFFF',
       },
+      typography: ({ theme }: PluginUtils) => ({
+        DEFAULT: {
+          css: {
+            table: {
+              width: '100%',
+              borderCollapse: 'collapse',
+              overflow: 'hidden',
+            },
+            'th, td': {
+              border: `1px solid ${theme('colors.surface')}`,
+              padding: '0.5rem',
+            },
+          },
+        },
+      }),
     },
   },
   plugins: [typography],
