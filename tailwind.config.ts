@@ -34,6 +34,7 @@ const config: Config = {
         secondary: '#2C3E50',
         text: '#415161',
         surface: '#E2E7ED',
+        'table-border': '#6B7C8D',
         background: '#F8F9FB',
         white: '#FFFFFF',
       },
@@ -46,7 +47,7 @@ const config: Config = {
               overflow: 'hidden',
             },
             'th, td': {
-              border: `1px solid ${theme('colors.surface')}`,
+              border: `1px solid ${theme('colors.table-border')}`,
               padding: '0.5rem',
             },
           },

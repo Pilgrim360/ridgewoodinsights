@@ -31,7 +31,7 @@
 
   .ProseMirror th,
   .ProseMirror td {
-    @apply border border-surface px-3 py-2 align-top;
+    @apply border border-table-border px-3 py-2 align-top;
   }
 
   .ProseMirror th {
@@ -39,7 +39,7 @@
   }
 
   .ProseMirror .page-break {
-    @apply my-6 border-t border-surface;
+    @apply my-6 border-t border-table-border;
   }
 
   @media print {
@@ -53,7 +53,7 @@
   }
 
   .ProseMirror .embed-wrapper {
-    @apply relative w-full overflow-hidden rounded-md border border-surface bg-background;
+    @apply relative w-full overflow-hidden rounded-md border border-table-border bg-background;
     padding-top: 56.25%;
   }
 
@@ -109,7 +109,7 @@
   }
 
   .ProseMirror .rw-image-resize-handle {
-    @apply absolute -right-2 -bottom-2 h-4 w-4 rounded-sm border border-surface bg-white shadow;
+    @apply absolute -right-2 -bottom-2 h-4 w-4 rounded-sm border border-table-border bg-white shadow;
     cursor: nwse-resize;
   }
 
@@ -125,7 +125,7 @@
 
 .prose th,
 .prose td {
-  @apply border border-surface px-3 py-2 align-top;
+  @apply border border-table-border px-3 py-2 align-top;
 }
 
 .prose th {
