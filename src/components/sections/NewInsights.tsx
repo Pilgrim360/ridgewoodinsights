@@ -3,11 +3,13 @@
 import { useCallback } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
+import { useRouter } from 'next/navigation';
 import { Insight } from '@/constants';
 import { Section } from '../ui/Section';
 import { Container } from '../ui/Container';
 import { Heading } from '../ui/Heading';
 import { Text } from '../ui/Text';
+import { Button } from '../ui/Button';
 import { InsightCard } from '../blog/InsightCard';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
@@ -35,6 +37,8 @@ export function NewInsights({ title, subtitle, insights }: NewInsightsProps) {
     const scrollNext = useCallback(() => {
         if (emblaApi) emblaApi.scrollNext();
     }, [emblaApi]);
+
+    const router = useRouter();
 
     return (
         <Section id="new-insights" bg="default" aria-labelledby="new-insights-title">
@@ -84,12 +88,14 @@ export function NewInsights({ title, subtitle, insights }: NewInsightsProps) {
                     </div>
                 </div>
                 <div className="text-center mt-12">
-                    <Link
-                        href="/insights"
-                        className="inline-flex items-center px-6 py-3 border border-surface rounded-lg text-secondary font-medium hover:bg-surface hover:border-primary hover:text-primary transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                    <Button
+                        variant="outline"
+                        size="lg"
+                        className="font-medium"
+                        onClick={() => router.push('/insights')}
                     >
                         See More Insights
-                    </Link>
+                    </Button>
                 </div>
             </Container>
         </Section>

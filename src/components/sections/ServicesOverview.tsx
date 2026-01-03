@@ -1,7 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Card } from '../ui/Card';
+import { Button } from '../ui/Button';
 import { Heading } from '../ui/Heading';
 import { Text } from '../ui/Text';
 import { Container } from '../ui/Container';
@@ -37,6 +39,7 @@ export function ServicesOverview({
   className = '',
 }: ServicesOverviewProps) {
   const displayServices = maxDisplay ? services.slice(0, maxDisplay) : services;
+  const router = useRouter();
   
   return (
     <Section
@@ -135,14 +138,16 @@ export function ServicesOverview({
         </div>
 
         {/* View All CTA */}
-        {showViewAll && services.length > (maxDisplay || services.length) && (
+        {showViewAll && maxDisplay && services.length > maxDisplay && (
           <div className="text-center">
-            <Link
-              href={viewAllHref}
-              className="inline-flex items-center px-6 py-3 border border-surface rounded-lg text-secondary font-medium hover:bg-surface hover:border-primary hover:text-primary transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            <Button
+              variant="outline"
+              size="lg"
+              className="font-medium"
+              onClick={() => router.push(viewAllHref)}
             >
               View All Services
-            </Link>
+            </Button>
           </div>
         )}
       </Container>
