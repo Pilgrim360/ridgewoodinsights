@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { Hero } from '@/components/sections/Hero';
-import { InsightsSection } from '@/components/sections/InsightsSection';
+import { InsightsGrid } from '@/components/sections/InsightsGrid';
 import { CTA } from '@/components/sections/CTA';
 import { getPublishedPostsPage } from '@/lib/blog';
 
@@ -43,18 +43,12 @@ export default async function InsightsPage() {
         alignment="center"
       />
 
-      {/* Insights Section */}
-      <InsightsSection
-        title="Insights"
-        subtitle="Financial Insights & Strategies"
-        description="Stay informed with expert financial insights, tax strategies, and business advice to help you make smarter decisions for your future."
+      {/* Insights Grid */}
+      <InsightsGrid
         insights={insights}
         totalCount={total}
         pageSize={12}
         backgroundVariant="white"
-        showLayoutSwitcher={true}
-        availableLayouts={['grid', 'list']}
-        enablePagination={true}
       />
 
       {/* CTA Section */}

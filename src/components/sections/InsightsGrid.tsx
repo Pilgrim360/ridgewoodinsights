@@ -1,20 +1,18 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import useEmblaCarousel from 'embla-carousel-react';
-import Autoplay from 'embla-carousel-autoplay';
-import Link from 'next/link';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
 import type { Insight } from '@/constants';
 import { cn } from '@/lib/utils';
-import { Section } from '../ui/Section';
+import { Button } from '../ui/Button';
 import { Container } from '../ui/Container';
 import { Heading } from '../ui/Heading';
+import { Section } from '../ui/Section';
 import { Text } from '../ui/Text';
-import { Button } from '../ui/Button';
 import { InsightCard } from '../blog/InsightCard';
 
 type LayoutMode = 'featured' | 'grid' | 'masonry' | 'list' | 'carousel';
+
+const DEFAULT_MARKETING_LAYOUTS: LayoutMode[] = ['grid', 'list'];
 
 type PostsApiResponse = {
   insights: Insight[];
@@ -25,23 +23,15 @@ type PostsApiResponse = {
   hasMore: boolean;
 };
 
-export interface InsightsSectionProps {
-  title: string;
-  subtitle?: string;
-  description?: string;
+export interface InsightsGridProps {
   insights: Insight[];
-  layout?: LayoutMode;
   totalCount?: number;
   pageSize?: number;
+  initialLayout?: LayoutMode;
   backgroundVariant?: 'default' | 'muted' | 'white';
-  showLayoutSwitcher?: boolean;
+
   availableLayouts?: LayoutMode[];
-  maxDisplay?: number;
-  showLoadMore?: boolean;
-  loadMoreHref?: string;
-  enablePagination?: boolean;
-  enableCarouselAutoplay?: boolean;
-  className?: string;
+  showLayoutSwitcher?: boolean;
 }
 
 function Spinner({ className }: { className?: string }) {
@@ -124,33 +114,25 @@ function InsightCardSkeleton() {
   );
 }
 
-export function InsightsSection({
-  title,
-  subtitle,
-  description,
-  insights: initialInsights,
-  layout: initialLayout = 'grid',
+export function InsightsGrid({
+  insights,
   totalCount,
   pageSize = 12,
+  initialLayout = 'grid',
   backgroundVariant = 'white',
-  showLayoutSwitcher = false,
-  availableLayouts = ['grid'],
-  maxDisplay,
-  showLoadMore = false,
-  loadMoreHref = '/insights',
-  enablePagination = false,
-  enableCarouselAutoplay = true,
-  className,
-}: InsightsSectionProps) {
+  availableLayouts = DEFAULT_MARKETING_LAYOUTS,
+  showLayoutSwitcher = true,
+}: InsightsGridProps) {
   const [layout, setLayout] = useState<LayoutMode>(() => {
-    if (availableLayouts.includes(initialLayout)) return initialLayout;
+    const preferred = initialLayout;
+    if (availableLayouts.includes(preferred)) return preferred;
     return availableLayouts[0] ?? 'grid';
   });
 
-  const [items, setItems] = useState<Insight[]>(initialInsights);
-  const [offset, setOffset] = useState<number>(initialInsights.length);
+  const [items, setItems] = useState<Insight[]>(insights);
+  const [offset, setOffset] = useState<number>(insights.length);
   const [hasMore, setHasMore] = useState<boolean>(
-    typeof totalCount === 'number' ? initialInsights.length < totalCount : !enablePagination
+    typeof totalCount === 'number' ? insights.length < totalCount : true
   );
 
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -159,27 +141,6 @@ export function InsightsSection({
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const inflightRef = useRef(false);
 
-  const displayItems = maxDisplay ? items.slice(0, maxDisplay) : items;
-
-  // Carousel setup
-  const [emblaRef, emblaApi] = useEmblaCarousel(
-    {
-      loop: true,
-      align: 'start',
-      slidesToScroll: 1,
-    },
-    enableCarouselAutoplay ? [Autoplay({ delay: 5000, stopOnInteraction: true })] : []
-  );
-
-  const scrollPrev = useCallback(() => {
-    if (emblaApi) emblaApi.scrollPrev();
-  }, [emblaApi]);
-
-  const scrollNext = useCallback(() => {
-    if (emblaApi) emblaApi.scrollNext();
-  }, [emblaApi]);
-
-  // Pagination
   const loadMore = useCallback(async () => {
     if (!hasMore || inflightRef.current) return;
 
@@ -218,9 +179,8 @@ export function InsightsSection({
     }
   }, [hasMore, offset, pageSize]);
 
-  // Intersection observer for infinite scroll
   useEffect(() => {
-    if (!enablePagination || !sentinelRef.current) return;
+    if (!sentinelRef.current) return;
     if (!hasMore) return;
 
     const el = sentinelRef.current;
@@ -238,7 +198,7 @@ export function InsightsSection({
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [hasMore, loadMore, enablePagination]);
+  }, [hasMore, loadMore]);
 
   const featured = items[0];
   const remaining = items.slice(1);
@@ -261,75 +221,21 @@ export function InsightsSection({
     setLayout(availableLayouts[0] ?? 'grid');
   }, [availableLayouts, layout]);
 
+  const carouselRef = useRef<HTMLDivElement | null>(null);
+  const scrollCarousel = useCallback((direction: 'prev' | 'next') => {
+    const el = carouselRef.current;
+    if (!el) return;
+
+    const amount = Math.round(el.clientWidth * 0.9);
+    el.scrollBy({
+      left: direction === 'next' ? amount : -amount,
+      behavior: 'smooth',
+    });
+  }, []);
+
   return (
-    <Section bg={backgroundVariant} aria-label="Insights" className={className}>
+    <Section bg={backgroundVariant} aria-label="Insights">
       <Container maxWidth="full-bleed">
-        {/* Header Section */}
-        <div className="mb-12 md:mb-16">
-          {layout === 'carousel' ? (
-            // Carousel header: title/subtitle on left, controls on right
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
-              <div className="text-center md:text-left">
-                {subtitle && (
-                  <Text as="p" className="text-primary font-semibold uppercase tracking-wide text-sm md:text-base mb-2">
-                    {subtitle}
-                  </Text>
-                )}
-                <Heading
-                  as={2}
-                  className="text-2xl sm:text-3xl lg:text-4xl font-bold text-secondary mb-2"
-                >
-                  {title}
-                </Heading>
-                {description && (
-                  <Text as="p" muted className="mt-4 max-w-2xl">
-                    {description}
-                  </Text>
-                )}
-              </div>
-
-              {/* Carousel Controls */}
-              <div className="flex justify-center md:justify-end items-center gap-4 md:gap-6 flex-shrink-0">
-                <button
-                  onClick={scrollPrev}
-                  className="p-3 rounded-full bg-surface/60 hover:bg-primary/20 text-secondary hover:text-primary transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                  aria-label="Previous insight"
-                >
-                  <ArrowLeft className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={scrollNext}
-                  className="p-3 rounded-full bg-surface/60 hover:bg-primary/20 text-secondary hover:text-primary transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                  aria-label="Next insight"
-                >
-                  <ArrowRight className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-          ) : (
-            // Standard header: centered or left-aligned
-            <div className="text-center">
-              {subtitle && (
-                <Text as="p" className="text-primary font-semibold uppercase tracking-wide text-sm md:text-base mb-2">
-                  {subtitle}
-                </Text>
-              )}
-              <Heading
-                as={2}
-                className="text-2xl sm:text-3xl lg:text-4xl font-bold text-secondary mb-2"
-              >
-                {title}
-              </Heading>
-              {description && (
-                <Text as="p" muted className="mt-4 max-w-2xl mx-auto">
-                  {description}
-                </Text>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Layout Switcher */}
         {showLayoutSwitcher && viewOptions.length > 1 ? (
           <div className="mb-8 flex justify-end">
             <div className="flex items-center gap-2 rounded-xl border border-surface/70 bg-white p-1 overflow-x-auto">
@@ -359,8 +265,7 @@ export function InsightsSection({
           </div>
         ) : null}
 
-        {/* Empty State */}
-        {displayItems.length === 0 ? (
+        {items.length === 0 ? (
           <div className="rounded-2xl border border-surface bg-background p-10 text-center">
             <Heading as={3} className="text-xl">
               No insights yet
@@ -371,8 +276,7 @@ export function InsightsSection({
           </div>
         ) : null}
 
-        {/* Featured Layout */}
-        {displayItems.length > 0 && layout === 'featured' ? (
+        {items.length > 0 && layout === 'featured' ? (
           <div className="space-y-10">
             {featured ? <InsightCard insight={featured} layout="featured" /> : null}
 
@@ -386,19 +290,17 @@ export function InsightsSection({
           </div>
         ) : null}
 
-        {/* Grid Layout */}
-        {displayItems.length > 0 && layout === 'grid' ? (
+        {items.length > 0 && layout === 'grid' ? (
           <div className="grid gap-6 md:gap-8 lg:gap-10 md:grid-cols-2 lg:grid-cols-3">
-            {displayItems.map((insight) => (
+            {items.map((insight) => (
               <InsightCard key={insight.id} insight={insight} layout="grid" />
             ))}
           </div>
         ) : null}
 
-        {/* Masonry Layout */}
-        {displayItems.length > 0 && layout === 'masonry' ? (
+        {items.length > 0 && layout === 'masonry' ? (
           <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 md:gap-8 lg:gap-10 [column-fill:_balance]">
-            {displayItems.map((insight) => (
+            {items.map((insight) => (
               <div key={insight.id} className="break-inside-avoid mb-6 md:mb-8 lg:mb-10">
                 <InsightCard insight={insight} layout="grid" />
               </div>
@@ -406,25 +308,57 @@ export function InsightsSection({
           </div>
         ) : null}
 
-        {/* List Layout */}
-        {displayItems.length > 0 && layout === 'list' ? (
+        {items.length > 0 && layout === 'list' ? (
           <div className="space-y-6">
-            {displayItems.map((insight) => (
+            {items.map((insight) => (
               <InsightCard key={insight.id} insight={insight} layout="list" />
             ))}
           </div>
         ) : null}
 
-        {/* Carousel Layout */}
-        {displayItems.length > 0 && layout === 'carousel' ? (
+        {items.length > 0 && layout === 'carousel' ? (
           <div className="relative">
-            <div className="overflow-hidden py-4" ref={emblaRef}>
-              <div className="flex -ml-4">
-                {displayItems.map((insight) => (
-                  <div key={insight.id} className="flex-grow-0 flex-shrink-0 w-full md:w-1/2 lg:w-1/3 pl-4">
-                    <div className="h-full">
-                      <InsightCard insight={insight} layout="grid" />
-                    </div>
+            <div className="flex items-center justify-between gap-4 mb-6">
+              <Text muted className="hidden md:block">
+                Tip: use trackpad / swipe to browse.
+              </Text>
+              <div className="flex items-center gap-2 ml-auto">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="border border-surface bg-white text-secondary hover:bg-background"
+                  onClick={() => scrollCarousel('prev')}
+                >
+                  <span aria-hidden>←</span>
+                  <span className="sr-only">Previous</span>
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="border border-surface bg-white text-secondary hover:bg-background"
+                  onClick={() => scrollCarousel('next')}
+                >
+                  <span aria-hidden>→</span>
+                  <span className="sr-only">Next</span>
+                </Button>
+              </div>
+            </div>
+
+            <div
+              ref={carouselRef}
+              className={cn(
+                'relative overflow-x-auto scroll-smooth',
+                'snap-x snap-mandatory',
+                'pb-2 -mx-4 sm:-mx-6 md:-mx-8 lg:-mx-12 px-4 sm:px-6 md:px-8 lg:px-12',
+                '[scrollbar-width:thin]'
+              )}
+              role="region"
+              aria-label="Insights carousel"
+            >
+              <div className="grid grid-flow-col auto-cols-[88%] sm:auto-cols-[62%] lg:auto-cols-[38%] gap-4 md:gap-6 lg:gap-8">
+                {items.map((insight) => (
+                  <div key={insight.id} className="snap-start">
+                    <InsightCard insight={insight} layout="carousel" />
                   </div>
                 ))}
               </div>
@@ -432,7 +366,6 @@ export function InsightsSection({
           </div>
         ) : null}
 
-        {/* Error State */}
         {error ? (
           <div
             className="mt-10 rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-900"
@@ -440,7 +373,7 @@ export function InsightsSection({
           >
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <span>
-                We couldn&apos;t load more posts. <span className="font-medium">{error}</span>
+                We couldn’t load more posts. <span className="font-medium">{error}</span>
               </span>
               <Button
                 type="button"
@@ -454,8 +387,7 @@ export function InsightsSection({
           </div>
         ) : null}
 
-        {/* Load More Section */}
-        {enablePagination && hasMore ? (
+        {hasMore ? (
           <div className="mt-12 md:mt-16 flex flex-col items-center gap-4">
             {isLoadingMore ? (
               <div className="flex items-center gap-3 text-sm text-text/80" aria-live="polite">
@@ -483,23 +415,11 @@ export function InsightsSection({
               </div>
             ) : null}
           </div>
-        ) : enablePagination && !hasMore ? (
+        ) : (
           <div className="mt-12 md:mt-16 text-center">
-            <Text muted>That&apos;s everything we&apos;ve published so far.</Text>
+            <Text muted>That’s everything we’ve published so far.</Text>
           </div>
-        ) : null}
-
-        {/* Simple Load More Link (for non-paginated mode) */}
-        {!enablePagination && showLoadMore && displayItems.length < items.length ? (
-          <div className="text-center mt-12">
-            <Link
-              href={loadMoreHref}
-              className="inline-flex items-center px-6 py-3 border border-surface rounded-lg text-secondary font-medium hover:bg-surface hover:border-primary hover:text-primary transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-            >
-              See More Insights
-            </Link>
-          </div>
-        ) : null}
+        )}
       </Container>
     </Section>
   );
