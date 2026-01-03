@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import type { Insight } from '@/constants';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/Button';
@@ -10,28 +10,21 @@ import { Section } from '../ui/Section';
 import { Text } from '../ui/Text';
 import { InsightCard } from '../blog/InsightCard';
 
-type LayoutMode = 'featured' | 'grid' | 'masonry' | 'list' | 'carousel';
+export type LayoutMode = 'featured' | 'grid' | 'masonry' | 'list' | 'carousel';
 
 const DEFAULT_MARKETING_LAYOUTS: LayoutMode[] = ['grid', 'list'];
 
-type PostsApiResponse = {
-  insights: Insight[];
-  total: number;
-  offset: number;
-  limit: number;
-  nextOffset: number;
-  hasMore: boolean;
-};
-
 export interface InsightsGridProps {
-  insights: Insight[];
-  totalCount?: number;
-  pageSize?: number;
-  initialLayout?: LayoutMode;
-  backgroundVariant?: 'default' | 'muted' | 'white';
-
-  availableLayouts?: LayoutMode[];
+  items: Insight[];
+  layout: LayoutMode;
+  isLoadingMore: boolean;
+  error: string | null;
+  hasMore: boolean;
+  onLayoutChange: (layout: LayoutMode) => void;
+  onLoadMore: () => void;
   showLayoutSwitcher?: boolean;
+  availableLayouts?: LayoutMode[];
+  backgroundVariant?: 'default' | 'muted' | 'white';
 }
 
 function Spinner({ className }: { className?: string }) {
@@ -115,90 +108,17 @@ function InsightCardSkeleton() {
 }
 
 export function InsightsGrid({
-  insights,
-  totalCount,
-  pageSize = 12,
-  initialLayout = 'grid',
-  backgroundVariant = 'white',
-  availableLayouts = DEFAULT_MARKETING_LAYOUTS,
+  items,
+  layout,
+  isLoadingMore,
+  error,
+  hasMore,
+  onLayoutChange,
+  onLoadMore,
   showLayoutSwitcher = true,
+  availableLayouts = DEFAULT_MARKETING_LAYOUTS,
+  backgroundVariant = 'white',
 }: InsightsGridProps) {
-  const [layout, setLayout] = useState<LayoutMode>(() => {
-    const preferred = initialLayout;
-    if (availableLayouts.includes(preferred)) return preferred;
-    return availableLayouts[0] ?? 'grid';
-  });
-
-  const [items, setItems] = useState<Insight[]>(insights);
-  const [offset, setOffset] = useState<number>(insights.length);
-  const [hasMore, setHasMore] = useState<boolean>(
-    typeof totalCount === 'number' ? insights.length < totalCount : true
-  );
-
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const sentinelRef = useRef<HTMLDivElement | null>(null);
-  const inflightRef = useRef(false);
-
-  const loadMore = useCallback(async () => {
-    if (!hasMore || inflightRef.current) return;
-
-    inflightRef.current = true;
-    setIsLoadingMore(true);
-    setError(null);
-
-    try {
-      const res = await fetch(`/api/insights/posts?offset=${offset}&limit=${pageSize}`);
-      if (!res.ok) {
-        throw new Error(`Request failed (${res.status})`);
-      }
-
-      const data = (await res.json()) as PostsApiResponse;
-
-      setItems((prev) => {
-        const next = [...prev, ...(data.insights ?? [])];
-        const seen = new Set<string>();
-        return next.filter((p) => {
-          const key = String(p.id);
-          if (seen.has(key)) return false;
-          seen.add(key);
-          return true;
-        });
-      });
-
-      setOffset((prev) =>
-        typeof data.nextOffset === 'number' ? data.nextOffset : prev
-      );
-      setHasMore((prev) => (typeof data.hasMore === 'boolean' ? data.hasMore : prev));
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Unable to load more posts');
-    } finally {
-      inflightRef.current = false;
-      setIsLoadingMore(false);
-    }
-  }, [hasMore, offset, pageSize]);
-
-  useEffect(() => {
-    if (!sentinelRef.current) return;
-    if (!hasMore) return;
-
-    const el = sentinelRef.current;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (!entry?.isIntersecting) return;
-        void loadMore();
-      },
-      {
-        rootMargin: '900px 0px',
-      }
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [hasMore, loadMore]);
 
   const featured = items[0];
   const remaining = items.slice(1);
@@ -215,11 +135,6 @@ export function InsightsGrid({
     const modes = Array.from(new Set<LayoutMode>(availableLayouts));
     return modes.map((mode) => ({ mode, label: labelByMode[mode] }));
   }, [availableLayouts]);
-
-  useEffect(() => {
-    if (availableLayouts.includes(layout)) return;
-    setLayout(availableLayouts[0] ?? 'grid');
-  }, [availableLayouts, layout]);
 
   const carouselRef = useRef<HTMLDivElement | null>(null);
   const scrollCarousel = useCallback((direction: 'prev' | 'next') => {
@@ -245,7 +160,7 @@ export function InsightsGrid({
                   <button
                     key={opt.mode}
                     type="button"
-                    onClick={() => setLayout(opt.mode)}
+                    onClick={() => onLayoutChange(opt.mode)}
                     aria-pressed={isActive}
                     className={cn(
                       'inline-flex h-10 w-10 items-center justify-center rounded-lg',
@@ -379,7 +294,7 @@ export function InsightsGrid({
                 type="button"
                 variant="ghost"
                 className="border border-red-200 bg-white text-red-900 hover:bg-red-100"
-                onClick={() => void loadMore()}
+                onClick={onLoadMore}
               >
                 Try again
               </Button>
@@ -399,13 +314,11 @@ export function InsightsGrid({
                 type="button"
                 variant="ghost"
                 className="border border-surface bg-white text-secondary hover:bg-background"
-                onClick={() => void loadMore()}
+                onClick={onLoadMore}
               >
                 Load more
               </Button>
             )}
-
-            <div ref={sentinelRef} className="h-1 w-full" aria-hidden />
 
             {isLoadingMore ? (
               <div className="grid w-full gap-6 md:gap-8 lg:gap-10 md:grid-cols-2 lg:grid-cols-3">
