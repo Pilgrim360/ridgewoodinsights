@@ -114,6 +114,22 @@ export function Footer({ className, ...props }: FooterProps) {
                   Privacy Policy
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/terms"
+                  className="text-sm text-white/60 transition-colors hover:text-white"
+                >
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/cookies"
+                  className="text-sm text-white/60 transition-colors hover:text-white"
+                >
+                  Cookie Policy
+                </Link>
+              </li>
             </ul>
           </div>
 

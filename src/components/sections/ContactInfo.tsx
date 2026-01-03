@@ -107,7 +107,7 @@ export function ContactInfo({ companyInfo }: ContactInfoProps) {
               rel="noopener noreferrer"
               className="text-primary font-medium hover:underline"
             >
-              (555) 123-4567
+              {companyInfo.phone}
             </a>
           </Card>
         </div>

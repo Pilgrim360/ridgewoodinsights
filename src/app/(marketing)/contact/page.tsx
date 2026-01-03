@@ -32,7 +32,7 @@ const FAQ_ITEMS = [
   },
   {
     question: 'How do I schedule a consultation?',
-    answer: 'You can schedule a consultation by filling out the contact form above, calling us at (555) 123-4567, or emailing us at info@ridgewoodinsights.com. We typically respond within 24 hours.',
+    answer: `You can schedule a consultation by filling out the contact form above, calling us at ${COMPANY_INFO.phone}, or emailing us at ${COMPANY_INFO.email}. We typically respond within 24 hours.`,
   },
   {
     question: 'Do you work with individuals or just businesses?',

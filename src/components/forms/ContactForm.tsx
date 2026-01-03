@@ -264,7 +264,7 @@ export function ContactForm({
                       {...register('phone')}
                       type="tel"
                       hasError={!!errors.phone}
-                      placeholder="(555) 123-4567"
+                      placeholder="+260 211 123456"
                       aria-describedby={errors.phone ? 'phone-error' : undefined}
                     />
                   </FormField>

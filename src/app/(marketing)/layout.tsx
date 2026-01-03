@@ -15,7 +15,8 @@ export const metadata: Metadata = {
     'financial planning',
     'business consulting',
     'CPA',
-    'New York accountant',
+    'Zambia accountant',
+    'Lusaka accountant',
   ],
   openGraph: {
     type: 'website',
