@@ -4,7 +4,7 @@ import { ServicesOverview } from '@/components/sections/ServicesOverview';
 import { AboutTrust } from '@/components/sections/AboutTrust';
 import { CTA } from '@/components/sections/CTA';
 import { Testimonials } from '@/components/sections/Testimonials';
-import { NewInsights } from '@/components/sections/NewInsights';
+import { InsightsSection } from '@/components/sections/InsightsSection';
 import { getPublishedPosts } from '@/lib/blog';
 import {
   SERVICES,
@@ -94,10 +94,14 @@ export default async function HomePage() {
       />
 
       {/* Insights Section */}
-      <NewInsights
+      <InsightsSection
         title="Latest Insights"
         subtitle="Financial Tips & News"
         insights={latestInsights}
+        layout="carousel"
+        enableCarouselAutoplay={true}
+        showLoadMore={true}
+        loadMoreHref="/insights"
       />
     </>
   );

@@ -14,8 +14,8 @@ export type { CTAProps, CTAAction } from './CTA';
 export { Testimonials } from './Testimonials';
 export type { TestimonialsProps, Testimonial } from './Testimonials';
 
-export { Insights } from './Insights';
-export type { InsightsProps } from './Insights';
+export { InsightsSection } from './InsightsSection';
+export type { InsightsSectionProps } from './InsightsSection';
 export type { Insight } from '../../constants';
 export { ServiceDetails } from './ServiceDetails';
 export type { ServiceDetailsProps } from './ServiceDetails';
