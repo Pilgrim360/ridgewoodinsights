@@ -1,0 +1,23 @@
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Insights',
+  description:
+    'Stay informed with the latest financial insights, tax tips, and business strategies from Ridgewood Insights. Expert guidance for your financial success.',
+  keywords:
+    'financial insights, tax planning, business advice, accounting tips, financial planning',
+  openGraph: {
+    title: 'Insights | Ridgewood Insights',
+    description:
+      'Stay informed with the latest financial insights, tax tips, and business strategies from Ridgewood Insights.',
+    type: 'website',
+  },
+};
+
+export default function InsightsLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return <>{children}</>;
+}
