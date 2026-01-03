@@ -79,7 +79,7 @@ export function NewInsights({ title, subtitle, insights }: NewInsightsProps) {
                 <div className="overflow-hidden py-4" ref={emblaRef}>
                     <div className="flex -ml-4">
                         {insights.map((insight) => (
-                            <div key={insight.id} className="flex-grow-0 flex-shrink-0 w-full md:w-1/2 lg:w-1/3 pl-4">
+                            <div key={insight.id} className="flex-grow-0 flex-shrink-0 w-full md:w-1/2 lg:w-1/4 pl-4">
                                 <div className="h-full">
                                     <InsightCard insight={insight} />
                                 </div>
@@ -94,7 +94,7 @@ export function NewInsights({ title, subtitle, insights }: NewInsightsProps) {
                         className="font-medium"
                         onClick={() => router.push('/insights')}
                     >
-                        See More Insights
+                        More Insights
                     </Button>
                 </div>
             </Container>
