@@ -104,7 +104,7 @@ export function Navbar({ className, mobileMenuOpen, setMobileMenuOpen, ...props 
               <div className={cn("hidden lg:block pl-4 border-l", isScrolled ? "border-surface" : "border-white/20")}>
                 <Button 
                   variant={isScrolled ? "primary" : "outline"} 
-                  className={!isScrolled ? "text-white border-white hover:bg-white/10" : ""}
+                  className={!isScrolled ? "text-primary border-white hover:text-primary bg-white" : ""}
                   size="sm" 
                   onClick={() => window.location.href = '/contact'}
                 >
