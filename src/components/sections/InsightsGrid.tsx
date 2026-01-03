@@ -1,17 +1,14 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
 import type { Insight } from '@/constants';
 import { cn } from '@/lib/utils';
-import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
-import { Card } from '../ui/Card';
 import { Container } from '../ui/Container';
 import { Heading } from '../ui/Heading';
 import { Section } from '../ui/Section';
 import { Text } from '../ui/Text';
+import { InsightCard } from '../blog/InsightCard';
 
 type LayoutMode = 'featured' | 'grid' | 'masonry' | 'list' | 'carousel';
 
@@ -35,20 +32,6 @@ export interface InsightsGridProps {
 
   availableLayouts?: LayoutMode[];
   showLayoutSwitcher?: boolean;
-}
-
-const BLUR_DATA_URL =
-  'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=';
-
-function formatDate(dateString: string) {
-  const date = new Date(dateString);
-  if (Number.isNaN(date.getTime())) return '';
-
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(date);
 }
 
 function Spinner({ className }: { className?: string }) {
@@ -112,236 +95,6 @@ function ViewIcon({ mode }: { mode: LayoutMode }) {
     default:
       return null;
   }
-}
-
-function CategoryBadge({ category }: { category: string }) {
-  return (
-    <Badge variant="info" className="self-start w-fit bg-primary/10 text-primary">
-      {category}
-    </Badge>
-  );
-}
-
-function DateReadTimeLine({ insight }: { insight: Insight }) {
-  const date = formatDate(insight.date);
-  const readTime = insight.readTime;
-
-  if (!date && !readTime) return null;
-
-  return (
-    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-text/70">
-      {date ? <span>{date}</span> : null}
-      {date && readTime ? <span aria-hidden>•</span> : null}
-      {readTime ? <span>{readTime}</span> : null}
-    </div>
-  );
-}
-
-function InsightCard({ insight }: { insight: Insight }) {
-  return (
-    <Card
-      variant="outlined"
-      padding="sm"
-      interactive
-      className={cn(
-        'group p-0 overflow-hidden',
-        'transition-all duration-300 motion-reduce:transition-none',
-        'focus-within:ring-2 focus-within:ring-primary/30 focus-within:ring-offset-2'
-      )}
-      asChild
-    >
-      <Link href={insight.link} aria-label={insight.title} className="block h-full">
-        <div className="flex h-full flex-col">
-          <div className="relative aspect-[16/10] overflow-hidden bg-surface/30">
-            {insight.image ? (
-              <Image
-                src={insight.image}
-                alt={insight.title}
-                fill
-                className="object-cover transition-transform duration-500 motion-reduce:transition-none group-hover:scale-[1.03]"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                placeholder="blur"
-                blurDataURL={BLUR_DATA_URL}
-              />
-            ) : (
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-white" />
-            )}
-
-            <div className="absolute inset-0 bg-gradient-to-t from-secondary/30 via-secondary/0 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-          </div>
-
-          <div className="p-6 flex flex-col gap-3">
-            <CategoryBadge category={insight.category} />
-
-            <Heading
-              as={3}
-              className={cn(
-                'text-xl md:text-[1.35rem] leading-snug',
-                'transition-colors duration-200 motion-reduce:transition-none',
-                'group-hover:text-primary line-clamp-2'
-              )}
-            >
-              {insight.title}
-            </Heading>
-
-            <DateReadTimeLine insight={insight} />
-
-            <Text className="text-text/90 leading-relaxed line-clamp-3">
-              {insight.excerpt}
-            </Text>
-
-            <div className="mt-2 pt-4 border-t border-surface/60 flex items-center justify-between gap-4">
-              <Text as="span" size="sm" muted className="truncate">
-                By <span className="text-secondary/80 font-medium">{insight.author}</span>
-              </Text>
-              <span
-                className={cn(
-                  'inline-flex items-center gap-1 text-sm font-semibold text-primary',
-                  'opacity-0 translate-x-1 transition-all duration-200 motion-reduce:transition-none',
-                  'group-hover:opacity-100 group-hover:translate-x-0'
-                )}
-              >
-                Read <span aria-hidden>→</span>
-              </span>
-            </div>
-          </div>
-        </div>
-      </Link>
-    </Card>
-  );
-}
-
-function InsightListRow({ insight }: { insight: Insight }) {
-  return (
-    <Card
-      variant="outlined"
-      padding="sm"
-      interactive
-      className={cn(
-        'group p-0 overflow-hidden',
-        'transition-all duration-300 motion-reduce:transition-none',
-        'focus-within:ring-2 focus-within:ring-primary/30 focus-within:ring-offset-2'
-      )}
-      asChild
-    >
-      <Link href={insight.link} aria-label={insight.title} className="block">
-        <div className="grid md:grid-cols-[260px_1fr]">
-          <div className="relative aspect-[16/10] md:aspect-auto md:min-h-[220px] overflow-hidden bg-surface/30">
-            {insight.image ? (
-              <Image
-                src={insight.image}
-                alt={insight.title}
-                fill
-                className="object-cover transition-transform duration-500 motion-reduce:transition-none group-hover:scale-[1.03]"
-                sizes="(max-width: 768px) 100vw, 320px"
-                placeholder="blur"
-                blurDataURL={BLUR_DATA_URL}
-              />
-            ) : (
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-white" />
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-secondary/25 via-secondary/0 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-          </div>
-
-          <div className="p-6 md:p-8 flex flex-col justify-center gap-3">
-            <CategoryBadge category={insight.category} />
-
-            <Heading
-              as={3}
-              className={cn(
-                'text-2xl leading-tight',
-                'transition-colors duration-200 motion-reduce:transition-none',
-                'group-hover:text-primary'
-              )}
-            >
-              {insight.title}
-            </Heading>
-
-            <DateReadTimeLine insight={insight} />
-
-            <Text className="text-text/90 leading-relaxed line-clamp-3">
-              {insight.excerpt}
-            </Text>
-
-            <div className="pt-4 flex items-center justify-between gap-4">
-              <Text as="span" size="sm" muted className="truncate">
-                By <span className="text-secondary/80 font-medium">{insight.author}</span>
-              </Text>
-              <span className="text-sm font-semibold text-primary">
-                Read <span aria-hidden>→</span>
-              </span>
-            </div>
-          </div>
-        </div>
-      </Link>
-    </Card>
-  );
-}
-
-function FeaturedInsightCard({ insight }: { insight: Insight }) {
-  return (
-    <Card
-      variant="elevated"
-      padding="sm"
-      interactive
-      className={cn(
-        'group p-0 overflow-hidden',
-        'focus-within:ring-2 focus-within:ring-primary/30 focus-within:ring-offset-2'
-      )}
-      asChild
-    >
-      <Link href={insight.link} aria-label={insight.title} className="block">
-        <div className="grid md:grid-cols-12">
-          <div className="relative aspect-[16/10] md:aspect-auto md:col-span-5 md:min-h-[320px] overflow-hidden bg-surface/30">
-            {insight.image ? (
-              <Image
-                src={insight.image}
-                alt={insight.title}
-                fill
-                priority
-                className="object-cover transition-transform duration-700 motion-reduce:transition-none group-hover:scale-[1.03]"
-                sizes="(max-width: 768px) 100vw, 50vw"
-                placeholder="blur"
-                blurDataURL={BLUR_DATA_URL}
-              />
-            ) : (
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-white" />
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-secondary/35 via-secondary/0 to-transparent" />
-          </div>
-
-          <div className="p-8 md:p-10 md:col-span-7 flex flex-col gap-4">
-            <CategoryBadge category={insight.category} />
-
-            <Heading as={2} className="text-3xl md:text-4xl leading-tight">
-              {insight.title}
-            </Heading>
-
-            <DateReadTimeLine insight={insight} />
-
-            <Text className="text-text/90 leading-relaxed line-clamp-4">
-              {insight.excerpt}
-            </Text>
-
-            <div className="mt-4 pt-6 border-t border-surface/60 flex items-center justify-between gap-6">
-              <Text as="span" size="sm" muted className="truncate">
-                By <span className="text-secondary/80 font-medium">{insight.author}</span>
-              </Text>
-              <span
-                className={cn(
-                  'inline-flex items-center gap-1 text-sm font-semibold text-primary',
-                  'transition-transform duration-200 motion-reduce:transition-none',
-                  'group-hover:translate-x-0.5'
-                )}
-              >
-                Read the full article <span aria-hidden>→</span>
-              </span>
-            </div>
-          </div>
-        </div>
-      </Link>
-    </Card>
-  );
 }
 
 function InsightCardSkeleton() {
@@ -525,12 +278,12 @@ export function InsightsGrid({
 
         {items.length > 0 && layout === 'featured' ? (
           <div className="space-y-10">
-            {featured ? <FeaturedInsightCard insight={featured} /> : null}
+            {featured ? <InsightCard insight={featured} layout="featured" /> : null}
 
             {remaining.length > 0 ? (
               <div className="grid gap-6 md:gap-8 lg:gap-10 md:grid-cols-2 lg:grid-cols-3">
                 {remaining.map((insight) => (
-                  <InsightCard key={insight.id} insight={insight} />
+                  <InsightCard key={insight.id} insight={insight} layout="grid" />
                 ))}
               </div>
             ) : null}
@@ -540,7 +293,7 @@ export function InsightsGrid({
         {items.length > 0 && layout === 'grid' ? (
           <div className="grid gap-6 md:gap-8 lg:gap-10 md:grid-cols-2 lg:grid-cols-3">
             {items.map((insight) => (
-              <InsightCard key={insight.id} insight={insight} />
+              <InsightCard key={insight.id} insight={insight} layout="grid" />
             ))}
           </div>
         ) : null}
@@ -549,7 +302,7 @@ export function InsightsGrid({
           <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 md:gap-8 lg:gap-10 [column-fill:_balance]">
             {items.map((insight) => (
               <div key={insight.id} className="break-inside-avoid mb-6 md:mb-8 lg:mb-10">
-                <InsightCard insight={insight} />
+                <InsightCard insight={insight} layout="grid" />
               </div>
             ))}
           </div>
@@ -558,7 +311,7 @@ export function InsightsGrid({
         {items.length > 0 && layout === 'list' ? (
           <div className="space-y-6">
             {items.map((insight) => (
-              <InsightListRow key={insight.id} insight={insight} />
+              <InsightCard key={insight.id} insight={insight} layout="list" />
             ))}
           </div>
         ) : null}
@@ -605,7 +358,7 @@ export function InsightsGrid({
               <div className="grid grid-flow-col auto-cols-[88%] sm:auto-cols-[62%] lg:auto-cols-[38%] gap-4 md:gap-6 lg:gap-8">
                 {items.map((insight) => (
                   <div key={insight.id} className="snap-start">
-                    <InsightCard insight={insight} />
+                    <InsightCard insight={insight} layout="carousel" />
                   </div>
                 ))}
               </div>
