@@ -49,21 +49,7 @@ const DateReadTimeLine = ({ insight }: { insight: Insight }) => {
   );
 };
 
-const AuthorLine = ({ insight, size = 'sm' }: { insight: Insight; size?: 'sm' | 'md' }) => (
-  <div className={cn('flex items-center justify-between gap-4', size === 'md' ? 'pt-6' : 'pt-4')}>
-    <Text as="span" size="sm" muted className="truncate">
-      By <span className="text-secondary/80 font-medium">{insight.author}</span>
-    </Text>
-    <span
-      className={cn(
-        'inline-flex items-center gap-1 text-sm font-semibold text-primary',
-        'transition-all duration-200 motion-reduce:transition-none'
-      )}
-    >
-      Read <span aria-hidden>→</span>
-    </span>
-  </div>
-);
+
 
 const GradientOverlay = () => (
   <div className="absolute inset-0 bg-gradient-to-t from-secondary/25 via-secondary/0 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
@@ -82,7 +68,7 @@ export const InsightCard = ({ insight, layout = 'grid' }: InsightCardProps) => {
       : '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw';
   const headingSize = isFeatured ? 'text-3xl md:text-4xl' : isList ? 'text-2xl' : 'text-xl md:text-[1.35rem]';
   const paddingClass = isFeatured ? 'p-8 md:p-10' : isList ? 'p-6 md:p-8' : 'p-6';
-  const showReadArrow = !isList;
+
 
   return (
     <Card
@@ -126,7 +112,6 @@ export const InsightCard = ({ insight, layout = 'grid' }: InsightCardProps) => {
               </Heading>
               <DateReadTimeLine insight={insight} />
               <Text className="text-text/90 leading-relaxed line-clamp-4">{insight.excerpt}</Text>
-              <AuthorLine insight={insight} size="md" />
             </div>
           </div>
         ) : isList ? (
@@ -163,7 +148,6 @@ export const InsightCard = ({ insight, layout = 'grid' }: InsightCardProps) => {
               </Heading>
               <DateReadTimeLine insight={insight} />
               <Text className="text-text/90 leading-relaxed line-clamp-3">{insight.excerpt}</Text>
-              <AuthorLine insight={insight} size="md" />
             </div>
           </div>
         ) : (
@@ -201,11 +185,7 @@ export const InsightCard = ({ insight, layout = 'grid' }: InsightCardProps) => {
               </Heading>
               <DateReadTimeLine insight={insight} />
               <Text className="text-text/90 leading-relaxed line-clamp-3">{insight.excerpt}</Text>
-              {showReadArrow && (
-                <div className="mt-2 border-t border-surface/60">
-                  <AuthorLine insight={insight} size="sm" />
-                </div>
-              )}
+
             </div>
           </div>
         )}
@@ -213,3 +193,4 @@ export const InsightCard = ({ insight, layout = 'grid' }: InsightCardProps) => {
     </Card>
   );
 };
+
