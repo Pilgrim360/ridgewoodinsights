@@ -87,6 +87,13 @@ export default async function HomePage() {
         backgroundVariant="white"
       />
 
+      {/* Insights Section */}
+      <NewInsights
+        title="Latest Insights"
+        subtitle="Financial Tips & News"
+        insights={latestInsights}
+      />
+
       {/* CTA Section */}
       <CTA
         title="Ready to Simplify Your Business Accounting?"
@@ -102,13 +109,6 @@ export default async function HomePage() {
         }}
         variant="centered"
         backgroundVariant="muted"
-      />
-
-      {/* Insights Section */}
-      <NewInsights
-        title="Latest Insights"
-        subtitle="Financial Tips & News"
-        insights={latestInsights}
       />
     </>
   );
