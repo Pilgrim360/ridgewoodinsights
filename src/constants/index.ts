@@ -1,8 +1,8 @@
 export const SITE_NAME = 'Ridgewood Insights';
 
 export const LOGOS = {
-  scrolling: 'https://nnnfcbmzygubyhufxwln.supabase.co/storage/v1/object/public/blog-images/e5d6bf0e-9122-426d-9b9b-b09b5113a564/1767260920028-R Teal 20260101_081644.png',
-  fixed: 'https://nnnfcbmzygubyhufxwln.supabase.co/storage/v1/object/public/blog-images/e5d6bf0e-9122-426d-9b9b-b09b5113a564/1767260922051-R White 20260101_081716.png',
+  scrolling: 'https://nnnfcbmzygubyhufxwln.supabase.co/storage/v1/object/public/blog-images/e5d6bf0e-9122-426d-9b9b-b09b5113a564/1767260920028-R%20Teal%2020260101_081644.png?width=400&height=100&resize=contain&quality=80',
+  fixed: 'https://nnnfcbmzygubyhufxwln.supabase.co/storage/v1/object/public/blog-images/e5d6bf0e-9122-426d-9b9b-b09b5113a564/1767260922051-R%20White%2020260101_081716.png?width=400&height=100&resize=contain&quality=80',
 };
 
 export const NAV_LINKS = [
@@ -167,7 +167,8 @@ export const TESTIMONIALS = [
     author: 'Sarah Johnson',
     title: 'CEO',
     company: 'TechStart Inc.',
-    avatar: 'https://images.unsplash.com/photo-1704307708227-356fe9fed262?q=80&w=870&auto=format&fit=crop&ixlib',
+    // Optimized: 200x200 avatar, WebP, quality 80
+    avatar: 'https://images.unsplash.com/photo-1704307708227-356fe9fed262?q=80&w=200&h=200&auto=format&fit=crop',
     rating: 5,
     service: 'Tax Planning',
   },
@@ -177,7 +178,8 @@ export const TESTIMONIALS = [
     author: 'Michael Chen',
     title: 'Owner',
     company: 'Chen\'s Restaurant Group',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80',
+    // Optimized: 200x200 avatar, WebP, quality 80
+    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&h=200&auto=format&fit=crop',
     rating: 5,
     service: 'Bookkeeping',
   },
@@ -187,7 +189,8 @@ export const TESTIMONIALS = [
     author: 'Emily Rodriguez',
     title: 'Founder',
     company: 'Bloom Boutique',
-    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1610&q=80',
+    // Optimized: 200x200 avatar, WebP, quality 80
+    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&h=200&auto=format&fit=crop',
     rating: 5,
     service: 'Financial Planning',
   },
@@ -215,7 +218,8 @@ export const INSIGHTS = [
     readTime: '5 min read',
     category: 'Tax Planning',
     author: 'John Smith, CPA',
-    image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1613&q=80',
+    // Optimized: 800x533 (3:2 ratio), WebP, quality 80
+    image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=800&h=533&auto=format&fit=crop',
     link: '/insights/2024-tax-changes',
   },
   {
@@ -226,7 +230,8 @@ export const INSIGHTS = [
     readTime: '4 min read',
     category: 'Financial Planning',
     author: 'Jane Doe, CFA',
-    image: 'https://images.unsplash.com/photo-1628348068343-c6a848d2b6dd?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid',
+    // Optimized: 800x533 (3:2 ratio), WebP, quality 80
+    image: 'https://images.unsplash.com/photo-1628348068343-c6a848d2b6dd?q=80&w=800&h=533&auto=format&fit=crop',
     link: '/insights/retirement-contributions',
   },
   {
@@ -237,7 +242,8 @@ export const INSIGHTS = [
     readTime: '3 min read',
     category: 'Business Strategy',
     author: 'John Smith, CPA',
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80',
+    // Optimized: 800x533 (3:2 ratio), WebP, quality 80
+    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&h=533&auto=format&fit=crop',
     link: '/insights/quarterly-reviews',
   },
   {
@@ -248,7 +254,8 @@ export const INSIGHTS = [
     readTime: '6 min read',
     category: 'Business Strategy',
     author: 'Mike Johnson, CPA',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80',
+    // Optimized: 800x533 (3:2 ratio), WebP, quality 80
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&h=533&auto=format&fit=crop',
     link: '/insights/cash-flow-management',
   },
   {
@@ -259,7 +266,8 @@ export const INSIGHTS = [
     readTime: '7 min read',
     category: 'Financial Planning',
     author: 'Jane Doe, CFA',
-    image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80',
+    // Optimized: 800x533 (3:2 ratio), WebP, quality 80
+    image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=800&h=533&auto=format&fit=crop',
     link: '/insights/investment-strategies',
   },
   {
@@ -270,7 +278,8 @@ export const INSIGHTS = [
     readTime: '5 min read',
     category: 'Business Consulting',
     author: 'John Smith, CPA',
-    image: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1426&q=80',
+    // Optimized: 800x533 (3:2 ratio), WebP, quality 80
+    image: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?q=80&w=800&h=533&auto=format&fit=crop',
     link: '/insights/succession-planning',
   },
   {
@@ -281,7 +290,8 @@ export const INSIGHTS = [
     readTime: '4 min read',
     category: 'Tax Planning',
     author: 'Mike Johnson, CPA',
-    image: 'https://images.unsplash.com/photo-1554224154-26032fced907?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80',
+    // Optimized: 800x533 (3:2 ratio), WebP, quality 80
+    image: 'https://images.unsplash.com/photo-1554224154-26032fced907?q=80&w=800&h=533&auto=format&fit=crop',
     link: '/insights/year-end-tax-planning',
   },
   {
@@ -292,7 +302,8 @@ export const INSIGHTS = [
     readTime: '5 min read',
     category: 'Financial Planning',
     author: 'Jane Doe, CFA',
-    image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80',
+    // Optimized: 800x533 (3:2 ratio), WebP, quality 80
+    image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?q=80&w=800&h=533&auto=format&fit=crop',
     link: '/insights/inflation-retirement',
   },
   {
@@ -303,7 +314,8 @@ export const INSIGHTS = [
     readTime: '6 min read',
     category: 'Business Strategy',
     author: 'John Smith, CPA',
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1415&q=80',
+    // Optimized: 800x533 (3:2 ratio), WebP, quality 80
+    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=800&h=533&auto=format&fit=crop',
     link: '/insights/digital-transformation',
   },
   {
@@ -314,7 +326,8 @@ export const INSIGHTS = [
     readTime: '7 min read',
     category: 'Estate Planning',
     author: 'Mike Johnson, CPA',
-    image: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80',
+    // Optimized: 800x533 (3:2 ratio), WebP, quality 80
+    image: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=800&h=533&auto=format&fit=crop',
     link: '/insights/estate-planning-business',
   },
   {
@@ -325,7 +338,8 @@ export const INSIGHTS = [
     readTime: '6 min read',
     category: 'Business Consulting',
     author: 'Jane Doe, CFA',
-    image: 'https://images.unsplash.com/photo-1560520653-9e0e4c8a1f06?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80',
+    // Optimized: 800x533 (3:2 ratio), WebP, quality 80
+    image: 'https://images.unsplash.com/photo-1560520653-9e0e4c8a1f06?q=80&w=800&h=533&auto=format&fit=crop',
     link: '/insights/business-valuation',
   },
   {
@@ -336,7 +350,8 @@ export const INSIGHTS = [
     readTime: '4 min read',
     category: 'Tax Planning',
     author: 'John Smith, CPA',
-    image: 'https://images.unsplash.com/photo-1587825140400-5fc38fef5b9f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80',
+    // Optimized: 800x533 (3:2 ratio), WebP, quality 80
+    image: 'https://images.unsplash.com/photo-1587825140400-5fc38fef5b9f?q=80&w=800&h=533&auto=format&fit=crop',
     link: '/insights/remote-work-tax',
   },
 ];
