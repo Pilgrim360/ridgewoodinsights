@@ -100,6 +100,6 @@ function getDefaultSettings(): SiteSettings {
   return {
     site_title: 'Ridgewood Insights',
     site_tagline: 'Financial insights for accountants',
-    contact_email: 'hello@ridgewoodinsights.com',
+    contact_email: 'enquiries@ridgewoodinsights.com',
   };
 }

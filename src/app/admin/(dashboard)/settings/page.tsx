@@ -10,7 +10,7 @@ import { useUpdateSettings } from '@/hooks/queries/useAdminMutations';
 const DEFAULT_SETTINGS: SiteSettings = {
   site_title: 'Ridgewood Insights',
   site_tagline: 'Financial insights for accountants',
-  contact_email: 'hello@ridgewoodinsights.com',
+  contact_email: 'enquiries@ridgewoodinsights.com',
 };
 
 export default function SettingsPage() {
