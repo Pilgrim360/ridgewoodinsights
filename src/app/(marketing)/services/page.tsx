@@ -3,8 +3,7 @@ import { Hero } from '@/components/sections/Hero';
 import { ServicesOverview } from '@/components/sections/ServicesOverview';
 import { ServiceDetails } from '@/components/sections/ServiceDetails';
 import { CTA } from '@/components/sections/CTA';
-import { Testimonials } from '@/components/sections/Testimonials';
-import { SERVICES, TESTIMONIALS } from '@/constants';
+import { SERVICES } from '@/constants';
 
 export const metadata: Metadata = {
   title: 'Our Services | Ridgewood Insights',
@@ -49,14 +48,6 @@ export default function ServicesPage() {
 
       {/* Service Details Section */}
       <ServiceDetails services={SERVICES} />
-
-      {/* Testimonials */}
-      <Testimonials
-        title="Client Success Stories"
-        subtitle="What Our Clients Say"
-        testimonials={TESTIMONIALS}
-        layout="carousel"
-      />
 
       {/* CTA Section */}
       <CTA

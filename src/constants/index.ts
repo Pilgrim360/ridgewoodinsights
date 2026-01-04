@@ -118,7 +118,7 @@ export const TRUST_SIGNALS = [
   {
     type: 'statistic' as const,
     title: 'Years of Experience',
-    value: '15+',
+    value: '5+',
     description: 'Serving clients with excellence',
   },
   {
