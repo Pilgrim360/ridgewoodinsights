@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "optimize:svg": "svgo --config .svgo.config.js --folder public --recursive",
+    "optimize:images": "node scripts/optimize-images.js"
   },
   "dependencies": {
     "@ai-sdk/xai": "^3.0.3",
@@ -69,6 +71,7 @@
     "eslint": "^8",
     "eslint-config-next": "^15.5.7",
     "postcss": "^8.4.49",
+    "svgo": "^3.3.2",
     "tailwindcss": "^3.4.15",
     "typescript": "^5"
   }

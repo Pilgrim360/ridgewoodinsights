@@ -20,9 +20,10 @@ export interface HeroProps {
   description?: string;
   primaryCTA: HeroCTA;
   secondaryCTA?: HeroCTA;
-  imageSrc?: string;
-  imageAlt?: string;
+  imageSrc?: string; // CSS background-image (decorative, no alt needed)
+  imageAlt?: string; // Reserved for future use with Image component
   videoSrc?: string;
+  videoPosterSrc?: string; // Optimized poster image for video fallback
   backgroundVariant?: 'default' | 'muted' | 'white';
   alignment?: 'left' | 'center';
   className?: string;
@@ -35,7 +36,9 @@ export function Hero({
   primaryCTA,
   secondaryCTA,
   imageSrc,
+  imageAlt,
   videoSrc,
+  videoPosterSrc,
   alignment = 'left',
   className = '',
 }: HeroProps) {
@@ -62,6 +65,7 @@ export function Hero({
           muted
           loop
           playsInline
+          poster={videoPosterSrc}
           className="absolute inset-0 h-full w-full object-cover"
           aria-hidden="true"
         >
