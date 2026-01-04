@@ -41,7 +41,7 @@ export function CTA({
   };
 
   const contentClasses = {
-    centered: 'text-center max-w-3xl mx-auto',
+    centered: 'text-center max-w-3xl mx-auto flex flex-col gap-8 md:gap-10',
     split: 'grid gap-6 md:gap-8 md:grid-cols-2 md:items-center lg:gap-12',
     inline: 'flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6 lg:gap-8',
   };
@@ -59,7 +59,7 @@ export function CTA({
       className={`${backgroundClasses[backgroundVariant]} ${className}`}
       aria-labelledby="cta-title"
     >
-      <Container maxWidth="full-bleed">
+      <Container maxWidth="xl" className={variant === 'centered' ? 'flex justify-center' : ''}>
         <div className={contentClasses[variant]}>
           {/* Content */}
           <div className={`space-y-4 ${variant === 'split' ? '' : 'md:max-w-2xl'}`}>
