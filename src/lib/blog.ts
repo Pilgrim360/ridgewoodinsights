@@ -16,7 +16,7 @@ function mapPostToInsight(post: any): Insight {
     id: post.id,
     title: post.title,
     excerpt: post.excerpt || '',
-    date: post.published_at || new Date().toISOString(),
+    date: post.published_at || post.created_at,
     readTime: calculateReadTime(post.content_html || ''),
     category: post.categories?.name || 'Uncategorized',
     author: post.profiles?.email?.split('@')[0] || 'Ridgewood Team',
