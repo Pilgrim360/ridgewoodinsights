@@ -1,0 +1,103 @@
+/*
+  This file contains all styles related to the Tiptap editor (.ProseMirror).
+  It is imported only within the /admin section of the application to avoid
+  loading unnecessary CSS on public-facing pages.
+*/
+
+@layer components {
+  .ProseMirror {
+    @apply text-text;
+  }
+
+  .ProseMirror > * + * {
+    @apply mt-4;
+  }
+
+  .ProseMirror .tableWrapper {
+    @apply overflow-x-auto;
+  }
+
+  .ProseMirror table {
+    @apply w-full border-collapse;
+  }
+
+  .ProseMirror th,
+  .ProseMirror td {
+    @apply border border-table-border px-3 py-2 align-top;
+  }
+
+  .ProseMirror th {
+    @apply bg-surface text-secondary;
+  }
+
+  .ProseMirror .page-break {
+    @apply my-6 border-t border-table-border;
+  }
+
+  @media print {
+    .ProseMirror .page-break {
+      break-after: page;
+      page-break-after: always;
+      border: 0;
+      margin: 0;
+      height: 0;
+    }
+  }
+
+  .ProseMirror .embed-wrapper {
+    @apply relative w-full overflow-hidden rounded-md border border-table-border bg-background;
+    padding-top: 56.25%;
+  }
+
+  .ProseMirror .embed-iframe {
+    @apply absolute inset-0 h-full w-full;
+  }
+
+  .ProseMirror audio {
+    @apply w-full;
+  }
+
+  /* Editor node-view wrapper alignment (so text wraps inside the editor) */
+  .ProseMirror .rw-image-nodeview.rw-img-align-left {
+    @apply float-left mr-6 my-2;
+    max-width: min(50%, 28rem);
+  }
+
+  .ProseMirror .rw-image-nodeview.rw-img-align-right {
+    @apply float-right ml-6 my-2;
+    max-width: min(50%, 28rem);
+  }
+
+  .ProseMirror .rw-image-nodeview.rw-img-align-center {
+    @apply block mx-auto;
+  }
+
+  .ProseMirror .rw-image-nodeview.rw-img-align-full {
+    @apply block w-full;
+  }
+
+  /* TipTap image node view (resize handle + selected ring) */
+  .ProseMirror .rw-image-nodeview--selected img {
+    @apply ring-2 ring-primary/40;
+  }
+
+  .ProseMirror .rw-image-resize-handle {
+    @apply absolute -right-2 -bottom-2 h-4 w-4 rounded-sm border border-table-border bg-white shadow;
+    cursor: nwse-resize;
+  }
+
+  .ProseMirror .rw-image-resize-handle--active {
+    @apply ring-2 ring-primary/30;
+  }
+
+  /* Reduce paragraph margins inside table cells for better spacing */
+  .ProseMirror table p {
+    margin: 0;
+  }
+
+  /* Handle empty table cells specifically to reduce row height */
+  .ProseMirror td:empty {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+}

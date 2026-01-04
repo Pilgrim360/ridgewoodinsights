@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import './editor.css';
 import { QueryClientProvider, focusManager, onlineManager } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { AdminAuthProvider } from '@/contexts/AdminAuthContext';
