@@ -3,13 +3,11 @@ import { Hero } from '@/components/sections/Hero';
 import { ServicesOverview } from '@/components/sections/ServicesOverview';
 import { AboutTrust } from '@/components/sections/AboutTrust';
 import { CTA } from '@/components/sections/CTA';
-import { Testimonials } from '@/components/sections/Testimonials';
 import { NewInsights } from '@/components/sections/NewInsights';
 import { getPublishedPosts } from '@/lib/blog';
 import {
   SERVICES,
   TRUST_SIGNALS,
-  TESTIMONIALS,
   SITE_NAME,
   SITE_DESCRIPTION,
 } from '@/constants';
@@ -65,15 +63,6 @@ export default async function HomePage() {
         trustSignals={TRUST_SIGNALS}
         layout="grid"
         backgroundVariant="white"
-      />
-
-      {/* Testimonials */}
-      <Testimonials
-        title="What Our Clients Say"
-        subtitle="Client Success Stories"
-        testimonials={TESTIMONIALS}
-        layout="grid"
-        maxDisplay={3}
       />
 
       {/* CTA Section */}

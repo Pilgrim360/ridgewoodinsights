@@ -2,14 +2,12 @@ import { Metadata } from 'next';
 import { Hero } from '@/components/sections/Hero';
 import { OurStory } from '@/components/sections/OurStory';
 import { CompanyValues } from '@/components/sections/CompanyValues';
-import { TeamGrid } from '@/components/sections/TeamGrid';
-import { CredentialsList } from '@/components/sections/CredentialsList';
+// import { TeamGrid } from '@/components/sections/TeamGrid';
+// import { CredentialsList } from '@/components/sections/CredentialsList';
 import { CTA } from '@/components/sections/CTA';
-import { Testimonials } from '@/components/sections/Testimonials';
 import {
   TRUST_SIGNALS,
   CREDENTIALS,
-  TESTIMONIALS,
   TEAM_MEMBERS,
   COMPANY_VALUES,
 } from '@/constants';
@@ -54,19 +52,11 @@ export default function AboutPage() {
       {/* Values Section */}
       <CompanyValues values={COMPANY_VALUES} />
 
-      {/* Team Section */}
-      <TeamGrid members={TEAM_MEMBERS} />
+      {/* Team Section - Coming soon */}
+      {/* <TeamGrid members={TEAM_MEMBERS} /> */}
 
-      {/* Credentials Section */}
-      <CredentialsList credentials={CREDENTIALS} />
-
-      {/* Testimonials */}
-      <Testimonials
-        title="What Our Clients Say"
-        subtitle="Client Testimonials"
-        testimonials={TESTIMONIALS}
-        layout="featured"
-      />
+      {/* Credentials Section - Coming soon */}
+      {/* <CredentialsList credentials={CREDENTIALS} /> */}
 
       {/* CTA Section */}
       <CTA

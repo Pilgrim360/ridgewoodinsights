@@ -124,7 +124,7 @@ export const TRUST_SIGNALS = [
   {
     type: 'statistic' as const,
     title: 'Clients Served',
-    value: '500+',
+    value: '50+',
     description: 'Businesses and individuals',
   },
   {
@@ -135,9 +135,9 @@ export const TRUST_SIGNALS = [
   },
   {
     type: 'statistic' as const,
-    title: 'Tax Savings',
-    value: '$2M+',
-    description: 'Saved for our clients annually',
+    title: 'Professional Excellence',
+    value: '100%',
+    description: 'Commitment to quality service delivery',
   },
 ];
 

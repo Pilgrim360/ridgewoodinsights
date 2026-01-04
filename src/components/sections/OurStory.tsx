@@ -38,15 +38,15 @@ export function OurStory({
             </Heading>
             <div className="space-y-4 text-text text-lg leading-relaxed">
               <Text as="p">
-                Ridgewood Insights was founded in 2009 with a simple mission: to provide 
+                Ridgewood Insights was founded with a simple mission: to provide 
                 personalized, high-quality financial services that help our clients succeed. 
                 What started as a small practice has grown into a trusted firm serving 
                 hundreds of businesses and individuals.
               </Text>
               <Text as="p">
-                Our founder, John Smith, recognized that many people felt overwhelmed by 
+                We recognised that people felt overwhelmed by 
                 financial complexity and underserved by large, impersonal accounting firms. 
-                He set out to create a different kind of practice—one that combines
+                We set out to create a different kind of practice, one that combines
                 professional expertise with genuine care for each client&apos;s unique situation.
               </Text>
               <Text as="p">

@@ -56,8 +56,7 @@ export default function TermsOfServicePage() {
           <Heading as={2}>4. Governing Law & Jurisdiction</Heading>
           <p>
             These terms will be governed by and interpreted in accordance with the laws of the Republic of Zambia,
-            and you submit to the non-exclusive jurisdiction of the state and federal courts located in Zambia for the
-            resolution of any disputes.
+            and you submit to the non-exclusive jurisdiction of the courts located in Zambia for the resolution of any disputes.
           </p>
 
           <Heading as={2}>5. Disclaimer</Heading>
