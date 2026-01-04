@@ -48,13 +48,11 @@
 }
 
 /* Reduce paragraph margins inside table cells for better spacing */
-.ProseMirror table p,
 .prose table p {
   margin: 0;
 }
 
 /* Handle empty table cells specifically to reduce row height */
-.ProseMirror td:empty,
 .prose td:empty {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
