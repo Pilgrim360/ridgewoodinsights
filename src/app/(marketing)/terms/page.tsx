@@ -4,6 +4,18 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Terms of Service',
+  description:
+    'Terms of Service for Ridgewood Insights. Review our terms and conditions for using our accounting and tax services in Zambia.',
+  alternates: {
+    canonical: 'https://ridgewoodinsights.com/terms',
+  },
+  openGraph: {
+    title: 'Terms of Service | Ridgewood Insights',
+    description:
+      'Terms of Service for Ridgewood Insights. Review our terms and conditions for using our accounting and tax services in Zambia.',
+    url: 'https://ridgewoodinsights.com/terms',
+    type: 'website',
+  },
 };
 
 export default function TermsOfServicePage() {

@@ -6,13 +6,36 @@ import { CTA } from '@/components/sections/CTA';
 import { SERVICES } from '@/constants';
 
 export const metadata: Metadata = {
-  title: 'Our Services | Ridgewood Insights',
+  title: 'Our Services',
   description:
-    'Comprehensive accounting services including bookkeeping, payroll management, tax preparation, financial statement preparation, business formation, and regulatory compliance.',
+    'Comprehensive accounting and tax services in Zambia including bookkeeping, payroll management, VAT returns, ZRA compliance, NAPSA filings, tax preparation, financial statement preparation, business formation, and regulatory compliance for businesses across Africa.',
+  alternates: {
+    canonical: 'https://ridgewoodinsights.com/services',
+  },
+  keywords: [
+    'accounting services Zambia',
+    'bookkeeping Lusaka',
+    'payroll management Zambia',
+    'VAT returns Zambia',
+    'ZRA compliance services',
+    'NAPSA filing',
+    'tax preparation Zambia',
+    'financial statements Zambia',
+    'business formation Zambia',
+    'regulatory compliance Africa',
+  ],
   openGraph: {
     title: 'Our Services | Ridgewood Insights',
     description:
-      'Comprehensive accounting services including bookkeeping, payroll management, tax preparation, financial statement preparation, business formation, and regulatory compliance.',
+      'Comprehensive accounting and tax services in Zambia including bookkeeping, payroll management, VAT returns, ZRA compliance, NAPSA filings, tax preparation, financial statements, and business formation.',
+    url: 'https://ridgewoodinsights.com/services',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Our Services | Ridgewood Insights',
+    description:
+      'Comprehensive accounting and tax services in Zambia including bookkeeping, VAT returns, ZRA compliance, and tax preparation.',
   },
 };
 

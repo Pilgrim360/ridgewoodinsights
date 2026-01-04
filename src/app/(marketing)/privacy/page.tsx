@@ -4,6 +4,18 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
+  description:
+    'Privacy Policy for Ridgewood Insights. Learn how we protect your personal information and data when using our accounting and tax services in Zambia.',
+  alternates: {
+    canonical: 'https://ridgewoodinsights.com/privacy',
+  },
+  openGraph: {
+    title: 'Privacy Policy | Ridgewood Insights',
+    description:
+      'Privacy Policy for Ridgewood Insights. Learn how we protect your personal information and data when using our accounting and tax services in Zambia.',
+    url: 'https://ridgewoodinsights.com/privacy',
+    type: 'website',
+  },
 };
 
 export default function PrivacyPolicyPage() {
