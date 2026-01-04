@@ -15,11 +15,22 @@ import {
 export const metadata: Metadata = {
   title: 'About Us',
   description:
-    'Learn about Ridgewood Insights, our team of certified professionals, and our commitment to providing exceptional accounting and financial services.',
+    'Learn about Ridgewood Insights, a trusted accounting and tax services firm based in Lusaka, Zambia. Our team of certified professionals is committed to delivering exceptional financial services across Africa.',
+  alternates: {
+    canonical: 'https://ridgewoodinsights.com/about',
+  },
   openGraph: {
     title: 'About Us | Ridgewood Insights',
     description:
-      'Learn about Ridgewood Insights, our team of certified professionals, and our commitment to providing exceptional accounting and financial services.',
+      'Learn about Ridgewood Insights, a trusted accounting and tax services firm based in Lusaka, Zambia. Our team of certified professionals is committed to delivering exceptional financial services across Africa.',
+    url: 'https://ridgewoodinsights.com/about',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'About Us | Ridgewood Insights',
+    description:
+      'Learn about Ridgewood Insights, a trusted accounting and tax services firm based in Lusaka, Zambia.',
   },
 };
 

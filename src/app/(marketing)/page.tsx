@@ -13,11 +13,33 @@ import {
 } from '@/constants';
 
 export const metadata: Metadata = {
-  title: `${SITE_NAME} - Professional Accounting & Financial Services`,
-  description: SITE_DESCRIPTION,
+  title: `${SITE_NAME} - Professional Accounting & Tax Services in Zambia`,
+  description: 'Expert accounting and tax services in Zambia. Specializing in bookkeeping, VAT returns, ZRA compliance, payroll management, NAPSA filings, and tax planning for businesses across Africa.',
+  alternates: {
+    canonical: 'https://ridgewoodinsights.com',
+  },
+  keywords: [
+    'accounting Zambia',
+    'tax services Lusaka',
+    'ZRA compliance',
+    'VAT Zambia',
+    'bookkeeping Zambia',
+    'NAPSA compliance',
+    'tax planning Zambia',
+    'payroll services Zambia',
+    'accounting firm Lusaka',
+    'Zambian accountant',
+  ],
   openGraph: {
-    title: `${SITE_NAME} - Professional Accounting & Financial Services`,
-    description: SITE_DESCRIPTION,
+    title: `${SITE_NAME} - Professional Accounting & Tax Services in Zambia`,
+    description: 'Expert accounting and tax services in Zambia. Specializing in bookkeeping, VAT returns, ZRA compliance, payroll management, NAPSA filings, and tax planning for businesses across Africa.',
+    url: 'https://ridgewoodinsights.com',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${SITE_NAME} - Professional Accounting & Tax Services in Zambia`,
+    description: 'Expert accounting and tax services in Zambia. Specializing in bookkeeping, VAT returns, ZRA compliance, and tax planning.',
   },
 };
 

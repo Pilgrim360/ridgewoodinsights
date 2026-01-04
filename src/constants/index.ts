@@ -19,7 +19,7 @@ export const SITE_DESCRIPTION =
 export const COMPANY_INFO = {
   name: 'Ridgewood Insights',
   tagline: 'Your Trusted Financial Partner',
-  address: '123 Financial District, Suite 400, New York, NY 10005',
+  address: 'Lusaka Business District, Lusaka, Zambia',
   phone: '+260 976 404079',
   email: 'enquiries@ridgewoodinsights.com',
   whatsapp: 'https://wa.me/260976404079',

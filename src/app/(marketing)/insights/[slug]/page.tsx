@@ -4,12 +4,16 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getPostBySlug } from '@/lib/blog';
 import { sanitizeContent } from '@/lib/admin/html';
+import { generateBlogPostingSchema, generateBreadcrumbSchema } from '@/lib/schema';
+import { LOGOS } from '@/constants';
 import { Container } from '@/components/ui/Container';
 import { Heading } from '@/components/ui/Heading';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { ReadingProgress } from '@/components/ui/ReadingProgress';
 import { ShareButtons } from '@/components/ShareButtons';
+
+const BASE_URL = 'https://ridgewoodinsights.com';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -25,9 +29,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
+  const postUrl = `${BASE_URL}/insights/${slug}`;
+
   return {
     title: `${post.title} | Ridgewood Insights`,
     description: post.excerpt,
+    alternates: {
+      canonical: postUrl,
+    },
     openGraph: {
       title: post.title,
       description: post.excerpt,
@@ -35,6 +44,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       type: 'article',
       publishedTime: post.date,
       authors: [post.author],
+      url: postUrl,
+      siteName: 'Ridgewood Insights',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.excerpt,
+      images: post.image ? [post.image] : [],
     },
   };
 }
@@ -57,8 +74,46 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   const cleanContent = sanitizeContent(post.content);
 
+  // Generate structured data for blog post
+  const postUrl = `${BASE_URL}/insights/${slug}`;
+  const blogPostingSchema = generateBlogPostingSchema({
+    headline: post.title,
+    description: post.excerpt,
+    image: post.image,
+    author: post.author,
+    publisher: {
+      name: 'Ridgewood Insights',
+      logo: LOGOS.scrolling,
+    },
+    datePublished: post.date,
+    dateModified: post.date,
+    url: postUrl,
+    mainEntityOfPage: postUrl,
+    articleSection: post.category,
+    keywords: [post.category, 'accounting Zambia', 'tax services', 'business insights'],
+  });
+
+  // Generate breadcrumb schema
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', url: BASE_URL },
+    { name: 'Insights', url: `${BASE_URL}/insights` },
+    { name: post.title, url: postUrl },
+  ]);
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(blogPostingSchema),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema),
+        }}
+      />
       <ReadingProgress />
       
       <article className="min-h-screen bg-white">

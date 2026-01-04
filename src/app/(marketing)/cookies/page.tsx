@@ -4,6 +4,18 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Cookie Policy',
+  description:
+    'Cookie Policy for Ridgewood Insights. Learn about how we use cookies on our website to improve your experience when accessing our accounting and tax services.',
+  alternates: {
+    canonical: 'https://ridgewoodinsights.com/cookies',
+  },
+  openGraph: {
+    title: 'Cookie Policy | Ridgewood Insights',
+    description:
+      'Cookie Policy for Ridgewood Insights. Learn about how we use cookies on our website to improve your experience.',
+    url: 'https://ridgewoodinsights.com/cookies',
+    type: 'website',
+  },
 };
 
 export default function CookiePolicyPage() {
