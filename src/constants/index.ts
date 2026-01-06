@@ -1,8 +1,8 @@
 export const SITE_NAME = 'Ridgewood Insights';
 
 export const LOGOS = {
-  scrolling: 'https://nnnfcbmzygubyhufxwln.supabase.co/storage/v1/object/public/blog-images/e5d6bf0e-9122-426d-9b9b-b09b5113a564/1767260920028-R%20Teal%2020260101_081644.png?width=400&height=100&resize=contain&quality=80',
-  fixed: 'https://nnnfcbmzygubyhufxwln.supabase.co/storage/v1/object/public/blog-images/e5d6bf0e-9122-426d-9b9b-b09b5113a564/1767260922051-R%20White%2020260101_081716.png?width=400&height=100&resize=contain&quality=80',
+  scrolling: 'https://nnnfcbmzygubyhufxwln.supabase.co/storage/v1/object/public/blog-images/e5d6bf0e-9122-426d-9b9b-b09b5113a564/1767619919355-R_Teal_Logo.png',
+  fixed: 'https://nnnfcbmzygubyhufxwln.supabase.co/storage/v1/object/public/blog-images/e5d6bf0e-9122-426d-9b9b-b09b5113a564/1767619917729-R_White_Logo.png',
 };
 
 export const NAV_LINKS = [

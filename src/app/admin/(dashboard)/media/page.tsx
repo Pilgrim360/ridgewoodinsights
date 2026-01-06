@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Button } from '@/components/ui/Button';
@@ -43,6 +43,8 @@ export default function MediaPage() {
     setSearchTerm(term);
   };
 
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -63,6 +65,10 @@ export default function MediaPage() {
       setUploadProgress(0);
       e.target.value = '';
     }
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
   };
 
   const handleDeleteSelected = async () => {
@@ -102,6 +108,7 @@ export default function MediaPage() {
           <Heading as={1}>Media Library</Heading>
           <div className="flex gap-2">
             <Input
+              ref={fileInputRef}
               type="file"
               id="media-upload"
               className="hidden"
@@ -110,11 +117,13 @@ export default function MediaPage() {
               accept="image/*,.pdf,.doc,.docx"
               disabled={isUploading}
             />
-            <label htmlFor="media-upload">
-              <Button variant="primary" disabled={isUploading}>
-                {isUploading ? `Uploading... ${uploadProgress}%` : 'Upload Media'}
-              </Button>
-            </label>
+            <Button 
+              variant="primary" 
+              disabled={isUploading}
+              onClick={handleUploadClick}
+            >
+              {isUploading ? `Uploading... ${uploadProgress}%` : 'Upload Media'}
+            </Button>
             {selectedMedia.length > 0 && (
               <Button variant="outline" onClick={() => setShowDeleteConfirm(true)}>
                 Delete Selected ({selectedMedia.length})
