@@ -21,8 +21,8 @@ interface InsightsPageClientProps {
 
 export function InsightsPageClient({ initialPosts }: InsightsPageClientProps) {
   const [items, setItems] = useState<Insight[]>(initialPosts);
-  const [offset, setOffset] = useState<number>(PAGE_SIZE);
-  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [offset, setOffset] = useState<number>(initialPosts.length);
+  const [hasMore, setHasMore] = useState<boolean>(initialPosts.length === PAGE_SIZE);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [layout, setLayout] = useState<LayoutMode>('grid');
