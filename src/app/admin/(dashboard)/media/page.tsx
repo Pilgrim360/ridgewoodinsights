@@ -29,6 +29,8 @@ export default function MediaPage() {
   const uploadMutation = useUploadMedia(user?.id);
   const deleteMutation = useDeleteMedia(user?.id);
 
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     if (!user) {
       router.push('/admin/login');
@@ -42,8 +44,6 @@ export default function MediaPage() {
   const handleSearch = (term: string) => {
     setSearchTerm(term);
   };
-
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
