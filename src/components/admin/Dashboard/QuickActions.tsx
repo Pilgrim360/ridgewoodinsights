@@ -6,18 +6,15 @@
 import React from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { PlusCircle, LayoutList, ExternalLink, LucideIcon } from 'lucide-react';
 
 export interface QuickActionItem {
   id: string;
   label: string;
   description: string;
   href: string;
-  icon: React.ReactNode;
+  icon: LucideIcon;
   variant?: 'primary' | 'secondary';
-}
-
-export interface QuickActionsProps extends React.HTMLAttributes<HTMLDivElement> {
-  actions?: QuickActionItem[];
 }
 
 const DEFAULT_ACTIONS: QuickActionItem[] = [
@@ -26,7 +23,7 @@ const DEFAULT_ACTIONS: QuickActionItem[] = [
     label: 'Create New Post',
     description: 'Start writing your next blog post',
     href: '/admin/posts/new',
-    icon: '✏️',
+    icon: PlusCircle,
     variant: 'primary',
   },
   {
@@ -34,7 +31,7 @@ const DEFAULT_ACTIONS: QuickActionItem[] = [
     label: 'View All Posts',
     description: 'Manage and edit existing posts',
     href: '/admin/posts',
-    icon: '📄',
+    icon: LayoutList,
     variant: 'secondary',
   },
   {
@@ -42,10 +39,14 @@ const DEFAULT_ACTIONS: QuickActionItem[] = [
     label: 'View Site',
     description: 'See how your posts look live',
     href: '/',
-    icon: '🌐',
+    icon: ExternalLink,
     variant: 'secondary',
   },
 ];
+
+export interface QuickActionsProps extends React.HTMLAttributes<HTMLDivElement> {
+  actions?: QuickActionItem[];
+}
 
 export function QuickActions({
   actions = DEFAULT_ACTIONS,
@@ -53,37 +54,45 @@ export function QuickActions({
   ...props
 }: QuickActionsProps) {
   return (
-    <div className={cn('grid grid-cols-1 md:grid-cols-3 gap-4', className)} {...props}>
-      {actions.map((action) => (
-        <Link
-          key={action.id}
-          href={action.href}
-          className={cn(
-            'rounded-lg p-6 border transition-all duration-200 hover:shadow-md',
-            action.variant === 'primary'
-              ? 'bg-primary text-white border-primary hover:bg-primary/90 shadow-sm'
-              : 'bg-white border-surface text-secondary hover:border-primary hover:text-primary'
-          )}
-        >
-          <div className="flex items-start gap-4">
-            {/* Icon */}
-            <div className="text-3xl flex-shrink-0">{action.icon}</div>
+    <div className={cn('grid grid-cols-1 md:grid-cols-3 gap-6', className)} {...props}>
+      {actions.map((action) => {
+        const Icon = action.icon;
+        return (
+          <Link
+            key={action.id}
+            href={action.href}
+            className={cn(
+              'group rounded-xl p-6 border transition-all duration-300 hover:shadow-lg hover:translate-y-[-4px]',
+              action.variant === 'primary'
+                ? 'bg-primary text-white border-primary shadow-md hover:bg-primary/95'
+                : 'bg-white border-surface text-secondary hover:border-primary/30'
+            )}
+          >
+            <div className="flex flex-col gap-4">
+              <div className={cn(
+                'w-12 h-12 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110',
+                action.variant === 'primary' ? 'bg-white/20' : 'bg-primary/5 text-primary'
+              )}>
+                <Icon className="w-6 h-6" />
+              </div>
 
-            {/* Content */}
-            <div className="flex-1 min-w-0">
-              <h3 className={cn('font-semibold text-base mb-1', action.variant === 'primary' ? 'text-white' : 'text-secondary')}>
-                {action.label}
-              </h3>
-              <p className={cn('text-sm', action.variant === 'primary' ? 'text-white/80' : 'text-text/70')}>
-                {action.description}
-              </p>
+              <div className="flex-1">
+                <div className="flex items-center justify-between mb-1">
+                  <h3 className={cn('font-bold text-lg', action.variant === 'primary' ? 'text-white' : 'text-secondary')}>
+                    {action.label}
+                  </h3>
+                  <div className={cn('text-xl opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-1', action.variant === 'primary' ? 'text-white' : 'text-primary')}>
+                    →
+                  </div>
+                </div>
+                <p className={cn('text-sm leading-relaxed', action.variant === 'primary' ? 'text-white/80' : 'text-text/70')}>
+                  {action.description}
+                </p>
+              </div>
             </div>
-
-            {/* Arrow */}
-            <div className="text-xl flex-shrink-0 opacity-60">→</div>
-          </div>
-        </Link>
-      ))}
+          </Link>
+        );
+      })}
     </div>
   );
 }

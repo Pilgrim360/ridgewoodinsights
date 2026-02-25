@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { getPost, getPostStats, getPosts, getRecentActivity } from '@/lib/admin/posts';
+import { getPost, getPostStats, getPosts, getRecentActivity, getMonthlyPostCounts } from '@/lib/admin/posts';
 import {
   DashboardStats,
   PaginatedResult,
@@ -24,15 +24,11 @@ function normalizeFilters(filters: PostFilters): NormalizedPostFilters {
 }
 
 export function usePostsList(filters: PostFilters) {
+  const { search, status, category_id, page, per_page } = filters;
+
   const normalized = useMemo(
-    () => normalizeFilters(filters),
-    [
-      filters.search,
-      filters.status,
-      filters.category_id,
-      filters.page,
-      filters.per_page,
-    ]
+    () => normalizeFilters({ search, status, category_id, page, per_page }),
+    [search, status, category_id, page, per_page]
   );
 
   return useQuery<PaginatedResult<PostData>, Error>({
@@ -62,5 +58,12 @@ export function useRecentActivity(limit: number = 10) {
     queryKey: adminQueryKeys.posts.activity(limit),
     queryFn: () => withSupabaseAuthRetry(() => getRecentActivity(limit)),
     staleTime: REALTIME_QUERY_STALE_TIME_MS,
+  });
+}
+
+export function useMonthlyPostCounts(months: number = 6) {
+  return useQuery<{ month: string; count: number }[], Error>({
+    queryKey: adminQueryKeys.posts.monthlyCounts(months),
+    queryFn: () => withSupabaseAuthRetry(() => getMonthlyPostCounts(months)),
   });
 }

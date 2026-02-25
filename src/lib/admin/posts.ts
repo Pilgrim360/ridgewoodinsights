@@ -7,6 +7,59 @@ import { supabase } from './supabase';
 import { DashboardStats, PostData, PostFilters, PaginatedResult, RecentActivity } from '@/types/admin';
 
 /**
+ * Get monthly post publication counts for charts
+ */
+export async function getMonthlyPostCounts(months: number = 6): Promise<{ month: string, count: number }[]> {
+  try {
+    const startDate = new Date();
+    startDate.setMonth(startDate.getMonth() - months);
+
+    const { data, error } = await supabase
+      .from('posts')
+      .select('published_at')
+      .gte('published_at', startDate.toISOString())
+      .eq('status', 'published');
+
+    if (error) throw error;
+
+    // Group by month
+    const counts: Record<string, number> = {};
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    // Initialize last N months with 0
+    for (let i = 0; i <= months; i++) {
+      const d = new Date();
+      d.setMonth(d.getMonth() - i);
+      const monthKey = `${monthNames[d.getMonth()]} ${d.getFullYear()}`;
+      counts[monthKey] = 0;
+    }
+
+    data?.forEach((post: { published_at: string | null }) => {
+      if (!post.published_at) return;
+      const d = new Date(post.published_at);
+      const monthKey = `${monthNames[d.getMonth()]} ${d.getFullYear()}`;
+      if (counts[monthKey] !== undefined) {
+        counts[monthKey]++;
+      }
+    });
+
+    // Convert to array and sort chronologically
+    return Object.entries(counts)
+      .map(([month, count]) => ({ month, count }))
+      .sort((a, b) => {
+        const [aMonth, aYear] = a.month.split(' ');
+        const [bMonth, bYear] = b.month.split(' ');
+        const aDate = new Date(parseInt(aYear), monthNames.indexOf(aMonth));
+        const bDate = new Date(parseInt(bYear), monthNames.indexOf(bMonth));
+        return aDate.getTime() - bDate.getTime();
+      });
+  } catch (error) {
+    console.error('Error fetching monthly post counts:', error);
+    throw error;
+  }
+}
+
+/**
  * Get dashboard statistics (post counts and page views)
  */
 export async function getPostStats(): Promise<DashboardStats> {
