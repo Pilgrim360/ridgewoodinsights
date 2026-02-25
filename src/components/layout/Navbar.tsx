@@ -32,12 +32,6 @@ export function Navbar({ className, mobileMenuOpen, setMobileMenuOpen, ...props 
     };
   }, []);
 
-  const isHome = pathname === '/';
-  // We apply the transparent effect primarily on the home page or pages with Hero. 
-  // Since all marketing pages seem to have a Hero, we can apply it globally or just check if we want it everywhere.
-  // The user request implies this design is for "the header and the background image/video of the hero component".
-  // Assuming all marketing pages have this structure.
-  
   // Dynamic classes based on scroll state
   const headerClasses = isScrolled
     ? 'bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 border-surface shadow-sm'

@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState, useEffect } from 'react';
-import { Search, Image as ImageIcon, Tag, Trash2, ExternalLink } from 'lucide-react';
+import { Search, Image as ImageIcon, FileText, File, Trash2, ExternalLink } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { Heading } from '@/components/ui/Heading';
 import { Text } from '@/components/ui/Text';
@@ -33,7 +33,7 @@ export function MediaBrowser({
   const mediaQuery = useMediaLibrary({ userId: user?.id });
   const deleteMutation = useDeleteMedia(user?.id);
 
-  const mediaItems = mediaQuery.data ?? [];
+  const mediaItems = useMemo(() => mediaQuery.data ?? [], [mediaQuery.data]);
   const isLoading = mediaQuery.isLoading;
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -106,9 +106,9 @@ export function MediaBrowser({
       case 'image':
         return <ImageIcon className="h-8 w-8 text-primary/60" />;
       case 'document':
-        return <Tag className="h-8 w-8 text-blue-500/60" />;
+        return <FileText className="h-8 w-8 text-blue-500/60" />;
       default:
-        return <Tag className="h-8 w-8 text-gray-400" />;
+        return <File className="h-8 w-8 text-text/40" />;
     }
   };
 

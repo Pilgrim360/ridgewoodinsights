@@ -12,7 +12,6 @@ import { Text } from '../ui/Text';
 import { Button } from '../ui/Button';
 import { InsightCard } from '../blog/InsightCard';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import Link from 'next/link';
 
 interface NewInsightsProps {
     title: string;

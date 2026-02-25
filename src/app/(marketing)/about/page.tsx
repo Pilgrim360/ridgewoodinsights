@@ -7,8 +7,6 @@ import { CompanyValues } from '@/components/sections/CompanyValues';
 import { CTA } from '@/components/sections/CTA';
 import {
   TRUST_SIGNALS,
-  CREDENTIALS,
-  TEAM_MEMBERS,
   COMPANY_VALUES,
 } from '@/constants';
 

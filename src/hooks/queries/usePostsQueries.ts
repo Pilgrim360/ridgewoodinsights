@@ -26,13 +26,10 @@ function normalizeFilters(filters: PostFilters): NormalizedPostFilters {
 export function usePostsList(filters: PostFilters) {
   const normalized = useMemo(
     () => normalizeFilters(filters),
-    [
-      filters.search,
-      filters.status,
-      filters.category_id,
-      filters.page,
-      filters.per_page,
-    ]
+    // Intentionally listing individual primitive properties instead of the `filters`
+    // object reference to avoid unnecessary recomputations on each render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [filters.search, filters.status, filters.category_id, filters.page, filters.per_page]
   );
 
   return useQuery<PaginatedResult<PostData>, Error>({

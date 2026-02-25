@@ -36,6 +36,7 @@ export function Hero({
   primaryCTA,
   secondaryCTA,
   imageSrc,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   imageAlt,
   videoSrc,
   videoPosterSrc,

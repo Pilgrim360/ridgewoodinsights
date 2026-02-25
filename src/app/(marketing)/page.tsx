@@ -9,7 +9,6 @@ import {
   SERVICES,
   TRUST_SIGNALS,
   SITE_NAME,
-  SITE_DESCRIPTION,
 } from '@/constants';
 
 export const metadata: Metadata = {
