@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import { ArrowDownRight, ArrowUpRight, Minus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface StatsCardProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -15,6 +16,7 @@ export interface StatsCardProps extends React.HTMLAttributes<HTMLDivElement> {
     percentage: number;
   };
   variant?: 'default' | 'primary' | 'success' | 'info';
+  helperText?: string;
 }
 
 export function StatsCard({
@@ -23,51 +25,64 @@ export function StatsCard({
   icon,
   trend,
   variant = 'default',
+  helperText,
   className,
   ...props
 }: StatsCardProps) {
   const variantStyles = {
     default: 'bg-white border border-surface',
-    primary: 'bg-primary/5 border border-primary/20',
-    success: 'bg-green-50 border border-green-200',
-    info: 'bg-blue-50 border border-blue-200',
+    primary: 'bg-primary/[0.04] border border-primary/20',
+    success: 'bg-emerald-50 border border-emerald-200',
+    info: 'bg-sky-50 border border-sky-200',
   };
 
   const trendColor = {
-    up: 'text-green-600',
-    down: 'text-red-600',
-    neutral: 'text-text',
+    up: 'text-emerald-700 bg-emerald-100',
+    down: 'text-rose-700 bg-rose-100',
+    neutral: 'text-text bg-background',
   };
 
   return (
-    <div
+    <article
       className={cn(
-        'rounded-lg p-6 flex flex-col gap-2',
+        'rounded-xl p-5 sm:p-6 flex flex-col gap-3 shadow-[0_1px_1px_rgba(0,0,0,0.02)]',
         variantStyles[variant],
         className
       )}
       {...props}
     >
-      {/* Header with Icon and Label */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <p className="text-sm font-medium text-secondary">{label}</p>
-        {icon && (
-          <div className="text-primary">
+        {icon ? (
+          <div className="rounded-lg bg-white/70 p-2 text-primary" aria-hidden="true">
             {icon}
           </div>
-        )}
+        ) : null}
       </div>
 
-      {/* Value Section */}
-      <div className="flex items-baseline gap-2">
-        <span className="text-3xl font-bold text-secondary">{value}</span>
-        {trend && (
-          <span className={cn('text-sm font-medium', trendColor[trend.direction])}>
-            {trend.direction === 'up' ? '↑' : trend.direction === 'down' ? '↓' : '→'}{' '}
+      <div className="flex items-end justify-between gap-2">
+        <span className="text-3xl font-bold tracking-tight text-secondary">{value}</span>
+
+        {trend ? (
+          <span
+            className={cn(
+              'inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold',
+              trendColor[trend.direction]
+            )}
+          >
+            {trend.direction === 'up' ? (
+              <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
+            ) : trend.direction === 'down' ? (
+              <ArrowDownRight className="h-3.5 w-3.5" aria-hidden="true" />
+            ) : (
+              <Minus className="h-3.5 w-3.5" aria-hidden="true" />
+            )}
             {trend.percentage}%
           </span>
-        )}
+        ) : null}
       </div>
-    </div>
+
+      {helperText ? <p className="text-xs text-text/80">{helperText}</p> : null}
+    </article>
   );
 }
