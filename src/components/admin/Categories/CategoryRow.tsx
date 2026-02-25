@@ -1,5 +1,6 @@
 'use client';
 
+import { Edit2, Trash2 } from 'lucide-react';
 import { CategoryWithPostCount } from '@/types/admin';
 import { cn } from '@/lib/utils';
 
@@ -10,36 +11,31 @@ interface CategoryRowProps {
   isDeleting?: boolean;
 }
 
-export function CategoryRow({
-  category,
-  onEdit,
-  onDelete,
-  isDeleting,
-}: CategoryRowProps) {
+export function CategoryRow({ category, onEdit, onDelete, isDeleting }: CategoryRowProps) {
   return (
-    <tr className="border-b border-surface hover:bg-background transition-colors">
+    <tr className="border-b border-surface hover:bg-background/50 transition-colors last:border-0">
       <td className="px-6 py-4">
-        <div>
-          <p className="font-medium text-secondary">{category.name}</p>
-          <p className="text-sm text-text/60">{category.slug}</p>
-        </div>
+        <p className="font-medium text-secondary">{category.name}</p>
+        <p className="text-xs text-text/50 mt-0.5">{category.slug}</p>
       </td>
-      <td className="px-6 py-4 text-sm text-text text-center">
-        {category.post_count}
+      <td className="px-6 py-4 text-center">
+        <span className="inline-flex items-center justify-center min-w-[2rem] px-2 py-0.5 rounded-full text-xs font-semibold bg-surface text-secondary">
+          {category.post_count}
+        </span>
       </td>
-      <td className="px-6 py-4 text-right">
-        <div className="flex items-center justify-end gap-2">
+      <td className="px-6 py-4">
+        <div className="flex items-center justify-end gap-1">
           <button
             type="button"
             onClick={() => onEdit(category)}
             disabled={isDeleting}
             className={cn(
-              'px-3 py-1 text-sm font-medium rounded transition-colors',
-              isDeleting
-                ? 'text-text/30 cursor-not-allowed'
-                : 'text-primary hover:bg-primary/10'
+              'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
+              'text-secondary hover:bg-surface',
+              'disabled:opacity-40 disabled:cursor-not-allowed'
             )}
           >
+            <Edit2 className="w-3.5 h-3.5" />
             Edit
           </button>
           <button
@@ -47,13 +43,17 @@ export function CategoryRow({
             onClick={() => onDelete(category)}
             disabled={isDeleting}
             className={cn(
-              'px-3 py-1 text-sm font-medium rounded transition-colors',
-              isDeleting
-                ? 'text-red-400 cursor-not-allowed'
-                : 'text-red-600 hover:bg-red-50'
+              'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
+              'text-red-600 hover:bg-red-50',
+              'disabled:opacity-40 disabled:cursor-not-allowed'
             )}
           >
-            {isDeleting ? 'Deleting...' : 'Delete'}
+            {isDeleting ? (
+              <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-red-300 border-t-red-600" />
+            ) : (
+              <Trash2 className="w-3.5 h-3.5" />
+            )}
+            {isDeleting ? 'Deleting…' : 'Delete'}
           </button>
         </div>
       </td>

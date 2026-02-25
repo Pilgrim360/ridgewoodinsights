@@ -2,16 +2,14 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Eye, EyeOff, Lock, Mail, AlertCircle } from 'lucide-react';
 import { getSupabaseClient } from '@/lib/supabase/client';
-
-/**
- * Admin Login Page
- * Simple email/password login for admin users
- */
+import { cn } from '@/lib/utils';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -34,7 +32,6 @@ export default function LoginPage() {
         return;
       }
 
-      // Verify user is admin
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -56,7 +53,6 @@ export default function LoginPage() {
         return;
       }
 
-      // Redirect to dashboard
       router.push('/admin');
     } catch (err) {
       setError('An unexpected error occurred');
@@ -67,61 +63,112 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-lg shadow p-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center">Admin Login</h1>
+        {/* Logo / Brand */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-primary text-white rounded-xl font-bold text-xl mb-4">
+            R
+          </div>
+          <h1 className="text-2xl font-bold text-secondary">Ridgewood Admin</h1>
+          <p className="text-text/70 text-sm mt-1">Sign in to manage your content</p>
+        </div>
 
+        {/* Card */}
+        <div className="bg-white rounded-xl shadow-sm border border-surface p-8">
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
-              {error}
+            <div className="mb-6 flex items-start gap-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+              <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
+              <p className="text-red-700 text-sm">{error}</p>
             </div>
           )}
 
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email
+              <label htmlFor="email" className="block text-sm font-medium text-secondary mb-1.5">
+                Email address
               </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="your@email.com"
-              />
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text/40" />
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  autoComplete="email"
+                  className={cn(
+                    'w-full pl-10 pr-4 py-2.5 rounded-lg text-sm',
+                    'border border-surface bg-white text-text',
+                    'placeholder:text-text/40',
+                    'focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary',
+                    'transition-colors'
+                  )}
+                  placeholder="you@example.com"
+                />
+              </div>
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="password" className="block text-sm font-medium text-secondary mb-1.5">
                 Password
               </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="••••••••"
-              />
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text/40" />
+                <input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                  className={cn(
+                    'w-full pl-10 pr-11 py-2.5 rounded-lg text-sm',
+                    'border border-surface bg-white text-text',
+                    'placeholder:text-text/40',
+                    'focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary',
+                    'transition-colors'
+                  )}
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text/40 hover:text-text/70 transition-colors"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors"
+              className={cn(
+                'w-full py-2.5 px-4 rounded-lg text-sm font-semibold text-white',
+                'bg-primary hover:bg-primary-dark',
+                'focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2',
+                'disabled:opacity-60 disabled:cursor-not-allowed',
+                'transition-all duration-200',
+                'flex items-center justify-center gap-2'
+              )}
             >
-              {isLoading ? 'Logging in...' : 'Login'}
+              {isLoading ? (
+                <>
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                  Signing in…
+                </>
+              ) : (
+                'Sign in'
+              )}
             </button>
           </form>
-
-          <p className="text-xs text-gray-500 text-center mt-4">
-            Only admin users can access this panel.
-          </p>
         </div>
+
+        <p className="text-xs text-text/50 text-center mt-6">
+          Only authorized admin users can access this panel.
+        </p>
       </div>
     </div>
   );

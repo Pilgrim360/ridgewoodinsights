@@ -1,9 +1,5 @@
-/**
- * StatsCard Component
- * Displays a single metric with label, value, and optional trend
- */
-
 import React from 'react';
+import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface StatsCardProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -15,6 +11,7 @@ export interface StatsCardProps extends React.HTMLAttributes<HTMLDivElement> {
     percentage: number;
   };
   variant?: 'default' | 'primary' | 'success' | 'info';
+  href?: string;
 }
 
 export function StatsCard({
@@ -33,40 +30,48 @@ export function StatsCard({
     info: 'bg-blue-50 border border-blue-200',
   };
 
-  const trendColor = {
-    up: 'text-green-600',
-    down: 'text-red-600',
-    neutral: 'text-text',
+  const iconBgStyles = {
+    default: 'bg-surface text-secondary',
+    primary: 'bg-primary/10 text-primary',
+    success: 'bg-green-100 text-green-700',
+    info: 'bg-blue-100 text-blue-700',
+  };
+
+  const trendConfig = {
+    up: { color: 'text-green-600', Icon: TrendingUp },
+    down: { color: 'text-red-600', Icon: TrendingDown },
+    neutral: { color: 'text-text/60', Icon: Minus },
   };
 
   return (
     <div
       className={cn(
-        'rounded-lg p-6 flex flex-col gap-2',
+        'rounded-xl p-5 flex flex-col gap-3 hover:shadow-md transition-shadow duration-200',
         variantStyles[variant],
         className
       )}
       {...props}
     >
-      {/* Header with Icon and Label */}
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium text-secondary">{label}</p>
+        <p className="text-sm font-medium text-text/70">{label}</p>
         {icon && (
-          <div className="text-primary">
+          <div className={cn('w-9 h-9 rounded-lg flex items-center justify-center', iconBgStyles[variant])}>
             {icon}
           </div>
         )}
       </div>
 
-      {/* Value Section */}
-      <div className="flex items-baseline gap-2">
-        <span className="text-3xl font-bold text-secondary">{value}</span>
-        {trend && (
-          <span className={cn('text-sm font-medium', trendColor[trend.direction])}>
-            {trend.direction === 'up' ? '↑' : trend.direction === 'down' ? '↓' : '→'}{' '}
-            {trend.percentage}%
-          </span>
-        )}
+      <div className="flex items-end justify-between gap-2">
+        <span className="text-3xl font-bold text-secondary tracking-tight">{value}</span>
+        {trend && (() => {
+          const { color, Icon } = trendConfig[trend.direction];
+          return (
+            <span className={cn('inline-flex items-center gap-1 text-xs font-medium mb-1', color)}>
+              <Icon className="w-3 h-3" />
+              {trend.percentage}%
+            </span>
+          );
+        })()}
       </div>
     </div>
   );

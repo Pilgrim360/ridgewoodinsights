@@ -1,10 +1,6 @@
-/**
- * QuickActions Component
- * Prominent shortcuts to common admin tasks
- */
-
 import React from 'react';
 import Link from 'next/link';
+import { PenLine, LayoutList, Globe, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface QuickActionItem {
@@ -26,7 +22,7 @@ const DEFAULT_ACTIONS: QuickActionItem[] = [
     label: 'Create New Post',
     description: 'Start writing your next blog post',
     href: '/admin/posts/new',
-    icon: '✏️',
+    icon: <PenLine className="w-5 h-5" />,
     variant: 'primary',
   },
   {
@@ -34,7 +30,7 @@ const DEFAULT_ACTIONS: QuickActionItem[] = [
     label: 'View All Posts',
     description: 'Manage and edit existing posts',
     href: '/admin/posts',
-    icon: '📄',
+    icon: <LayoutList className="w-5 h-5" />,
     variant: 'secondary',
   },
   {
@@ -42,7 +38,7 @@ const DEFAULT_ACTIONS: QuickActionItem[] = [
     label: 'View Site',
     description: 'See how your posts look live',
     href: '/',
-    icon: '🌐',
+    icon: <Globe className="w-5 h-5" />,
     variant: 'secondary',
   },
 ];
@@ -59,28 +55,50 @@ export function QuickActions({
           key={action.id}
           href={action.href}
           className={cn(
-            'rounded-lg p-6 border transition-all duration-200 hover:shadow-md',
+            'rounded-xl p-5 border transition-all duration-200',
+            'group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
             action.variant === 'primary'
-              ? 'bg-primary text-white border-primary hover:bg-primary/90 shadow-sm'
-              : 'bg-white border-surface text-secondary hover:border-primary hover:text-primary'
+              ? 'bg-primary text-white border-primary hover:bg-primary-dark shadow-sm hover:shadow-md'
+              : 'bg-white border-surface hover:border-primary/30 hover:shadow-md'
           )}
         >
-          <div className="flex items-start gap-4">
-            {/* Icon */}
-            <div className="text-3xl flex-shrink-0">{action.icon}</div>
-
-            {/* Content */}
-            <div className="flex-1 min-w-0">
-              <h3 className={cn('font-semibold text-base mb-1', action.variant === 'primary' ? 'text-white' : 'text-secondary')}>
-                {action.label}
-              </h3>
-              <p className={cn('text-sm', action.variant === 'primary' ? 'text-white/80' : 'text-text/70')}>
-                {action.description}
-              </p>
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-3 flex-1 min-w-0">
+              <div
+                className={cn(
+                  'flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center',
+                  action.variant === 'primary'
+                    ? 'bg-white/20 text-white'
+                    : 'bg-primary/10 text-primary'
+                )}
+              >
+                {action.icon}
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3
+                  className={cn(
+                    'font-semibold text-sm mb-0.5',
+                    action.variant === 'primary' ? 'text-white' : 'text-secondary'
+                  )}
+                >
+                  {action.label}
+                </h3>
+                <p
+                  className={cn(
+                    'text-xs',
+                    action.variant === 'primary' ? 'text-white/75' : 'text-text/60'
+                  )}
+                >
+                  {action.description}
+                </p>
+              </div>
             </div>
-
-            {/* Arrow */}
-            <div className="text-xl flex-shrink-0 opacity-60">→</div>
+            <ArrowRight
+              className={cn(
+                'w-4 h-4 flex-shrink-0 mt-0.5 transition-transform duration-200 group-hover:translate-x-0.5',
+                action.variant === 'primary' ? 'text-white/60' : 'text-text/30'
+              )}
+            />
           </div>
         </Link>
       ))}
