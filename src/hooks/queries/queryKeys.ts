@@ -19,6 +19,7 @@ export const adminQueryKeys = {
     byId: (id: string) => ['posts', id] as const,
     stats: () => ['posts', 'stats'] as const,
     activity: (limit: number) => ['activity', limit] as const,
+    monthlyCounts: (months: number) => ['posts', 'monthly-counts', months] as const,
   },
   categories: {
     all: ['categories'] as const,

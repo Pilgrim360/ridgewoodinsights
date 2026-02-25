@@ -24,6 +24,7 @@ export default function MediaPage() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [selectedMedia, setSelectedMedia] = useState<string[]>([]);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const mediaQuery = useMediaLibrary({ userId: user?.id, search: searchTerm });
   const uploadMutation = useUploadMedia(user?.id);
@@ -42,8 +43,6 @@ export default function MediaPage() {
   const handleSearch = (term: string) => {
     setSearchTerm(term);
   };
-
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
