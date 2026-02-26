@@ -165,6 +165,7 @@ export function ResizableImageNodeView({ node, selected, editor, updateAttribute
         selected && 'rw-image-nodeview--selected'
       )}
     >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         ref={imgRef}
         src={attrs.src}

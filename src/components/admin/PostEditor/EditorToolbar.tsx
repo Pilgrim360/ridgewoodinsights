@@ -125,23 +125,22 @@ export function EditorToolbar({
     (config: ImageConfig) => {
       const { url, alt, title, alignment, size } = config;
 
-      // Map size to pixel widths (standard presets)
-      const sizeMap = {
+      const sizeMap: Record<string, number | null> = {
         thumbnail: 150,
         medium: 300,
         large: 1024,
         full: null,
       };
 
-      const width = sizeMap[size];
-
-      // Map alignment to Tailwind classes
-      const alignmentClasses = {
+      const alignmentClasses: Record<string, string> = {
         left: 'float-left mr-6 mb-4',
         center: 'mx-auto block',
         right: 'float-right ml-6 mb-4',
         full: 'w-full block',
       };
+
+      const width = sizeMap[size];
+      const className = alignmentClasses[alignment] ?? alignmentClasses.center;
 
       editor
         .chain()
@@ -150,8 +149,16 @@ export function EditorToolbar({
           src: url,
           alt: alt || undefined,
           title: title || undefined,
-        })
+          ...(width ? { width: String(width) } : {}),
+        } as Parameters<typeof editor.commands.setImage>[0] & { class?: string })
         .run();
+
+      // Apply alignment class after insertion since the setImage type does not expose `class`
+      const { selection } = editor.state;
+      const node = selection.$from.nodeAfter ?? selection.$anchor.parent;
+      if (node?.type.name === 'image') {
+        editor.commands.updateAttributes('image', { class: className });
+      }
     },
     [editor]
   );

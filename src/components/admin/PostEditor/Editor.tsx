@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Check, AlertCircle, Clock, Loader2 } from 'lucide-react';
 
 import { useAdminError } from '@/contexts/AdminErrorContext';
 import { useAdminHeaderSlots } from '@/contexts/AdminHeaderSlotsContext';
@@ -164,13 +164,11 @@ export function Editor({ postId, initialData }: EditorProps) {
             <div
               className={cn(
                 'space-y-6 lg:w-80',
-                isSidebarOpen
-                  ? 'opacity-100 visible'
-                  : 'lg:opacity-0 lg:invisible',
+                isSidebarOpen ? 'opacity-100 visible' : 'lg:opacity-0 lg:invisible',
                 'transition-all duration-300'
               )}
             >
-              <div className="bg-white border border-surface rounded-lg p-4 pointer-events-auto">
+              <div className="bg-white border border-surface rounded-xl p-4 pointer-events-auto">
                 <EditorSidebar
                   state={state}
                   updateField={updateFieldWithNull}
@@ -212,20 +210,28 @@ function EditorHeaderActions({
 
   return (
     <div className="flex items-center gap-3">
-      <div className="hidden md:flex items-center text-sm">
+      {/* Save status indicator */}
+      <div className="hidden sm:flex items-center text-xs">
         {saveError ? (
-          <span className="text-red-600" role="alert">
-            {saveError}
+          <span className="flex items-center gap-1.5 text-red-600" role="alert">
+            <AlertCircle className="w-3.5 h-3.5" />
+            Save failed
           </span>
         ) : isSaving ? (
-          <span className="text-text/60 inline-flex items-center gap-2">
-            <span className="h-3 w-3 animate-spin rounded-full border border-text/30 border-t-text" />
+          <span className="flex items-center gap-1.5 text-text/50">
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
             Saving…
           </span>
         ) : isDirty ? (
-          <span className="text-amber-600">Unsaved changes</span>
+          <span className="flex items-center gap-1.5 text-amber-600">
+            <Clock className="w-3.5 h-3.5" />
+            Unsaved
+          </span>
         ) : lastSaved ? (
-          <span className="text-text/60">Saved {formatRelativeTime(lastSaved)}</span>
+          <span className="flex items-center gap-1.5 text-text/50">
+            <Check className="w-3.5 h-3.5" />
+            Saved {formatRelativeTime(lastSaved)}
+          </span>
         ) : null}
       </div>
 
@@ -234,13 +240,13 @@ function EditorHeaderActions({
         onClick={() => void onSave()}
         disabled={!isDirty || isSaving}
         className={cn(
-          'h-9 px-3 rounded-md text-sm font-medium transition-colors border',
+          'h-8 px-3 rounded-lg text-sm font-medium transition-colors border',
           !isDirty || isSaving
-            ? 'bg-surface text-text/50 border-surface cursor-not-allowed'
+            ? 'bg-surface text-text/40 border-surface cursor-not-allowed'
             : 'bg-white text-secondary border-surface hover:bg-surface'
         )}
       >
-        {isSaving ? 'Saving…' : 'Save'}
+        Save
       </button>
 
       <button
@@ -248,14 +254,23 @@ function EditorHeaderActions({
         onClick={() => void onPublish()}
         disabled={publishDisabled}
         className={cn(
-          'h-9 px-3 rounded-md text-sm font-medium text-white transition-colors',
+          'h-8 px-3 rounded-lg text-sm font-medium text-white transition-colors',
           publishDisabled
             ? 'bg-primary/50 cursor-not-allowed'
-            : 'bg-primary hover:bg-primary/90'
+            : 'bg-primary hover:bg-primary-dark'
         )}
         title={publishDisabledReason}
       >
-        {postStatus === 'published' ? 'Update' : 'Publish'}
+        {isSaving ? (
+          <span className="flex items-center gap-1.5">
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            {postStatus === 'published' ? 'Updating…' : 'Publishing…'}
+          </span>
+        ) : postStatus === 'published' ? (
+          'Update'
+        ) : (
+          'Publish'
+        )}
       </button>
     </div>
   );

@@ -1,5 +1,6 @@
 'use client';
 
+import { Tag } from 'lucide-react';
 import { CategoryWithPostCount } from '@/types/admin';
 import { CategoryRow } from './CategoryRow';
 
@@ -20,34 +21,62 @@ export function CategoriesTable({
 }: CategoriesTableProps) {
   if (isLoading) {
     return (
-      <div className="text-center py-8">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent mx-auto mb-2" />
-        <p className="text-text/60 text-sm">Loading categories...</p>
+      <div className="rounded-xl border border-surface bg-white overflow-hidden">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-surface bg-background">
+              {['Name', 'Posts', 'Actions'].map((h) => (
+                <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-text/50 uppercase tracking-wide">
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {[...Array(4)].map((_, i) => (
+              <tr key={i} className="border-b border-surface animate-pulse">
+                <td className="px-6 py-4">
+                  <div className="h-4 bg-surface rounded w-32 mb-1" />
+                  <div className="h-3 bg-surface rounded w-20" />
+                </td>
+                <td className="px-6 py-4 text-center">
+                  <div className="h-4 bg-surface rounded w-8 mx-auto" />
+                </td>
+                <td className="px-6 py-4">
+                  <div className="h-4 bg-surface rounded w-20 ml-auto" />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     );
   }
 
   if (categories.length === 0) {
     return (
-      <div className="text-center py-12 bg-white rounded-lg border border-surface">
-        <p className="text-secondary font-medium">No categories yet</p>
-        <p className="text-text/60 text-sm mt-1">Create your first category to organize posts</p>
+      <div className="rounded-xl border border-surface bg-white flex flex-col items-center justify-center py-20 text-center px-6">
+        <div className="w-14 h-14 rounded-full bg-surface flex items-center justify-center mb-4">
+          <Tag className="w-6 h-6 text-text/40" />
+        </div>
+        <p className="font-medium text-secondary mb-1">No categories yet</p>
+        <p className="text-sm text-text/60">Create your first category to organize posts.</p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto bg-white rounded-lg border border-surface">
+    <div className="rounded-xl border border-surface bg-white overflow-hidden">
       <table className="w-full">
         <thead>
           <tr className="border-b border-surface bg-background">
-            <th className="text-left px-6 py-3 font-semibold text-secondary">
+            <th className="text-left px-6 py-3 text-xs font-semibold text-text/50 uppercase tracking-wide">
               Name
             </th>
-            <th className="text-center px-6 py-3 font-semibold text-secondary">
+            <th className="text-center px-6 py-3 text-xs font-semibold text-text/50 uppercase tracking-wide">
               Posts
             </th>
-            <th className="text-right px-6 py-3 font-semibold text-secondary">
+            <th className="text-right px-6 py-3 text-xs font-semibold text-text/50 uppercase tracking-wide">
               Actions
             </th>
           </tr>

@@ -1,11 +1,16 @@
 'use client';
 
+import React from 'react';
+import Image from 'next/image';
+import { Image as ImageIcon, FileText, File } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Text } from '@/components/ui/Text';
 import { Badge } from '@/components/ui/Badge';
-import { formatFileSize, formatDate } from '@/lib/admin/dates';
 import { Button } from '@/components/ui/Button';
+import { Trash2 } from 'lucide-react';
+import { formatFileSize, formatDate } from '@/lib/admin/dates';
 import { MediaItem as MediaItemType } from '@/lib/admin/media';
+import { cn } from '@/lib/utils';
 
 interface MediaItemProps {
   item: MediaItemType;
@@ -15,55 +20,58 @@ interface MediaItemProps {
   showActions?: boolean;
 }
 
-export function MediaItem({ item, isSelected = false, onSelect, onDelete, showActions = false }: MediaItemProps) {
-  const getMediaTypeIcon = (type: string) => {
-    switch (type) {
-      case 'image': return '🖼️';
-      case 'document': return '📄';
-      default: return '📁';
-    }
-  };
+function MediaTypeIcon({ type }: { type: string }) {
+  if (type === 'image') return <ImageIcon className="w-8 h-8 text-primary/60" />;
+  if (type === 'document') return <FileText className="w-8 h-8 text-blue-500/60" />;
+  return <File className="w-8 h-8 text-text/40" />;
+}
 
+export function MediaItem({
+  item,
+  isSelected = false,
+  onSelect,
+  onDelete,
+  showActions = false,
+}: MediaItemProps) {
   const handleSelect = () => {
-    if (onSelect) {
-      onSelect(item.path);
-    }
+    onSelect?.(item.path);
   };
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (onDelete) {
-      onDelete(item.path);
-    }
+    onDelete?.(item.path);
   };
 
   return (
     <Card
-      className={`relative cursor-pointer hover:shadow-md transition-shadow ${
-        isSelected ? 'ring-2 ring-primary' : ''
-      }`}
+      className={cn(
+        'relative cursor-pointer hover:shadow-md transition-shadow p-0',
+        isSelected && 'ring-2 ring-primary'
+      )}
       onClick={handleSelect}
     >
-      <div className="aspect-square bg-gray-100 flex items-center justify-center overflow-hidden">
+      <div className="aspect-square bg-surface/50 flex items-center justify-center overflow-hidden rounded-t-xl relative">
         {item.type === 'image' ? (
-          <img
+          <Image
             src={item.url}
             alt={item.name}
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
+            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 16vw"
           />
         ) : (
-          <div className="text-3xl">{getMediaTypeIcon(item.type)}</div>
+          <MediaTypeIcon type={item.type} />
         )}
       </div>
       <div className="p-2">
-        <div className="flex justify-between items-start">
-          <div className="truncate text-xs">
-            <Text className="font-medium truncate">{item.name}</Text>
-            <Text muted className="text-xs">
-              {formatFileSize(item.size)} • {formatDate(item.created_at)}
+        <div className="flex justify-between items-start gap-1">
+          <div className="min-w-0 flex-1 truncate">
+            <Text className="font-medium truncate text-xs">{item.name}</Text>
+            <Text muted className="text-xs mt-0.5">
+              {formatFileSize(item.size)} · {formatDate(item.created_at)}
             </Text>
           </div>
-          <Badge variant={item.type === 'image' ? 'info' : 'neutral'}>
+          <Badge variant={item.type === 'image' ? 'info' : 'neutral'} className="flex-shrink-0">
             {item.type}
           </Badge>
         </div>
@@ -75,9 +83,10 @@ export function MediaItem({ item, isSelected = false, onSelect, onDelete, showAc
             variant="outline"
             size="sm"
             onClick={handleDelete}
-            className="h-6 w-6 p-0"
+            className="h-7 w-7 p-0"
+            aria-label="Delete media item"
           >
-            ×
+            <Trash2 className="w-3.5 h-3.5 text-red-600" />
           </Button>
         </div>
       )}

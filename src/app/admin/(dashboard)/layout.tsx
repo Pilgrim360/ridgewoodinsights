@@ -1,19 +1,14 @@
 'use client';
 
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { AdminHeader } from '@/components/admin/AdminHeader';
+import { QuickSearch } from '@/components/admin/QuickSearch';
 import {
   AdminHeaderSlotsProvider,
   useAdminHeaderSlots,
 } from '@/contexts/AdminHeaderSlotsContext';
 import { useSidebarState } from '@/hooks/useSidebarState';
-
-/**
- * Admin Dashboard Layout
- * Provides two-panel structure (sidebar + content)
- * Includes responsive navigation with mobile hamburger menu
- */
 
 export default function DashboardLayout({
   children,
@@ -21,6 +16,21 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const sidebarState = useSidebarState();
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  const openSearch = useCallback(() => setIsSearchOpen(true), []);
+  const closeSearch = useCallback(() => setIsSearchOpen(false), []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsSearchOpen((prev) => !prev);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   return (
     <AdminHeaderSlotsProvider>
@@ -31,15 +41,18 @@ export default function DashboardLayout({
           <AdminHeader
             onMenuToggle={sidebarState.toggleMobileMenu}
             isMobileMenuOpen={sidebarState.isMobileOpen}
+            onSearchOpen={openSearch}
           />
 
           <AdminSubHeader />
 
           <main className="flex-1 overflow-auto pointer-events-auto">
-            <div className="px-4 py-3 md:px-6 pointer-events-auto">{children}</div>
+            <div className="px-4 py-5 md:px-6 pointer-events-auto">{children}</div>
           </main>
         </div>
       </div>
+
+      <QuickSearch isOpen={isSearchOpen} onClose={closeSearch} />
     </AdminHeaderSlotsProvider>
   );
 }

@@ -32,8 +32,6 @@ import { useAdminError } from '@/contexts/AdminErrorContext';
 import { withSupabaseAuthRetry, withTimeout } from '@/lib/queryClient';
 import { adminQueryKeys, type NormalizedPostFilters } from './queryKeys';
 
-type PostsListKey = ReturnType<typeof adminQueryKeys.posts.list>;
-
 function getPostsFiltersFromKey(queryKey: QueryKey): NormalizedPostFilters | null {
   if (!Array.isArray(queryKey)) return null;
   const second = queryKey[1] as Record<string, unknown> | undefined;
