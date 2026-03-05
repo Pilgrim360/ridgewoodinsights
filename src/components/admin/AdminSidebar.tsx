@@ -1,196 +1,119 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
-import { cn } from '@/lib/utils';
-import { SidebarState, NavItem, NavGroup } from '@/types/admin';
-import { SidebarHeader } from './SidebarHeader';
-import { SidebarNav } from './SidebarNav';
-import { SidebarFooter } from './SidebarFooter';
+import React from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
   FileText,
   Tag,
   Image as ImageIcon,
   Settings,
+  LogOut,
+  ChevronRight
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { SidebarState } from '@/types/admin';
+import { useAdminAuth } from '@/contexts/AdminAuthContext';
 
 interface AdminSidebarProps {
   state: SidebarState;
 }
 
-/**
- * AdminSidebar - Modern, professional navigation sidebar
- * 
- * Features:
- * - Clean, minimalist design inspired by Notion/Ghost/Linear
- * - Fixed left positioning with smooth collapse/expand (240px ↔ 64px)
- * - Expandable submenus with localStorage persistence
- * - Responsive mobile overlay with focus trap
- * - Smooth animations and hover effects
- * - Accessible keyboard navigation
- */
-export const AdminSidebar = React.forwardRef<HTMLDivElement, AdminSidebarProps>(
-  ({ state }, ref) => {
-    const { isExpanded, isMobileOpen, expandedGroups, toggleGroup, closeMobileMenu } = state;
-    const focusTrapRef = useRef<HTMLDivElement>(null);
+const NAV_ITEMS = [
+  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/admin/posts', label: 'Posts', icon: FileText },
+  { href: '/admin/categories', label: 'Categories', icon: Tag },
+  { href: '/admin/media', label: 'Media', icon: ImageIcon },
+  { href: '/admin/settings', label: 'Settings', icon: Settings },
+];
 
-    // Navigation structure
-    const navItems: (NavItem | NavGroup)[] = [
-      {
-        href: '/admin',
-        label: 'Dashboard',
-        icon: <LayoutDashboard className="w-5 h-5" />,
-      },
-      {
-        id: 'posts',
-        label: 'Posts',
-        icon: <FileText className="w-5 h-5" />,
-        items: [
-          { href: '/admin/posts', label: 'All Posts', icon: null },
-          { href: '/admin/posts?status=draft', label: 'Drafts', icon: null },
-          { href: '/admin/posts?status=scheduled', label: 'Scheduled', icon: null },
-          { href: '/admin/posts/new', label: 'New Post', icon: null },
-        ],
-      },
-      {
-        href: '/admin/categories',
-        label: 'Categories',
-        icon: <Tag className="w-5 h-5" />,
-      },
-      {
-        href: '/admin/media',
-        label: 'Media Library',
-        icon: <ImageIcon className="w-5 h-5" />,
-      },
-      {
-        href: '/admin/settings',
-        label: 'Settings',
-        icon: <Settings className="w-5 h-5" />,
-      },
-    ];
+export function AdminSidebar({ state }: AdminSidebarProps) {
+  const pathname = usePathname();
+  const { user, logout, isLoading: isAuthLoading } = useAdminAuth();
 
-    // Focus trap for mobile menu
-    useEffect(() => {
-      if (!isMobileOpen || typeof window === 'undefined') return;
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
 
-      const handleKeyDown = (e: KeyboardEvent) => {
-        // Close on Escape
-        if (e.key === 'Escape') {
-          closeMobileMenu();
-          return;
-        }
+  const SidebarContent = (
+    <div className="flex flex-col h-full bg-white">
+      {/* Brand Header */}
+      <div className="h-16 flex items-center px-6 border-b border-surface">
+        <Link href="/admin" className="flex items-center gap-2.5 group">
+          <div className="w-8 h-8 flex items-center justify-center bg-primary text-white rounded font-bold text-sm transition-transform group-hover:scale-105">
+            R
+          </div>
+          <span className="text-sm font-bold tracking-tight text-secondary">
+            Ridgewood Admin
+          </span>
+        </Link>
+      </div>
 
-        // Focus trap: Keep focus within menu when Tab is pressed
-        if (e.key !== 'Tab') return;
-
-        const focusableElements = focusTrapRef.current?.querySelectorAll(
-          'button, [href], input, [tabindex]:not([tabindex="-1"])'
-        );
-
-        if (!focusableElements?.length) return;
-
-        const firstElement = focusableElements[0] as HTMLElement;
-        const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
-        const activeElement = document.activeElement;
-
-        if (e.shiftKey) {
-          // Shift+Tab - move to previous element
-          if (activeElement === firstElement) {
-            e.preventDefault();
-            lastElement.focus();
-          }
-        } else {
-          // Tab - move to next element
-          if (activeElement === lastElement) {
-            e.preventDefault();
-            firstElement.focus();
-          }
-        }
-      };
-
-      document.addEventListener('keydown', handleKeyDown);
-      return () => document.removeEventListener('keydown', handleKeyDown);
-    }, [isMobileOpen, closeMobileMenu]);
-
-    // Prevent body scroll when mobile menu is open
-    useEffect(() => {
-      if (isMobileOpen) {
-        document.body.style.overflow = 'hidden';
-      } else {
-        document.body.style.overflow = 'unset';
-      }
-      return () => {
-        document.body.style.overflow = 'unset';
-      };
-    }, [isMobileOpen]);
-
-    return (
-      <>
-        {/* Desktop Sidebar (md+) */}
-        <div
-          ref={ref}
-          className={cn(
-            'hidden md:flex flex-col h-screen bg-white border-r border-surface overflow-hidden',
-            'transition-all duration-200 ease-in-out',
-            isExpanded ? 'w-60' : 'w-16'
-          )}
-          role="navigation"
-          aria-label="Main navigation"
-        >
-          <SidebarHeader isExpanded={isExpanded} />
-          
-          <SidebarNav
-            items={navItems}
-            isExpanded={isExpanded}
-            expandedGroups={expandedGroups}
-            onToggleGroup={toggleGroup}
-          />
-
-          <SidebarFooter isExpanded={isExpanded} onToggleExpand={state.toggleExpand} />
-        </div>
-
-        {/* Mobile Sidebar Overlay (<md) */}
-        {isMobileOpen && (
-          <>
-            {/* Backdrop */}
-            <div
-              className="fixed inset-0 z-40 bg-black/50 md:hidden transition-opacity duration-200"
-              onClick={closeMobileMenu}
-              aria-hidden="true"
-            />
-
-            {/* Mobile Sidebar Panel */}
-            <div
-              ref={focusTrapRef}
+      {/* Navigation */}
+      <nav className="flex-1 py-6 px-3 space-y-1">
+        {NAV_ITEMS.map((item) => {
+          const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
               className={cn(
-                'fixed top-0 left-0 h-screen w-60 bg-white z-50 md:hidden',
-                'flex flex-col shadow-2xl',
-                'animate-in slide-in-from-left duration-200'
+                'flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                isActive
+                  ? 'bg-surface text-primary'
+                  : 'text-text/70 hover:bg-surface/50 hover:text-secondary'
               )}
-              role="navigation"
-              aria-label="Mobile navigation"
             >
-              <SidebarHeader
-                isExpanded={true}
-                isMobile={true}
-                onClose={closeMobileMenu}
-              />
+              <item.icon className={cn('w-4 h-4', isActive ? 'text-primary' : 'text-text/50')} />
+              {item.label}
+              {isActive && <ChevronRight className="w-3 h-3 ml-auto opacity-50" />}
+            </Link>
+          );
+        })}
+      </nav>
 
-              <SidebarNav
-                items={navItems}
-                isExpanded={true}
-                expandedGroups={expandedGroups}
-                onToggleGroup={toggleGroup}
-                onItemClick={closeMobileMenu}
-              />
+      {/* User / Footer */}
+      <div className="p-4 border-t border-surface">
+        <div className="px-2 mb-4">
+          <p className="text-[10px] uppercase tracking-wider font-bold text-text/40 mb-1">Account</p>
+          <p className="text-xs font-medium text-secondary truncate">{user?.email}</p>
+        </div>
+        <button
+          onClick={handleLogout}
+          disabled={isAuthLoading}
+          className="flex items-center w-full gap-3 px-3 py-2 rounded-md text-sm font-medium text-text/70 hover:bg-red-50 hover:text-red-600 transition-colors disabled:opacity-50"
+        >
+          <LogOut className="w-4 h-4" />
+          <span>Logout</span>
+        </button>
+      </div>
+    </div>
+  );
 
-              <SidebarFooter isExpanded={true} />
-            </div>
-          </>
-        )}
-      </>
-    );
-  }
-);
+  return (
+    <>
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex flex-col w-56 border-r border-surface h-screen sticky top-0 shrink-0">
+        {SidebarContent}
+      </aside>
 
-AdminSidebar.displayName = 'AdminSidebar';
+      {/* Mobile Sidebar Overlay */}
+      {state.isMobileOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            onClick={state.closeMobileMenu}
+          />
+          <aside className="absolute inset-y-0 left-0 w-64 bg-white shadow-2xl animate-in slide-in-from-left duration-200">
+            {SidebarContent}
+          </aside>
+        </div>
+      )}
+    </>
+  );
+}

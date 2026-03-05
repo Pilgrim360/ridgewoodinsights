@@ -1,81 +1,72 @@
 'use client';
 
 import React from 'react';
-import { Menu, X, Search } from 'lucide-react';
+import { Menu, Plus, Globe, ChevronRight } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { useAdminHeaderSlots } from '@/contexts/AdminHeaderSlotsContext';
 
 interface AdminHeaderProps {
   onMenuToggle: () => void;
   isMobileMenuOpen: boolean;
-  onSearchOpen?: () => void;
 }
 
-export const AdminHeader = React.forwardRef<HTMLElement, AdminHeaderProps>(
-  ({ onMenuToggle, isMobileMenuOpen, onSearchOpen }, ref) => {
-    const { slots } = useAdminHeaderSlots();
+export function AdminHeader({ onMenuToggle }: AdminHeaderProps) {
+  const pathname = usePathname();
 
-    return (
-      <header
-        ref={ref}
-        className={cn(
-          'bg-white border-b border-surface px-4 py-3 md:px-6',
-          'flex items-center justify-between gap-4'
-        )}
-        role="banner"
-      >
-        {/* Mobile hamburger */}
+  // Basic breadcrumb logic
+  const segments = pathname.split('/').filter(Boolean).slice(1); // skip 'admin'
+
+  return (
+    <header className="h-16 flex items-center justify-between px-4 md:px-8 bg-white border-b border-surface sticky top-0 z-30">
+      <div className="flex items-center gap-4">
         <button
           onClick={onMenuToggle}
-          className={cn(
-            'md:hidden flex-shrink-0 w-9 h-9 flex items-center justify-center',
-            'rounded-lg text-secondary hover:bg-surface',
-            'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
-            'transition-colors'
-          )}
-          aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-          aria-expanded={isMobileMenuOpen}
-          aria-controls="mobile-sidebar"
+          className="md:hidden p-2 -ml-2 text-text/60 hover:text-secondary hover:bg-surface rounded-md transition-colors"
+          aria-label="Toggle Menu"
         >
-          {isMobileMenuOpen ? (
-            <X className="w-5 h-5" />
-          ) : (
-            <Menu className="w-5 h-5" />
-          )}
+          <Menu className="w-5 h-5" />
         </button>
 
-        {/* Title / Breadcrumbs area */}
-        <div className="flex-1 flex items-center gap-2 min-w-0">
-          {slots.title ? (
-            <div className="truncate">{slots.title}</div>
-          ) : null}
-        </div>
+        {/* Breadcrumbs */}
+        <nav className="flex items-center text-sm font-medium" aria-label="Breadcrumb">
+          <Link
+            href="/admin"
+            className="text-text/50 hover:text-secondary transition-colors"
+          >
+            Admin
+          </Link>
+          {segments.map((segment, index) => (
+            <React.Fragment key={segment}>
+              <ChevronRight className="w-4 h-4 mx-1.5 text-text/30" />
+              <span className={cn(
+                "capitalize",
+                index === segments.length - 1 ? "text-secondary font-bold" : "text-text/50"
+              )}>
+                {segment.replace(/-/g, ' ')}
+              </span>
+            </React.Fragment>
+          ))}
+        </nav>
+      </div>
 
-        {/* Right side: search + actions */}
-        <div className="flex items-center gap-2">
-          {onSearchOpen && (
-            <button
-              onClick={onSearchOpen}
-              className={cn(
-                'flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm',
-                'text-text/50 bg-background border border-surface',
-                'hover:border-primary/30 hover:text-text/70',
-                'transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50'
-              )}
-              aria-label="Search (Ctrl+K)"
-            >
-              <Search className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline text-xs">Search…</span>
-              <kbd className="hidden sm:inline text-xs bg-surface px-1 py-0.5 rounded font-mono">
-                ⌘K
-              </kbd>
-            </button>
-          )}
-          {slots.actions}
-        </div>
-      </header>
-    );
-  }
-);
-
-AdminHeader.displayName = 'AdminHeader';
+      <div className="flex items-center gap-3">
+        <Link
+          href="/"
+          target="_blank"
+          className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-text/60 hover:text-secondary transition-colors border border-transparent hover:border-surface rounded-md"
+        >
+          <Globe className="w-3.5 h-3.5" />
+          View Site
+        </Link>
+        <Link
+          href="/admin/posts/new"
+          className="flex items-center gap-2 px-4 py-2 bg-primary text-white text-xs font-bold rounded hover:bg-primary-dark transition-all shadow-sm active:scale-95"
+        >
+          <Plus className="w-4 h-4" />
+          New Post
+        </Link>
+      </div>
+    </header>
+  );
+}

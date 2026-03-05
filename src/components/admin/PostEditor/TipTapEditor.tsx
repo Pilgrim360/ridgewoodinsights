@@ -7,7 +7,6 @@ import { uploadPostImage } from '@/lib/admin/storage';
 import { cn } from '@/lib/utils';
 import { createPostEditorExtensions } from '@/lib/tiptap/editorExtensions';
 import { sanitizePastedHtml } from '@/lib/tiptap/sanitize';
-import { useAdminHeaderSlots } from '@/contexts/AdminHeaderSlotsContext';
 
 import { EditorImageBubbleMenu } from './EditorImageBubbleMenu';
 import { EditorToolbar } from './EditorToolbar';
@@ -31,8 +30,6 @@ export function TipTapEditor({
   characterLimit = 50000,
   onError,
 }: TipTapEditorProps) {
-  const { setSubHeader } = useAdminHeaderSlots();
-
   const [isPastingUpload, setIsPastingUpload] = useState(false);
   const editorRef = useRef<Editor | null>(null);
 
@@ -58,7 +55,7 @@ export function TipTapEditor({
           'prose prose-sm max-w-none',
           'prose-headings:text-secondary prose-p:text-text',
           'prose-a:text-primary',
-          'min-h-[28rem] px-4 py-4 outline-none'
+          'min-h-[28rem] px-8 py-8 outline-none'
         ),
       },
       transformPastedHTML: sanitizePastedHtml,
@@ -131,23 +128,6 @@ export function TipTapEditor({
     editor.setEditable(!disabled);
   }, [editor, disabled]);
 
-  useEffect(() => {
-    if (!editor) return;
-
-    setSubHeader(
-      <EditorToolbar
-        editor={editor}
-        disabled={disabled}
-        onError={onError}
-        className="w-full border-0 rounded-none bg-transparent p-0"
-      />
-    );
-
-    return () => {
-      setSubHeader(null);
-    };
-  }, [editor, disabled, onError, setSubHeader, editor?.state]);
-
   const stats = useMemo(() => {
     if (!editor) {
       return {
@@ -163,43 +143,79 @@ export function TipTapEditor({
   if (!editor) return null;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-6">
       <EditorImageBubbleMenu editor={editor} disabled={disabled} onError={onError} />
 
-      <div className="overflow-hidden rounded-lg border border-surface bg-white">
-        <div className="px-4 pt-4 pb-3">
+      <div className="bg-white border border-surface rounded-xl overflow-hidden shadow-sm">
+        <div className="border-b border-surface p-1.5 bg-background/50">
+          <EditorToolbar
+            editor={editor}
+            disabled={disabled}
+            onError={onError}
+            className="border-0 shadow-none bg-transparent"
+          />
+        </div>
+
+        <div className="px-8 pt-10 pb-6">
           <input
             type="text"
             value={title}
             onChange={(e) => onTitleChange(e.target.value)}
             disabled={disabled}
-            placeholder="Post title…"
+            placeholder="Enter Post Title..."
             className={cn(
-              'w-full bg-transparent text-3xl font-bold text-secondary',
-              'placeholder:text-text/30 focus:outline-none',
+              'w-full bg-transparent text-4xl font-bold tracking-tight text-secondary',
+              'placeholder:text-text/20 focus:outline-none',
               disabled && 'text-text/50'
             )}
           />
         </div>
 
-        <div className="border-t border-surface">
+        <div className="border-t border-surface/30">
           <EditorContent editor={editor} />
         </div>
 
-        <div className="flex items-center justify-between border-t border-surface bg-background px-4 py-2 text-xs text-text/70">
-          <span>
-            Words:{' '}
-            <span className="font-medium text-secondary">{stats.words.toLocaleString()}</span>
-          </span>
+        <div className="flex items-center justify-between border-t border-surface bg-background/30 px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-text/40">
+          <div className="flex items-center gap-6">
+            <span>
+              Words:{' '}
+              <span className="text-secondary">{stats.words.toLocaleString()}</span>
+            </span>
+            <span>
+              Status:{' '}
+              <span className={cn(disabled ? "text-amber-600" : "text-green-600")}>
+                {disabled ? "Read Only" : "Ready"}
+              </span>
+            </span>
+          </div>
 
           {isPastingUpload ? (
-            <span className="inline-flex items-center gap-2">
-              <span className="h-3 w-3 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-              Uploading…
+            <span className="inline-flex items-center gap-2 text-primary">
+              <LoaderCircle className="w-3 h-3 animate-spin" />
+              Uploading...
             </span>
           ) : null}
         </div>
       </div>
     </div>
+  );
+}
+
+function LoaderCircle({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+    </svg>
   );
 }
