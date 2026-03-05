@@ -1,8 +1,8 @@
 'use client';
 
-import { Tag } from 'lucide-react';
+import React from 'react';
+import { Edit, Trash2 } from 'lucide-react';
 import { CategoryWithPostCount } from '@/types/admin';
-import { CategoryRow } from './CategoryRow';
 
 interface CategoriesTableProps {
   categories: CategoryWithPostCount[];
@@ -21,75 +21,74 @@ export function CategoriesTable({
 }: CategoriesTableProps) {
   if (isLoading) {
     return (
-      <div className="rounded-xl border border-surface bg-white overflow-hidden">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-surface bg-background">
-              {['Name', 'Posts', 'Actions'].map((h) => (
-                <th key={h} className="px-6 py-3 text-left text-xs font-semibold text-text/50 uppercase tracking-wide">
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {[...Array(4)].map((_, i) => (
-              <tr key={i} className="border-b border-surface animate-pulse">
-                <td className="px-6 py-4">
-                  <div className="h-4 bg-surface rounded w-32 mb-1" />
-                  <div className="h-3 bg-surface rounded w-20" />
-                </td>
-                <td className="px-6 py-4 text-center">
-                  <div className="h-4 bg-surface rounded w-8 mx-auto" />
-                </td>
-                <td className="px-6 py-4">
-                  <div className="h-4 bg-surface rounded w-20 ml-auto" />
-                </td>
-              </tr>
+      <div className="bg-white rounded-lg border border-surface">
+        <div className="p-8">
+          <div className="animate-pulse space-y-3">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="h-10 bg-surface rounded" />
             ))}
-          </tbody>
-        </table>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (categories.length === 0) {
     return (
-      <div className="rounded-xl border border-surface bg-white flex flex-col items-center justify-center py-20 text-center px-6">
-        <div className="w-14 h-14 rounded-full bg-surface flex items-center justify-center mb-4">
-          <Tag className="w-6 h-6 text-text/40" />
-        </div>
-        <p className="font-medium text-secondary mb-1">No categories yet</p>
-        <p className="text-sm text-text/60">Create your first category to organize posts.</p>
+      <div className="bg-white rounded-lg border border-surface p-12 text-center">
+        <p className="text-secondary font-medium">No categories yet</p>
+        <p className="text-sm text-text/60 mt-1">
+          Create your first category to organize posts
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="rounded-xl border border-surface bg-white overflow-hidden">
+    <div className="bg-white rounded-lg border border-surface overflow-hidden">
       <table className="w-full">
-        <thead>
-          <tr className="border-b border-surface bg-background">
-            <th className="text-left px-6 py-3 text-xs font-semibold text-text/50 uppercase tracking-wide">
+        <thead className="bg-surface/50 border-b border-surface">
+          <tr>
+            <th className="text-left text-xs font-medium text-text/60 uppercase tracking-wide px-4 py-3">
               Name
             </th>
-            <th className="text-center px-6 py-3 text-xs font-semibold text-text/50 uppercase tracking-wide">
+            <th className="text-left text-xs font-medium text-text/60 uppercase tracking-wide px-4 py-3 w-24">
               Posts
             </th>
-            <th className="text-right px-6 py-3 text-xs font-semibold text-text/50 uppercase tracking-wide">
-              Actions
-            </th>
+            <th className="w-20" />
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-surface">
           {categories.map((category) => (
-            <CategoryRow
-              key={category.id}
-              category={category}
-              onEdit={onEdit}
-              onDelete={onDelete}
-              isDeleting={isDeletingId === category.id}
-            />
+            <tr key={category.id} className="hover:bg-surface/30">
+              <td className="px-4 py-3">
+                <p className="font-medium text-secondary">{category.name}</p>
+                <p className="text-xs text-text/50">/{category.slug}</p>
+              </td>
+              <td className="px-4 py-3">
+                <span className="text-sm text-text/70">
+                  {category.post_count}
+                </span>
+              </td>
+              <td className="px-4 py-3">
+                <div className="flex items-center justify-end gap-1">
+                  <button
+                    onClick={() => onEdit(category)}
+                    disabled={isDeletingId === category.id}
+                    className="p-1.5 rounded hover:bg-surface text-text/60 hover:text-secondary disabled:opacity-40"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => onDelete(category)}
+                    disabled={isDeletingId === category.id}
+                    className="p-1.5 rounded hover:bg-red-50 text-text/60 hover:text-red-600 disabled:opacity-40"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </td>
+            </tr>
           ))}
         </tbody>
       </table>

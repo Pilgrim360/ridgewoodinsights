@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { PenLine } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useAdminAuth } from '@/contexts/AdminAuthContext';
 
 function getGreeting(): string {
@@ -24,21 +24,21 @@ export function WelcomeSection() {
   const name = user?.email ? getFirstName(user.email) : 'Admin';
 
   return (
-    <div className="flex items-center justify-between gap-4">
+    <div className="flex items-center justify-between">
       <div>
-        <h1 className="text-2xl font-bold text-secondary">
+        <h1 className="text-xl font-semibold text-secondary">
           {greeting}, {name}
         </h1>
-        <p className="text-sm text-text/70 mt-0.5">
-          Here&apos;s an overview of your blog content.
+        <p className="text-sm text-text/60 mt-0.5">
+          Manage your blog content
         </p>
       </div>
 
       <Link
         href="/admin/posts/new"
-        className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary-dark transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 flex-shrink-0"
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-white text-sm font-medium hover:opacity-90 transition-opacity"
       >
-        <PenLine className="w-4 h-4" />
+        <Plus className="w-4 h-4" />
         New Post
       </Link>
     </div>

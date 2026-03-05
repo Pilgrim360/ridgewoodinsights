@@ -1,21 +1,13 @@
-/**
- * Posts Management Page
- * Step 4: Lists all posts with filtering, sorting, and pagination
- */
-
 'use client';
 
-import React, { useCallback, useState } from 'react';
-import { FilterBar } from '@/components/admin/Posts/FilterBar';
+import React, { useState, useCallback } from 'react';
+import Link from 'next/link';
+import { Plus, Search } from 'lucide-react';
 import { PostsTable } from '@/components/admin/Posts/PostsTable';
 import { PostFilters } from '@/types/admin';
 import { useCategories } from '@/hooks/queries/useCategoriesQueries';
 import { usePostsList } from '@/hooks/queries/usePostsQueries';
-import {
-  useBulkDeletePosts,
-  useBulkPublishPosts,
-  useDeletePost,
-} from '@/hooks/queries/useAdminMutations';
+import { useDeletePost } from '@/hooks/queries/useAdminMutations';
 
 export default function PostsPage() {
   const [filters, setFilters] = useState<PostFilters>({
@@ -25,116 +17,90 @@ export default function PostsPage() {
     per_page: 10,
   });
 
-  const [selectedPosts, setSelectedPosts] = useState<string[]>([]);
-
   const categoriesQuery = useCategories();
   const postsQuery = usePostsList(filters);
-
   const deletePostMutation = useDeletePost();
-  const bulkDeleteMutation = useBulkDeletePosts();
-  const bulkPublishMutation = useBulkPublishPosts();
 
-  const isDeleting =
-    deletePostMutation.isPending ||
-    bulkDeleteMutation.isPending ||
-    bulkPublishMutation.isPending;
+  const handleSearch = useCallback((search: string) => {
+    setFilters((prev) => ({ ...prev, search, page: 1 }));
+  }, []);
 
-  const handleFilterChange = useCallback((newFilters: PostFilters) => {
-    setFilters((prev) => ({
-      ...prev,
-      ...newFilters,
-    }));
+  const handleStatusChange = useCallback((status: PostFilters['status']) => {
+    setFilters((prev) => ({ ...prev, status, page: 1 }));
   }, []);
 
   const handlePageChange = useCallback((page: number) => {
-    setFilters((prev) => ({
-      ...prev,
-      page,
-    }));
+    setFilters((prev) => ({ ...prev, page }));
   }, []);
 
   const handleDeletePost = useCallback(
     async (postId: string) => {
+      if (!confirm('Are you sure you want to delete this post?')) return;
       try {
         await deletePostMutation.mutateAsync(postId);
-        setSelectedPosts((prev) => prev.filter((id) => id !== postId));
       } catch {
-        // Errors are surfaced via the global admin toast system.
+        // Error handled by toast
       }
     },
     [deletePostMutation]
   );
 
-  const handleBulkDelete = useCallback(
-    async (postIds: string[]) => {
-      if (postIds.length === 0) return;
-      try {
-        await bulkDeleteMutation.mutateAsync(postIds);
-        setSelectedPosts([]);
-      } catch {
-        // Errors are surfaced via the global admin toast system.
-      }
-    },
-    [bulkDeleteMutation]
-  );
-
-  const handleBulkPublish = useCallback(
-    async (postIds: string[]) => {
-      if (postIds.length === 0) return;
-      try {
-        await bulkPublishMutation.mutateAsync(postIds);
-        setSelectedPosts([]);
-      } catch {
-        // Errors are surfaced via the global admin toast system.
-      }
-    },
-    [bulkPublishMutation]
-  );
-
-  const handleSelectPost = useCallback((postId: string) => {
-    setSelectedPosts((prev) =>
-      prev.includes(postId) ? prev.filter((id) => id !== postId) : [...prev, postId]
-    );
-  }, []);
-
-  const handleSelectAll = useCallback((postIds: string[]) => {
-    setSelectedPosts(postIds);
-  }, []);
-
   const posts = postsQuery.data?.data ?? [];
   const categories = categoriesQuery.data ?? [];
-
-  const paginationMeta = postsQuery.data?.meta ?? {
+  const pagination = postsQuery.data?.meta ?? {
     total: 0,
     page: 1,
     per_page: 10,
     total_pages: 0,
   };
 
-  const isLoading = postsQuery.isLoading;
-
   return (
-    <div className="space-y-6">
-      <FilterBar
-        filters={filters}
-        categories={categories}
-        onFilterChange={handleFilterChange}
-        isLoading={isLoading}
-      />
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-semibold text-secondary">Posts</h1>
+        <Link
+          href="/admin/posts/new"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-white text-sm font-medium hover:opacity-90 transition-opacity"
+        >
+          <Plus className="w-4 h-4" />
+          New Post
+        </Link>
+      </div>
 
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text/40" />
+          <input
+            type="text"
+            placeholder="Search posts..."
+            value={filters.search}
+            onChange={(e) => handleSearch(e.target.value)}
+            className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-surface bg-white text-secondary placeholder:text-text/40 focus:outline-none focus:border-primary"
+          />
+        </div>
+
+        <select
+          value={filters.status}
+          onChange={(e) => handleStatusChange(e.target.value as PostFilters['status'])}
+          className="px-3 py-2 text-sm rounded-lg border border-surface bg-white text-secondary focus:outline-none focus:border-primary"
+        >
+          <option value="all">All Status</option>
+          <option value="published">Published</option>
+          <option value="draft">Drafts</option>
+          <option value="scheduled">Scheduled</option>
+        </select>
+      </div>
+
+      {/* Table */}
       <PostsTable
         posts={posts}
         categories={categories}
-        pagination={paginationMeta}
-        onDelete={handleDeletePost}
-        onBulkDelete={handleBulkDelete}
-        onBulkPublish={handleBulkPublish}
+        pagination={pagination}
         onPageChange={handlePageChange}
-        isLoading={isLoading}
-        isDeleting={isDeleting}
-        selectedPosts={selectedPosts}
-        onSelectChange={handleSelectPost}
-        onSelectAll={handleSelectAll}
+        onDelete={handleDeletePost}
+        isLoading={postsQuery.isLoading}
       />
     </div>
   );

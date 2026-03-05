@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { getPost, getPostStats, getPosts, getRecentActivity } from '@/lib/admin/posts';
+import { getPost, getPostStats, getPosts, getRecentActivity, getScheduledPosts } from '@/lib/admin/posts';
 import {
   DashboardStats,
   PaginatedResult,
@@ -59,5 +59,12 @@ export function useRecentActivity(limit: number = 10) {
     queryKey: adminQueryKeys.posts.activity(limit),
     queryFn: () => withSupabaseAuthRetry(() => getRecentActivity(limit)),
     staleTime: REALTIME_QUERY_STALE_TIME_MS,
+  });
+}
+
+export function useScheduledPosts() {
+  return useQuery<PostData[], Error>({
+    queryKey: adminQueryKeys.posts.scheduled(),
+    queryFn: () => withSupabaseAuthRetry(() => getScheduledPosts()),
   });
 }

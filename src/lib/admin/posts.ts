@@ -419,3 +419,23 @@ export async function bulkPublishPosts(ids: string[]): Promise<void> {
     throw error;
   }
 }
+
+/**
+ * Get scheduled posts
+ */
+export async function getScheduledPosts(): Promise<PostData[]> {
+  try {
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*')
+      .eq('status', 'scheduled')
+      .order('published_at', { ascending: true })
+      .limit(5);
+
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching scheduled posts:', error);
+    return [];
+  }
+}
