@@ -1,196 +1,116 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { LayoutDashboard, FileText, Tag, Image as ImageIcon, Settings, LogOut, Plus } from 'lucide-react';
+import { SidebarState } from '@/types/admin';
 import { cn } from '@/lib/utils';
-import { SidebarState, NavItem, NavGroup } from '@/types/admin';
-import { SidebarHeader } from './SidebarHeader';
-import { SidebarNav } from './SidebarNav';
-import { SidebarFooter } from './SidebarFooter';
-import {
-  LayoutDashboard,
-  FileText,
-  Tag,
-  Image as ImageIcon,
-  Settings,
-} from 'lucide-react';
+import { useAdminAuth } from '@/contexts/AdminAuthContext';
 
 interface AdminSidebarProps {
   state: SidebarState;
 }
 
-/**
- * AdminSidebar - Modern, professional navigation sidebar
- * 
- * Features:
- * - Clean, minimalist design inspired by Notion/Ghost/Linear
- * - Fixed left positioning with smooth collapse/expand (240px ↔ 64px)
- * - Expandable submenus with localStorage persistence
- * - Responsive mobile overlay with focus trap
- * - Smooth animations and hover effects
- * - Accessible keyboard navigation
- */
-export const AdminSidebar = React.forwardRef<HTMLDivElement, AdminSidebarProps>(
-  ({ state }, ref) => {
-    const { isExpanded, isMobileOpen, expandedGroups, toggleGroup, closeMobileMenu } = state;
-    const focusTrapRef = useRef<HTMLDivElement>(null);
+const NAV_ITEMS = [
+  { href: '/admin', label: 'Overview', icon: LayoutDashboard },
+  { href: '/admin/posts', label: 'Posts', icon: FileText },
+  { href: '/admin/categories', label: 'Categories', icon: Tag },
+  { href: '/admin/media', label: 'Media', icon: ImageIcon },
+  { href: '/admin/settings', label: 'Settings', icon: Settings },
+];
 
-    // Navigation structure
-    const navItems: (NavItem | NavGroup)[] = [
-      {
-        href: '/admin',
-        label: 'Dashboard',
-        icon: <LayoutDashboard className="w-5 h-5" />,
-      },
-      {
-        id: 'posts',
-        label: 'Posts',
-        icon: <FileText className="w-5 h-5" />,
-        items: [
-          { href: '/admin/posts', label: 'All Posts', icon: null },
-          { href: '/admin/posts?status=draft', label: 'Drafts', icon: null },
-          { href: '/admin/posts?status=scheduled', label: 'Scheduled', icon: null },
-          { href: '/admin/posts/new', label: 'New Post', icon: null },
-        ],
-      },
-      {
-        href: '/admin/categories',
-        label: 'Categories',
-        icon: <Tag className="w-5 h-5" />,
-      },
-      {
-        href: '/admin/media',
-        label: 'Media Library',
-        icon: <ImageIcon className="w-5 h-5" />,
-      },
-      {
-        href: '/admin/settings',
-        label: 'Settings',
-        icon: <Settings className="w-5 h-5" />,
-      },
-    ];
+export const AdminSidebar = React.forwardRef<HTMLDivElement, AdminSidebarProps>(({ state }, ref) => {
+  const pathname = usePathname();
+  const { user, logout, isLoading } = useAdminAuth();
 
-    // Focus trap for mobile menu
-    useEffect(() => {
-      if (!isMobileOpen || typeof window === 'undefined') return;
+  useEffect(() => {
+    document.body.style.overflow = state.isMobileOpen ? 'hidden' : 'unset';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [state.isMobileOpen]);
 
-      const handleKeyDown = (e: KeyboardEvent) => {
-        // Close on Escape
-        if (e.key === 'Escape') {
-          closeMobileMenu();
-          return;
-        }
+  const sidebarContent = (
+    <div className="flex h-full flex-col">
+      <div className="border-b border-surface px-5 py-5">
+        <Link href="/admin" className="flex items-center gap-3 hover:no-underline">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-sm font-semibold text-white">R</span>
+          <div>
+            <p className="text-sm font-semibold text-secondary">Ridgewood CMS</p>
+            <p className="text-xs text-text/65">Blog control panel</p>
+          </div>
+        </Link>
+      </div>
 
-        // Focus trap: Keep focus within menu when Tab is pressed
-        if (e.key !== 'Tab') return;
-
-        const focusableElements = focusTrapRef.current?.querySelectorAll(
-          'button, [href], input, [tabindex]:not([tabindex="-1"])'
-        );
-
-        if (!focusableElements?.length) return;
-
-        const firstElement = focusableElements[0] as HTMLElement;
-        const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
-        const activeElement = document.activeElement;
-
-        if (e.shiftKey) {
-          // Shift+Tab - move to previous element
-          if (activeElement === firstElement) {
-            e.preventDefault();
-            lastElement.focus();
-          }
-        } else {
-          // Tab - move to next element
-          if (activeElement === lastElement) {
-            e.preventDefault();
-            firstElement.focus();
-          }
-        }
-      };
-
-      document.addEventListener('keydown', handleKeyDown);
-      return () => document.removeEventListener('keydown', handleKeyDown);
-    }, [isMobileOpen, closeMobileMenu]);
-
-    // Prevent body scroll when mobile menu is open
-    useEffect(() => {
-      if (isMobileOpen) {
-        document.body.style.overflow = 'hidden';
-      } else {
-        document.body.style.overflow = 'unset';
-      }
-      return () => {
-        document.body.style.overflow = 'unset';
-      };
-    }, [isMobileOpen]);
-
-    return (
-      <>
-        {/* Desktop Sidebar (md+) */}
-        <div
-          ref={ref}
-          className={cn(
-            'hidden md:flex flex-col h-screen bg-white border-r border-surface overflow-hidden',
-            'transition-all duration-200 ease-in-out',
-            isExpanded ? 'w-60' : 'w-16'
-          )}
-          role="navigation"
-          aria-label="Main navigation"
-        >
-          <SidebarHeader isExpanded={isExpanded} />
-          
-          <SidebarNav
-            items={navItems}
-            isExpanded={isExpanded}
-            expandedGroups={expandedGroups}
-            onToggleGroup={toggleGroup}
-          />
-
-          <SidebarFooter isExpanded={isExpanded} onToggleExpand={state.toggleExpand} />
-        </div>
-
-        {/* Mobile Sidebar Overlay (<md) */}
-        {isMobileOpen && (
-          <>
-            {/* Backdrop */}
-            <div
-              className="fixed inset-0 z-40 bg-black/50 md:hidden transition-opacity duration-200"
-              onClick={closeMobileMenu}
-              aria-hidden="true"
-            />
-
-            {/* Mobile Sidebar Panel */}
-            <div
-              ref={focusTrapRef}
+      <nav className="flex-1 space-y-1 px-3 py-4" aria-label="Admin navigation">
+        {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+          const isActive = href === '/admin' ? pathname === '/admin' : pathname.startsWith(href);
+          return (
+            <Link
+              key={href}
+              href={href}
+              onClick={state.closeMobileMenu}
               className={cn(
-                'fixed top-0 left-0 h-screen w-60 bg-white z-50 md:hidden',
-                'flex flex-col shadow-2xl',
-                'animate-in slide-in-from-left duration-200'
+                'flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors hover:no-underline',
+                isActive
+                  ? 'bg-primary/10 text-primary'
+                  : 'text-secondary hover:bg-background'
               )}
-              role="navigation"
-              aria-label="Mobile navigation"
+              aria-current={isActive ? 'page' : undefined}
             >
-              <SidebarHeader
-                isExpanded={true}
-                isMobile={true}
-                onClose={closeMobileMenu}
-              />
+              <Icon className="h-4 w-4" />
+              <span>{label}</span>
+            </Link>
+          );
+        })}
+      </nav>
 
-              <SidebarNav
-                items={navItems}
-                isExpanded={true}
-                expandedGroups={expandedGroups}
-                onToggleGroup={toggleGroup}
-                onItemClick={closeMobileMenu}
-              />
+      <div className="space-y-2 border-t border-surface p-3">
+        <Link
+          href="/admin/posts/new"
+          onClick={state.closeMobileMenu}
+          className="flex min-h-11 items-center justify-center gap-2 rounded-lg bg-primary px-3 text-sm font-semibold text-white transition-colors hover:bg-primary-dark hover:no-underline"
+        >
+          <Plus className="h-4 w-4" />
+          New post
+        </Link>
 
-              <SidebarFooter isExpanded={true} />
-            </div>
-          </>
-        )}
-      </>
-    );
-  }
-);
+        <div className="rounded-lg border border-surface bg-background px-3 py-2">
+          <p className="truncate text-xs font-medium text-secondary">{user?.email ?? 'Admin'}</p>
+          <button
+            onClick={logout}
+            disabled={isLoading}
+            className="mt-2 flex min-h-10 w-full items-center justify-center gap-2 rounded-md border border-surface bg-white text-xs font-medium text-secondary transition-colors hover:bg-surface/40 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <LogOut className="h-3.5 w-3.5" />
+            Log out
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <>
+      <aside ref={ref} className="hidden h-screen w-72 shrink-0 border-r border-surface bg-white md:block">
+        {sidebarContent}
+      </aside>
+
+      {state.isMobileOpen && (
+        <div className="fixed inset-0 z-50 md:hidden" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+          <button
+            className="absolute inset-0 bg-secondary/35"
+            onClick={state.closeMobileMenu}
+            aria-label="Close mobile navigation"
+          />
+          <aside className="relative h-full w-[84%] max-w-xs border-r border-surface bg-white shadow-2xl">
+            {sidebarContent}
+          </aside>
+        </div>
+      )}
+    </>
+  );
+});
 
 AdminSidebar.displayName = 'AdminSidebar';
