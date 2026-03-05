@@ -9,25 +9,16 @@ import { NavItem } from '@/types/admin';
 interface SidebarNavItemProps {
   item: NavItem;
   isExpanded: boolean;
-  isNested?: boolean;
   onClick?: () => void;
 }
 
 /**
- * SidebarNavItem - Individual navigation link
- * 
- * Features:
- * - Icon + label with smooth transitions
- * - Active state with primary background
- * - Hover effect with subtle background
- * - Tooltip on hover when collapsed
- * - Badge support for counts
+ * SidebarNavItem - Minimalist navigation link
  */
 export const SidebarNavItem = React.forwardRef<HTMLAnchorElement, SidebarNavItemProps>(
-  ({ item, isExpanded, isNested = false, onClick }, ref) => {
+  ({ item, isExpanded, onClick }, ref) => {
     const pathname = usePathname();
     
-    // Check if current route matches this item
     const isActive = item.href === '/admin' 
       ? pathname === '/admin'
       : pathname.startsWith(item.href);
@@ -38,48 +29,41 @@ export const SidebarNavItem = React.forwardRef<HTMLAnchorElement, SidebarNavItem
         href={item.href}
         onClick={onClick}
         className={cn(
-          'flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200',
+          'flex items-center gap-3 px-6 py-2 transition-colors duration-200',
           'hover:no-underline group relative',
-          isNested && 'pl-11',
           isActive
-            ? 'bg-primary text-white shadow-sm'
-            : 'text-secondary hover:bg-surface/50',
-          !isExpanded && !isNested && 'justify-center'
+            ? 'text-zinc-900 font-semibold'
+            : 'text-zinc-500 hover:text-zinc-900',
+          !isExpanded && 'justify-center px-0'
         )}
         title={!isExpanded ? item.label : undefined}
         aria-current={isActive ? 'page' : undefined}
       >
+        {/* Active Indicator - subtle left line */}
+        {isActive && isExpanded && (
+          <div className="absolute left-0 w-1 h-4 bg-zinc-900 rounded-r-full" />
+        )}
+
         {/* Icon */}
         {item.icon && (
-          <span className="flex-shrink-0 flex items-center justify-center">
-            {item.icon}
+          <span className={cn(
+            "flex-shrink-0 flex items-center justify-center transition-colors",
+            isActive ? "text-zinc-900" : "text-zinc-400 group-hover:text-zinc-900"
+          )}>
+            {React.cloneElement(item.icon as React.ReactElement<{ size?: number }>, { size: 18 })}
           </span>
         )}
 
-        {/* Label - visible when expanded */}
+        {/* Label */}
         {isExpanded && (
-          <span className="flex-1 text-sm font-medium whitespace-nowrap">
+          <span className="flex-1 text-sm tracking-tight whitespace-nowrap">
             {item.label}
           </span>
         )}
 
-        {/* Badge - visible when expanded and badge exists */}
-        {isExpanded && item.badge !== undefined && item.badge > 0 && (
-          <span
-            className={cn(
-              'flex-shrink-0 px-2 py-0.5 text-xs font-medium rounded-full',
-              isActive
-                ? 'bg-white/20 text-white'
-                : 'bg-primary/10 text-primary'
-            )}
-          >
-            {item.badge}
-          </span>
-        )}
-
         {/* Tooltip for collapsed state */}
-        {!isExpanded && !isNested && (
-          <span className="absolute left-full ml-2 px-2 py-1 bg-secondary text-white text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 pointer-events-none">
+        {!isExpanded && (
+          <span className="absolute left-full ml-4 px-2 py-1 bg-zinc-900 text-white text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 pointer-events-none">
             {item.label}
           </span>
         )}

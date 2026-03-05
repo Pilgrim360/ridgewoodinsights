@@ -11,45 +11,36 @@ interface SidebarHeaderProps {
 }
 
 /**
- * SidebarHeader - Logo and close button (mobile only)
- * 
- * Desktop: Shows only logo
- * Mobile: Shows logo with close button (X icon)
- * Smooth transitions for logo text visibility
+ * SidebarHeader - Clean, typographic logo
  */
 export const SidebarHeader = React.forwardRef<HTMLDivElement, SidebarHeaderProps>(
   ({ isExpanded, isMobile = false, onClose }, ref) => {
     return (
       <div
         ref={ref}
-        className="flex items-center justify-between gap-3 px-4 py-4 border-b border-surface"
+        className="flex items-center justify-between gap-3 px-6 py-8"
       >
-        {/* Logo */}
         <Link
           href="/admin"
-          className="flex items-center gap-3 hover:no-underline group"
+          className="flex items-center gap-2 hover:no-underline group"
           title="Admin Dashboard"
         >
-          {/* Logo icon - always visible */}
-          <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-primary text-white rounded-lg font-bold text-sm transition-transform group-hover:scale-105">
-            R
-          </div>
+          <span className="text-xl font-bold tracking-tighter text-primary">
+            RW
+          </span>
 
-          {/* Logo text - visible when expanded */}
           {isExpanded && (
-            <span className="text-base font-semibold text-secondary whitespace-nowrap transition-opacity duration-200">
-              Ridgewood
+            <span className="text-sm font-medium text-zinc-400 tracking-tight transition-opacity duration-200">
+              Insight
             </span>
           )}
         </Link>
 
-        {/* Close button - mobile only */}
         {isMobile && onClose && (
           <button
             onClick={onClose}
-            className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-secondary hover:bg-surface/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            className="p-1 rounded-md text-zinc-400 hover:text-zinc-900 transition-colors"
             aria-label="Close menu"
-            title="Close menu"
           >
             <X className="w-5 h-5" />
           </button>

@@ -28,14 +28,14 @@ const config: Config = {
       },
       colors: {
         primary: {
-          DEFAULT: '#006466',
-          dark: '#004d4f',
+          DEFAULT: '#18181b',
+          dark: '#09090b',
         },
-        secondary: '#2C3E50',
-        text: '#415161',
-        surface: '#E2E7ED',
-        'table-border': '#c9cdd1',
-        background: '#F8F9FB',
+        secondary: '#27272a',
+        text: '#3f3f46',
+        surface: '#f4f4f5',
+        'table-border': '#e4e4e7',
+        background: '#ffffff',
         white: '#FFFFFF',
       },
       typography: ({ theme }: PluginUtils) => ({
