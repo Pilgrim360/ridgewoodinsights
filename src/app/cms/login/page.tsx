@@ -22,8 +22,14 @@ export default function LoginPage() {
     try {
       const supabase = getSupabaseClient();
 
-      const { data: { user }, error: authError } = await supabase.auth.signInWithPassword({
-        email,
+      // Basic validation for environment variables
+      if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+        setError('CMS is not properly configured. Missing environment variables.');
+        return;
+      }
+
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
         password,
       });
 
@@ -32,27 +38,33 @@ export default function LoginPage() {
         return;
       }
 
-      if (!user) {
-        setError('Failed to authenticate');
+      if (!data.user) {
+        setError('Authentication failed. No user data returned.');
         return;
       }
 
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('is_admin')
-        .eq('id', user.id)
+        .eq('id', data.user.id)
         .single();
 
+      if (profileError) {
+        setError('Could not verify access permissions. Please contact an administrator.');
+        await supabase.auth.signOut();
+        return;
+      }
+
       if (!profile?.is_admin) {
-        setError('You do not have cms access');
+        setError('Access denied. You do not have CMS permissions.');
         await supabase.auth.signOut();
         return;
       }
 
       router.push('/cms');
     } catch (err) {
-      setError('An unexpected error occurred');
-      console.error(err);
+      setError('An unexpected error occurred. Please try again later.');
+      console.error('Login error:', err);
     } finally {
       setIsLoading(false);
     }
