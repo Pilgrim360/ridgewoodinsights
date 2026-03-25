@@ -5,10 +5,10 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { SidebarState } from '@/types/admin';
+import { SidebarState } from '@/types/cms';
 
-const STORAGE_KEY_EXPANDED = 'ridgewood-admin-sidebar-expanded';
-const STORAGE_KEY_SUBMENU_PREFIX = 'ridgewood-admin-submenu-';
+const STORAGE_KEY_EXPANDED = 'ridgewood-cms-sidebar-expanded';
+const STORAGE_KEY_SUBMENU_PREFIX = 'ridgewood-cms-submenu-';
 
 export const useSidebarState = (): SidebarState => {
   const [isExpanded, setIsExpanded] = useState<boolean>(true);

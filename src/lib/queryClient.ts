@@ -1,15 +1,15 @@
 import { QueryClient } from '@tanstack/react-query';
 import { getSupabaseClient } from '@/lib/supabase/client';
-import { AdminErrorHandler } from '@/lib/admin/error-handler';
+import { CmsErrorHandler } from '@/lib/cms/error-handler';
 
 export const DEFAULT_QUERY_STALE_TIME_MS = 5 * 60 * 1000;
 export const REALTIME_QUERY_STALE_TIME_MS = 30 * 1000;
 export const QUERY_DEDUPING_INTERVAL_MS = 30 * 1000;
-export const ADMIN_REQUEST_TIMEOUT_MS = 20 * 1000;
+export const CMS_REQUEST_TIMEOUT_MS = 20 * 1000;
 
 export function withTimeout<T>(
   promise: Promise<T>,
-  timeoutMs: number = ADMIN_REQUEST_TIMEOUT_MS,
+  timeoutMs: number = CMS_REQUEST_TIMEOUT_MS,
   message: string = 'Request timed out'
 ): Promise<T> {
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
@@ -62,7 +62,7 @@ async function refreshSupabaseSession(): Promise<void> {
   })()
     .catch((error) => {
       if (process.env.NODE_ENV === 'development') {
-        AdminErrorHandler.log(AdminErrorHandler.parse(error));
+        CmsErrorHandler.log(CmsErrorHandler.parse(error));
       }
       throw error;
     })
@@ -90,7 +90,7 @@ export async function withSupabaseAuthRetry<T>(fn: () => Promise<T>): Promise<T>
       }
 
       if (typeof window !== 'undefined') {
-        window.location.href = '/admin/login';
+        window.location.href = '/cms/login';
       }
 
       throw error;
@@ -98,7 +98,7 @@ export async function withSupabaseAuthRetry<T>(fn: () => Promise<T>): Promise<T>
   }
 }
 
-export function createAdminQueryClient(): QueryClient {
+export function createCmsQueryClient(): QueryClient {
   return new QueryClient({
     defaultOptions: {
       queries: {

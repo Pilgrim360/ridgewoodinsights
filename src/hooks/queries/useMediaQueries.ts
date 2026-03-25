@@ -2,9 +2,9 @@
 
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { getMediaItems, MediaItem, searchMedia } from '@/lib/admin/media';
+import { getMediaItems, MediaItem, searchMedia } from '@/lib/cms/media';
 import { withSupabaseAuthRetry, REALTIME_QUERY_STALE_TIME_MS } from '@/lib/queryClient';
-import { adminQueryKeys } from './queryKeys';
+import { cmsQueryKeys } from './queryKeys';
 
 export function useMediaLibrary(filters: { userId?: string; search?: string }) {
   const normalizedFilters = useMemo(
@@ -17,7 +17,7 @@ export function useMediaLibrary(filters: { userId?: string; search?: string }) {
 
   return useQuery<MediaItem[], Error>({
     queryKey: normalizedFilters.userId
-      ? adminQueryKeys.media.list({
+      ? cmsQueryKeys.media.list({
           userId: normalizedFilters.userId,
           search: normalizedFilters.search,
         })
@@ -36,7 +36,7 @@ export function useMediaLibrary(filters: { userId?: string; search?: string }) {
 
 export function useMediaItem(path?: string, userId?: string) {
   return useQuery<MediaItem | null, Error>({
-    queryKey: path ? adminQueryKeys.media.byPath(path) : ['media', 'missing-path'],
+    queryKey: path ? cmsQueryKeys.media.byPath(path) : ['media', 'missing-path'],
     queryFn: async () => {
       if (!path || !userId) return null;
       const items = await withSupabaseAuthRetry(() => getMediaItems(userId));

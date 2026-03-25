@@ -5,17 +5,17 @@ import {
   getCategories,
   getCategoriesWithCount,
   getCategory,
-} from '@/lib/admin/categories';
+} from '@/lib/cms/categories';
 import {
   CategoryData,
   CategoryWithPostCount,
-} from '@/types/admin';
+} from '@/types/cms';
 import { withSupabaseAuthRetry, REALTIME_QUERY_STALE_TIME_MS } from '@/lib/queryClient';
-import { adminQueryKeys } from './queryKeys';
+import { cmsQueryKeys } from './queryKeys';
 
 export function useCategories() {
   return useQuery<CategoryData[], Error>({
-    queryKey: adminQueryKeys.categories.all,
+    queryKey: cmsQueryKeys.categories.all,
     queryFn: () => withSupabaseAuthRetry(() => getCategories()),
     staleTime: REALTIME_QUERY_STALE_TIME_MS,
   });
@@ -23,7 +23,7 @@ export function useCategories() {
 
 export function useCategoriesWithCount() {
   return useQuery<CategoryWithPostCount[], Error>({
-    queryKey: adminQueryKeys.categories.withCount(),
+    queryKey: cmsQueryKeys.categories.withCount(),
     queryFn: () => withSupabaseAuthRetry(() => getCategoriesWithCount()),
     staleTime: REALTIME_QUERY_STALE_TIME_MS,
   });
@@ -31,7 +31,7 @@ export function useCategoriesWithCount() {
 
 export function useCategoryById(id?: string) {
   return useQuery<CategoryData, Error>({
-    queryKey: id ? adminQueryKeys.categories.byId(id) : ['categories', 'missing-id'],
+    queryKey: id ? cmsQueryKeys.categories.byId(id) : ['categories', 'missing-id'],
     queryFn: () => withSupabaseAuthRetry(() => getCategory(id!)),
     enabled: Boolean(id),
   });

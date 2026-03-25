@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { getPostBySlug } from '@/lib/blog';
-import { sanitizeContent } from '@/lib/admin/html';
+import { sanitizeContent } from '@/lib/cms/html';
 import { generateBlogPostingSchema, generateBreadcrumbSchema } from '@/lib/schema';
 import { LOGOS } from '@/constants';
 import { Container } from '@/components/ui/Container';

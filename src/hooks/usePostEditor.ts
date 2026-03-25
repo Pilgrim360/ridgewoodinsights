@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import debounce from 'lodash.debounce';
-import { isContentValid } from '@/lib/admin/html';
-import { PostData } from '@/types/admin';
-import { useCreatePost, useUpdatePost } from '@/hooks/queries/useAdminMutations';
+import { isContentValid } from '@/lib/cms/html';
+import { PostData } from '@/types/cms';
+import { useCreatePost, useUpdatePost } from '@/hooks/queries/useCmsMutations';
 
 export interface EditorState {
   title: string;

@@ -1,14 +1,14 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { getSettings } from '@/lib/admin/settings';
-import { SiteSettings } from '@/types/admin';
+import { getSettings } from '@/lib/cms/settings';
+import { SiteSettings } from '@/types/cms';
 import { withSupabaseAuthRetry } from '@/lib/queryClient';
-import { adminQueryKeys } from './queryKeys';
+import { cmsQueryKeys } from './queryKeys';
 
 export function useSiteSettings() {
   return useQuery<SiteSettings, Error>({
-    queryKey: adminQueryKeys.settings.all,
+    queryKey: cmsQueryKeys.settings.all,
     queryFn: () => withSupabaseAuthRetry(() => getSettings()),
   });
 }
