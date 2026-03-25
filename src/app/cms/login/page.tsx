@@ -22,7 +22,7 @@ export default function LoginPage() {
     try {
       const supabase = getSupabaseClient();
 
-      const { error: authError } = await supabase.auth.signInWithPassword({
+      const { data: { user }, error: authError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -31,10 +31,6 @@ export default function LoginPage() {
         setError(authError.message);
         return;
       }
-
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
 
       if (!user) {
         setError('Failed to authenticate');

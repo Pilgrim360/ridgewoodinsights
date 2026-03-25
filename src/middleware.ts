@@ -64,7 +64,7 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/cms/:path*'],
+  matcher: ['/cms', '/cms/:path*'],
 };
 
 // Note: Login is excluded in the middleware function itself (line 15)
