@@ -28,15 +28,15 @@ const config: Config = {
       },
       colors: {
         primary: {
-          DEFAULT: '#006466',
-          dark: '#004d4f',
+          DEFAULT: 'var(--primary)',
+          dark: 'var(--primary-dark)',
         },
-        secondary: '#2C3E50',
-        text: '#415161',
-        surface: '#E2E7ED',
+        secondary: 'var(--secondary)',
+        text: 'var(--text)',
+        surface: 'var(--surface)',
         'table-border': '#c9cdd1',
-        background: '#F8F9FB',
-        white: '#FFFFFF',
+        background: 'var(--background)',
+        white: 'var(--white)',
       },
       typography: ({ theme }: PluginUtils) => ({
         DEFAULT: {

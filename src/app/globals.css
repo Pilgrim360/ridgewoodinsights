@@ -3,12 +3,32 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --primary: #006466;
+    --primary-dark: #004d4f;
+    --secondary: #2C3E50;
+    --text: #415161;
+    --surface: #E2E7ED;
+    --background: #F8F9FB;
+    --white: #ffffff;
+  }
+
+  .cms-theme {
+    --primary: #18181b;
+    --primary-dark: #000000;
+    --secondary: #27272a;
+    --text: #3f3f46;
+    --surface: #f4f4f5;
+    --background: #ffffff;
+  }
+
   html {
     scroll-behavior: smooth;
   }
 
   body {
-    color: #415161;
+    color: var(--text);
+    background-color: var(--background);
   }
 }
 

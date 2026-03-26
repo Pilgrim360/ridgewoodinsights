@@ -1,14 +1,14 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight, Check, AlertCircle, Clock, Loader2 } from 'lucide-react';
 
 import { useCmsError } from '@/contexts/CmsErrorContext';
-import { useCmsHeaderSlots } from '@/contexts/CmsHeaderSlotsContext';
 import { usePostEditor, EditorState } from '@/hooks/usePostEditor';
 import { usePublishPost } from '@/hooks/queries/useCmsMutations';
 import { cn } from '@/lib/utils';
+import { CmsPageHeader } from '@/components/cms/CmsPageHeader';
 
 import { EditorSidebar } from './EditorSidebar';
 import { TipTapEditor } from './TipTapEditor';
@@ -32,7 +32,6 @@ const DEFAULT_STATE: EditorState = {
 export function Editor({ postId, initialData }: EditorProps) {
   const router = useRouter();
   const { showError } = useCmsError();
-  const { setActions } = useCmsHeaderSlots();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const publishMutation = usePublishPost();
@@ -97,32 +96,31 @@ export function Editor({ postId, initialData }: EditorProps) {
   const isBusy = isSaving || publishMutation.isPending;
   const editorDisabled = publishMutation.isPending;
 
-  useEffect(() => {
-    setActions(
-      <EditorHeaderActions
-        isDirty={isDirty}
-        isSaving={isBusy}
-        lastSaved={lastSaved}
-        saveError={saveError}
-        onSave={explicitSave}
-        onPublish={handlePublish}
-        canPublish={canPublish}
-        publishDisabledReason={publishDisabledReason}
-        postStatus={state.status}
-      />
-    );
-
-    return () => {
-      setActions(null);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDirty, isBusy, lastSaved, saveError, state.status]);
-
   return (
-    <div className="h-full flex flex-col bg-background pointer-events-auto">
-      <div className="flex-1 overflow-y-auto flex flex-col lg:flex-row pointer-events-auto relative">
+    <div className="h-full flex flex-col bg-white pointer-events-auto">
+      <div className="mb-8">
+        <CmsPageHeader
+          title={postId ? 'Edit Post' : 'New Post'}
+          description="Create and refine your blog content."
+          actions={
+            <EditorHeaderActions
+              isDirty={isDirty}
+              isSaving={isBusy}
+              lastSaved={lastSaved}
+              saveError={saveError}
+              onSave={explicitSave}
+              onPublish={handlePublish}
+              canPublish={canPublish}
+              publishDisabledReason={publishDisabledReason}
+              postStatus={state.status}
+            />
+          }
+        />
+      </div>
+
+      <div className="flex-1 flex flex-col lg:flex-row pointer-events-auto relative overflow-y-auto">
         <div className="flex-1 min-w-0 pointer-events-auto">
-          <div className="max-w-3xl mx-auto w-full">
+          <div className="max-w-3xl w-full">
             <TipTapEditor
               title={state.title}
               onTitleChange={(value) => updateField('title', value)}

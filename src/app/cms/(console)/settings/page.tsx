@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { SiteSettings } from '@/types/cms';
-import { SettingsHeader } from '@/components/cms/Settings/SettingsHeader';
+import { CmsPageHeader } from '@/components/cms/CmsPageHeader';
 import { SettingsForm } from '@/components/cms/Settings/SettingsForm';
 import { useSiteSettings } from '@/hooks/queries/useSettingsQueries';
 import { useUpdateSettings } from '@/hooks/queries/useCmsMutations';
+import { Check, AlertCircle, Clock, Loader2 } from 'lucide-react';
 
 const DEFAULT_SETTINGS: SiteSettings = {
   site_title: 'Ridgewood Insights',
@@ -52,12 +53,24 @@ export default function SettingsPage() {
     }
   };
 
+  function formatRelativeTime(date: Date): string {
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+    if (minutes < 1) return 'just now';
+    if (minutes < 60) return `${minutes}m ago`;
+    if (hours < 24) return `${hours}h ago`;
+    return `${days}d ago`;
+  }
+
   if (settingsQuery.isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
+      <div className="flex items-center justify-center py-20">
         <div className="text-center">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-surface border-t-primary mx-auto mb-4" />
-          <p className="text-secondary">Loading settings...</p>
+          <p className="text-secondary text-sm">Loading settings...</p>
         </div>
       </div>
     );
@@ -67,11 +80,34 @@ export default function SettingsPage() {
 
   return (
     <div className="max-w-2xl">
-      <SettingsHeader
-        isDirty={isDirty}
-        isSaving={updateSettingsMutation.isPending}
-        lastSaved={lastSaved}
-        saveError={saveError}
+      <CmsPageHeader
+        title="Settings"
+        description="Configure site-wide settings and information."
+        actions={
+          <div className="flex items-center gap-1.5 text-xs">
+            {saveError ? (
+              <span className="flex items-center gap-1.5 text-red-600" role="alert">
+                <AlertCircle className="w-3.5 h-3.5" />
+                {saveError}
+              </span>
+            ) : updateSettingsMutation.isPending ? (
+              <span className="flex items-center gap-1.5 text-text/50">
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                Saving…
+              </span>
+            ) : isDirty ? (
+              <span className="flex items-center gap-1.5 text-amber-600">
+                <Clock className="w-3.5 h-3.5" />
+                Unsaved changes
+              </span>
+            ) : lastSaved ? (
+              <span className="flex items-center gap-1.5 text-text/50">
+                <Check className="w-3.5 h-3.5" />
+                Saved {formatRelativeTime(lastSaved)}
+              </span>
+            ) : null}
+          </div>
+        }
       />
 
       <SettingsForm

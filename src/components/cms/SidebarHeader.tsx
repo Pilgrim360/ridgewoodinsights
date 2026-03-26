@@ -22,7 +22,7 @@ export const SidebarHeader = React.forwardRef<HTMLDivElement, SidebarHeaderProps
     return (
       <div
         ref={ref}
-        className="flex items-center justify-between gap-3 px-4 py-4 border-b border-surface"
+        className="flex items-center justify-between gap-3 px-4 py-6"
       >
         {/* Logo */}
         <Link
@@ -31,13 +31,13 @@ export const SidebarHeader = React.forwardRef<HTMLDivElement, SidebarHeaderProps
           title="CMS Dashboard"
         >
           {/* Logo icon - always visible */}
-          <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-primary text-white rounded-lg font-bold text-sm transition-transform group-hover:scale-105">
+          <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center bg-white text-zinc-950 rounded-lg font-bold text-sm transition-transform group-hover:scale-105 shadow-[0_0_15px_rgba(255,255,255,0.1)]">
             R
           </div>
 
           {/* Logo text - visible when expanded */}
           {isExpanded && (
-            <span className="text-base font-semibold text-secondary whitespace-nowrap transition-opacity duration-200">
+            <span className="text-sm font-bold text-white tracking-tight whitespace-nowrap transition-opacity duration-200 uppercase">
               Ridgewood
             </span>
           )}

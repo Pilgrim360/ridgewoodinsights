@@ -9,10 +9,18 @@ import { createCmsQueryClient } from '@/lib/queryClient';
 import { getSupabaseClient } from '@/lib/supabase/client';
 
 /**
+ * Applying .cms-theme to body or a wrapper for the entire CMS.
+ * Since we want it to apply to the entire CMS section (including login),
+ * we wrap the content here.
+ */
+function CmsThemeWrapper({ children }: { children: React.ReactNode }) {
+  return <div className="cms-theme min-h-screen bg-background text-text">{children}</div>;
+}
+
+/**
  * CMS Root Layout
  * Provides TanStack Query, auth context, and error toasts for all cms routes (including login)
  */
-
 export default function CmsLayout({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => createCmsQueryClient());
 
@@ -56,7 +64,9 @@ export default function CmsLayout({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <CmsAuthProvider>
-        <CmsErrorProvider>{children}</CmsErrorProvider>
+        <CmsErrorProvider>
+          <CmsThemeWrapper>{children}</CmsThemeWrapper>
+        </CmsErrorProvider>
       </CmsAuthProvider>
 
       {process.env.NODE_ENV === 'development' && (

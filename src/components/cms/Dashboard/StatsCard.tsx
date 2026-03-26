@@ -25,16 +25,16 @@ export function StatsCard({
 }: StatsCardProps) {
   const variantStyles = {
     default: 'bg-white border border-surface',
-    primary: 'bg-primary/5 border border-primary/20',
-    success: 'bg-green-50 border border-green-200',
-    info: 'bg-blue-50 border border-blue-200',
+    primary: 'bg-white border border-surface',
+    success: 'bg-white border border-surface',
+    info: 'bg-white border border-surface',
   };
 
   const iconBgStyles = {
     default: 'bg-surface text-secondary',
-    primary: 'bg-primary/10 text-primary',
-    success: 'bg-green-100 text-green-700',
-    info: 'bg-blue-100 text-blue-700',
+    primary: 'bg-surface text-secondary',
+    success: 'bg-surface text-secondary',
+    info: 'bg-surface text-secondary',
   };
 
   const trendConfig = {
@@ -46,7 +46,7 @@ export function StatsCard({
   return (
     <div
       className={cn(
-        'rounded-xl p-5 flex flex-col gap-3 hover:shadow-md transition-shadow duration-200',
+        'rounded-xl p-6 flex flex-col gap-3 transition-all duration-200 hover:border-zinc-300',
         variantStyles[variant],
         className
       )}

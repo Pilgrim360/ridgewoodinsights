@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
-import { SidebarState, NavItem, NavGroup } from '@/types/cms';
+import { SidebarState, NavItem } from '@/types/cms';
 import { SidebarHeader } from './SidebarHeader';
 import { SidebarNav } from './SidebarNav';
 import { SidebarFooter } from './SidebarFooter';
@@ -12,6 +12,7 @@ import {
   Tag,
   Image as ImageIcon,
   Settings,
+  Search,
 } from 'lucide-react';
 
 interface CmsSidebarProps {
@@ -35,37 +36,31 @@ export const CmsSidebar = React.forwardRef<HTMLDivElement, CmsSidebarProps>(
     const focusTrapRef = useRef<HTMLDivElement>(null);
 
     // Navigation structure
-    const navItems: (NavItem | NavGroup)[] = [
+    const navItems: NavItem[] = [
       {
         href: '/cms',
         label: 'Dashboard',
-        icon: <LayoutDashboard className="w-5 h-5" />,
+        icon: <LayoutDashboard className="w-4 h-4" />,
       },
       {
-        id: 'posts',
+        href: '/cms/posts',
         label: 'Posts',
-        icon: <FileText className="w-5 h-5" />,
-        items: [
-          { href: '/cms/posts', label: 'All Posts', icon: null },
-          { href: '/cms/posts?status=draft', label: 'Drafts', icon: null },
-          { href: '/cms/posts?status=scheduled', label: 'Scheduled', icon: null },
-          { href: '/cms/posts/new', label: 'New Post', icon: null },
-        ],
+        icon: <FileText className="w-4 h-4" />,
       },
       {
         href: '/cms/categories',
         label: 'Categories',
-        icon: <Tag className="w-5 h-5" />,
+        icon: <Tag className="w-4 h-4" />,
       },
       {
         href: '/cms/media',
         label: 'Media Library',
-        icon: <ImageIcon className="w-5 h-5" />,
+        icon: <ImageIcon className="w-4 h-4" />,
       },
       {
         href: '/cms/settings',
         label: 'Settings',
-        icon: <Settings className="w-5 h-5" />,
+        icon: <Settings className="w-4 h-4" />,
       },
     ];
 
@@ -130,14 +125,27 @@ export const CmsSidebar = React.forwardRef<HTMLDivElement, CmsSidebarProps>(
         <div
           ref={ref}
           className={cn(
-            'hidden md:flex flex-col h-screen bg-white border-r border-surface overflow-hidden',
+            'hidden md:flex flex-col h-screen bg-[#18181b] border-r border-white/5 overflow-hidden',
             'transition-all duration-200 ease-in-out',
-            isExpanded ? 'w-60' : 'w-16'
+            isExpanded ? 'w-56' : 'w-16'
           )}
           role="navigation"
           aria-label="Main navigation"
         >
           <SidebarHeader isExpanded={isExpanded} />
+
+          {isExpanded && (
+            <div className="px-3 mb-4 mt-2">
+              <button
+                onClick={() => (window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true })))}
+                className="flex items-center gap-2 w-full px-3 py-1.5 rounded-md bg-white/5 border border-white/10 text-zinc-400 hover:text-zinc-200 hover:bg-white/10 transition-all text-xs"
+              >
+                <Search className="w-3.5 h-3.5" />
+                <span>Search...</span>
+                <kbd className="ml-auto font-sans text-[10px] opacity-50">⌘K</kbd>
+              </button>
+            </div>
+          )}
           
           <SidebarNav
             items={navItems}
@@ -163,7 +171,7 @@ export const CmsSidebar = React.forwardRef<HTMLDivElement, CmsSidebarProps>(
             <div
               ref={focusTrapRef}
               className={cn(
-                'fixed top-0 left-0 h-screen w-60 bg-white z-50 md:hidden',
+            'fixed top-0 left-0 h-screen w-64 bg-[#18181b] z-50 md:hidden',
                 'flex flex-col shadow-2xl',
                 'animate-in slide-in-from-left duration-200'
               )}
@@ -175,6 +183,16 @@ export const CmsSidebar = React.forwardRef<HTMLDivElement, CmsSidebarProps>(
                 isMobile={true}
                 onClose={closeMobileMenu}
               />
+
+          <div className="px-3 mb-4 mt-2">
+            <button
+              onClick={() => (window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true })))}
+              className="flex items-center gap-2 w-full px-3 py-1.5 rounded-md bg-white/5 border border-white/10 text-zinc-400 hover:text-zinc-200 hover:bg-white/10 transition-all text-xs"
+            >
+              <Search className="w-3.5 h-3.5" />
+              <span>Search...</span>
+            </button>
+          </div>
 
               <SidebarNav
                 items={navItems}

@@ -3,6 +3,7 @@
 import React, { useRef, useState } from 'react';
 import Image from 'next/image';
 import { Upload, Trash2, X, Image as ImageIcon, FileText, File } from 'lucide-react';
+import { CmsPageHeader } from '@/components/cms/CmsPageHeader';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Card } from '@/components/ui/Card';
@@ -80,46 +81,43 @@ export default function MediaPage() {
   return (
     <ErrorBoundary>
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <Heading as={1} className="text-2xl">Media Library</Heading>
-            <Text muted className="text-sm mt-0.5">
-              Manage images and files for your posts
-            </Text>
-          </div>
-          <div className="flex items-center gap-2">
-            {selectedMedia.length > 0 && (
+        <CmsPageHeader
+          title="Media Library"
+          description="Manage images and files for your posts."
+          actions={
+            <div className="flex items-center gap-2">
+              {selectedMedia.length > 0 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  icon={<Trash2 className="w-4 h-4" />}
+                  onClick={() => setShowDeleteConfirm(true)}
+                >
+                  Delete ({selectedMedia.length})
+                </Button>
+              )}
+              <Input
+                ref={fileInputRef}
+                type="file"
+                id="media-upload"
+                className="hidden"
+                onChange={handleFileUpload}
+                multiple
+                accept="image/*,.pdf,.doc,.docx"
+                disabled={isUploading}
+              />
               <Button
-                variant="outline"
+                variant="primary"
                 size="sm"
-                icon={<Trash2 className="w-4 h-4" />}
-                onClick={() => setShowDeleteConfirm(true)}
+                icon={<Upload className="w-4 h-4" />}
+                disabled={isUploading}
+                onClick={() => fileInputRef.current?.click()}
               >
-                Delete ({selectedMedia.length})
+                {isUploading ? `Uploading ${uploadProgress}%` : 'Upload'}
               </Button>
-            )}
-            <Input
-              ref={fileInputRef}
-              type="file"
-              id="media-upload"
-              className="hidden"
-              onChange={handleFileUpload}
-              multiple
-              accept="image/*,.pdf,.doc,.docx"
-              disabled={isUploading}
-            />
-            <Button
-              variant="primary"
-              size="sm"
-              icon={<Upload className="w-4 h-4" />}
-              disabled={isUploading}
-              onClick={() => fileInputRef.current?.click()}
-            >
-              {isUploading ? `Uploading ${uploadProgress}%` : 'Upload'}
-            </Button>
-          </div>
-        </div>
+            </div>
+          }
+        />
 
         {/* Search */}
         <div className="max-w-sm">

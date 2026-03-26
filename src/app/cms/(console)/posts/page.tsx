@@ -6,6 +6,9 @@
 'use client';
 
 import React, { useCallback, useState } from 'react';
+import { CmsPageHeader } from '@/components/cms/CmsPageHeader';
+import { Plus } from 'lucide-react';
+import Link from 'next/link';
 import { FilterBar } from '@/components/cms/Posts/FilterBar';
 import { PostsTable } from '@/components/cms/Posts/PostsTable';
 import { PostFilters } from '@/types/cms';
@@ -115,6 +118,20 @@ export default function PostsPage() {
 
   return (
     <div className="space-y-6">
+      <CmsPageHeader
+        title="Posts"
+        description="Manage and edit your blog content."
+        actions={
+          <Link
+            href="/cms/posts/new"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors shadow-sm"
+          >
+            <Plus className="w-4 h-4" />
+            New Post
+          </Link>
+        }
+      />
+
       <FilterBar
         filters={filters}
         categories={categories}

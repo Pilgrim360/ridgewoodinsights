@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { CategoryData, CategoryWithPostCount } from '@/types/cms';
-import { CategoriesHeader } from '@/components/cms/Categories/CategoriesHeader';
+import { CmsPageHeader } from '@/components/cms/CmsPageHeader';
+import { Plus } from 'lucide-react';
 import { CategoriesTable } from '@/components/cms/Categories/CategoriesTable';
 import { CategoryModal } from '@/components/cms/Categories/CategoryModal';
 import { DeleteConfirmModal } from '@/components/cms/Categories/DeleteConfirmModal';
@@ -80,7 +81,21 @@ export default function CategoriesPage() {
 
   return (
     <div className="space-y-6">
-      <CategoriesHeader onNewCategory={handleNewCategory} isLoading={isLoading} />
+      <CmsPageHeader
+        title="Categories"
+        description="Organize posts by topic."
+        actions={
+          <button
+            type="button"
+            onClick={handleNewCategory}
+            disabled={isLoading}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 shadow-sm"
+          >
+            <Plus className="w-4 h-4" />
+            New Category
+          </button>
+        }
+      />
 
       <CategoriesTable
         categories={categories}

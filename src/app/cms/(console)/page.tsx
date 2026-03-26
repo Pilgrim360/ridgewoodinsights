@@ -4,10 +4,11 @@ import React from 'react';
 import { FileText, CheckCircle2, FileEdit, Calendar } from 'lucide-react';
 import { StatsCard } from '@/components/cms/Dashboard/StatsCard';
 import { ActivityFeed } from '@/components/cms/Dashboard/ActivityFeed';
-import { QuickActions } from '@/components/cms/Dashboard/QuickActions';
-import { WelcomeSection } from '@/components/cms/Dashboard/WelcomeSection';
 import { ScheduledPosts } from '@/components/cms/Dashboard/ScheduledPosts';
 import { usePostStats, useRecentActivity } from '@/hooks/queries/usePostsQueries';
+import { CmsPageHeader } from '@/components/cms/CmsPageHeader';
+import { Plus } from 'lucide-react';
+import Link from 'next/link';
 
 export default function CMSDashboard() {
   const statsQuery = usePostStats();
@@ -17,16 +18,24 @@ export default function CMSDashboard() {
   const activities = activityQuery.data ?? [];
 
   return (
-    <div className="space-y-8">
-      <WelcomeSection />
-
-      <section aria-label="Quick actions">
-        <QuickActions />
-      </section>
+    <div className="space-y-10">
+      <CmsPageHeader
+        title="Dashboard"
+        description="Monitor your blog performance and recent activity."
+        actions={
+          <Link
+            href="/cms/posts/new"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors shadow-sm"
+          >
+            <Plus className="w-4 h-4" />
+            New Post
+          </Link>
+        }
+      />
 
       <section aria-label="Statistics">
-        <h2 className="text-sm font-semibold text-text/60 uppercase tracking-wide mb-4">
-          Overview
+        <h2 className="text-sm font-bold text-secondary uppercase tracking-widest mb-6">
+          Insights
         </h2>
         {statsQuery.isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -77,7 +86,10 @@ export default function CMSDashboard() {
       </section>
 
       <section aria-label="Activity and upcoming posts">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <h2 className="text-sm font-bold text-secondary uppercase tracking-widest mb-6">
+          Activity
+        </h2>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2">
             <ActivityFeed
               activities={activities}

@@ -2,13 +2,12 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import { CmsSidebar } from '@/components/cms/CmsSidebar';
-import { CmsHeader } from '@/components/cms/CmsHeader';
 import { QuickSearch } from '@/components/cms/QuickSearch';
 import {
   CmsHeaderSlotsProvider,
-  useCmsHeaderSlots,
 } from '@/contexts/CmsHeaderSlotsContext';
 import { useSidebarState } from '@/hooks/useSidebarState';
+import { cn } from '@/lib/utils';
 
 export default function DashboardLayout({
   children,
@@ -18,7 +17,6 @@ export default function DashboardLayout({
   const sidebarState = useSidebarState();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  const openSearch = useCallback(() => setIsSearchOpen(true), []);
   const closeSearch = useCallback(() => setIsSearchOpen(false), []);
 
   useEffect(() => {
@@ -34,37 +32,37 @@ export default function DashboardLayout({
 
   return (
     <CmsHeaderSlotsProvider>
-      <div className="flex h-screen bg-background">
+      <div className="flex h-screen bg-white">
         <CmsSidebar state={sidebarState} />
 
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <CmsHeader
-            onMenuToggle={sidebarState.toggleMobileMenu}
-            isMobileMenuOpen={sidebarState.isMobileOpen}
-            onSearchOpen={openSearch}
-          />
+        <div className={cn(
+          "flex-1 flex flex-col overflow-hidden transition-all duration-200",
+          sidebarState.isExpanded ? "md:ml-0" : "md:ml-0"
+        )}>
+          {/* Mobile Header */}
+          <header className="md:hidden flex items-center justify-between px-4 py-3 border-b border-surface bg-white">
+            <button
+              onClick={sidebarState.toggleMobileMenu}
+              className="p-2 -ml-2 text-secondary hover:bg-surface rounded-md transition-colors"
+              aria-label="Toggle menu"
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+              </svg>
+            </button>
+            <span className="font-bold text-sm uppercase tracking-tight">Ridgewood</span>
+            <div className="w-10" /> {/* Spacer */}
+          </header>
 
-          <CmsSubHeader />
-
-          <main className="flex-1 overflow-auto pointer-events-auto">
-            <div className="px-4 py-5 md:px-6 pointer-events-auto">{children}</div>
+          <main className="flex-1 overflow-auto pointer-events-auto bg-white">
+            <div className="max-w-[1600px] mx-auto px-4 py-8 md:px-10 lg:px-16 pointer-events-auto">
+              {children}
+            </div>
           </main>
         </div>
       </div>
 
       <QuickSearch isOpen={isSearchOpen} onClose={closeSearch} />
     </CmsHeaderSlotsProvider>
-  );
-}
-
-function CmsSubHeader() {
-  const { slots } = useCmsHeaderSlots();
-
-  if (!slots.subHeader) return null;
-
-  return (
-    <div className="border-b border-surface bg-white px-4 py-2 md:px-6">
-      {slots.subHeader}
-    </div>
   );
 }
