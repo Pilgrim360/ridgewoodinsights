@@ -1,4 +1,4 @@
-import { PostFilters } from '@/types/admin';
+import { PostFilters } from '@/types/cms';
 
 export interface NormalizedPostFilters {
   search: string;
@@ -12,7 +12,7 @@ export interface MediaLibraryFilters {
   userId: string;
 }
 
-export const adminQueryKeys = {
+export const cmsQueryKeys = {
   posts: {
     all: ['posts'] as const,
     list: (filters: NormalizedPostFilters) => ['posts', { filters }] as const,

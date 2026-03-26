@@ -2,16 +2,16 @@
 
 import { useMemo } from 'react';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { getPost, getPostStats, getPosts, getRecentActivity } from '@/lib/admin/posts';
+import { getPost, getPostStats, getPosts, getRecentActivity } from '@/lib/cms/posts';
 import {
   DashboardStats,
   PaginatedResult,
   PostData,
   PostFilters,
   RecentActivity,
-} from '@/types/admin';
+} from '@/types/cms';
 import { withSupabaseAuthRetry, REALTIME_QUERY_STALE_TIME_MS } from '@/lib/queryClient';
-import { adminQueryKeys, NormalizedPostFilters } from './queryKeys';
+import { cmsQueryKeys, NormalizedPostFilters } from './queryKeys';
 
 function normalizeFilters(filters: PostFilters): NormalizedPostFilters {
   return {
@@ -33,7 +33,7 @@ export function usePostsList(filters: PostFilters) {
   );
 
   return useQuery<PaginatedResult<PostData>, Error>({
-    queryKey: adminQueryKeys.posts.list(normalized),
+    queryKey: cmsQueryKeys.posts.list(normalized),
     queryFn: () => withSupabaseAuthRetry(() => getPosts(normalized)),
     placeholderData: keepPreviousData,
   });
@@ -41,7 +41,7 @@ export function usePostsList(filters: PostFilters) {
 
 export function usePostById(id?: string) {
   return useQuery<PostData, Error>({
-    queryKey: id ? adminQueryKeys.posts.byId(id) : ['posts', 'missing-id'],
+    queryKey: id ? cmsQueryKeys.posts.byId(id) : ['posts', 'missing-id'],
     queryFn: () => withSupabaseAuthRetry(() => getPost(id!)),
     enabled: Boolean(id),
   });
@@ -49,14 +49,14 @@ export function usePostById(id?: string) {
 
 export function usePostStats() {
   return useQuery<DashboardStats, Error>({
-    queryKey: adminQueryKeys.posts.stats(),
+    queryKey: cmsQueryKeys.posts.stats(),
     queryFn: () => withSupabaseAuthRetry(() => getPostStats()),
   });
 }
 
 export function useRecentActivity(limit: number = 10) {
   return useQuery<RecentActivity[], Error>({
-    queryKey: adminQueryKeys.posts.activity(limit),
+    queryKey: cmsQueryKeys.posts.activity(limit),
     queryFn: () => withSupabaseAuthRetry(() => getRecentActivity(limit)),
     staleTime: REALTIME_QUERY_STALE_TIME_MS,
   });

@@ -2,17 +2,17 @@ import { createServerClient } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
- * Middleware to protect admin routes
- * Redirects unauthenticated users to /admin/login
+ * Middleware to protect cms routes
+ * Redirects unauthenticated users to /cms/login
  */
 
 export async function middleware(request: NextRequest) {
-  // Only protect /admin routes (except /admin/login)
-  if (!request.nextUrl.pathname.startsWith('/admin')) {
+  // Only protect /cms routes (except /cms/login)
+  if (!request.nextUrl.pathname.startsWith('/cms')) {
     return NextResponse.next();
   }
 
-  if (request.nextUrl.pathname === '/admin/login') {
+  if (request.nextUrl.pathname === '/cms/login') {
     return NextResponse.next();
   }
 
@@ -45,10 +45,10 @@ export async function middleware(request: NextRequest) {
 
   // If no user, redirect to login
   if (!user) {
-    return NextResponse.redirect(new URL('/admin/login', request.url));
+    return NextResponse.redirect(new URL('/cms/login', request.url));
   }
 
-  // Verify user is admin
+  // Verify user is cms
   const { data: profile } = await supabase
     .from('profiles')
     .select('is_admin')
@@ -56,7 +56,7 @@ export async function middleware(request: NextRequest) {
     .single();
 
   if (!profile?.is_admin) {
-    // Non-admin user trying to access admin routes
+    // Non-cms user trying to access cms routes
     return NextResponse.redirect(new URL('/', request.url));
   }
 
@@ -64,7 +64,7 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/cms', '/cms/:path*'],
 };
 
 // Note: Login is excluded in the middleware function itself (line 15)
