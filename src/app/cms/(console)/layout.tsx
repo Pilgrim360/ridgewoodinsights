@@ -34,10 +34,10 @@ export default function DashboardLayout({
 
   return (
     <CmsHeaderSlotsProvider>
-      <div className="flex h-screen bg-background">
-        <CmsSidebar state={sidebarState} />
+      <div className="flex h-screen bg-background overflow-hidden">
+        <CmsSidebar state={sidebarState} onSearchOpen={openSearch} />
 
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
           <CmsHeader
             onMenuToggle={sidebarState.toggleMobileMenu}
             isMobileMenuOpen={sidebarState.isMobileOpen}
@@ -46,8 +46,10 @@ export default function DashboardLayout({
 
           <CmsSubHeader />
 
-          <main className="flex-1 overflow-auto pointer-events-auto">
-            <div className="px-4 py-5 md:px-6 pointer-events-auto">{children}</div>
+          <main className="flex-1 overflow-y-auto overflow-x-hidden">
+            <div className="container mx-auto max-w-7xl px-4 py-6 md:px-8">
+              {children}
+            </div>
           </main>
         </div>
       </div>

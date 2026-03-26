@@ -14,12 +14,12 @@ interface SidebarNavItemProps {
 }
 
 /**
- * SidebarNavItem - Individual navigation link
+ * SidebarNavItem - Individual navigation link with refined SaaS styling
  * 
  * Features:
  * - Icon + label with smooth transitions
- * - Active state with primary background
- * - Hover effect with subtle background
+ * - Active state with subtle background and primary accent
+ * - Hover effect with refined background
  * - Tooltip on hover when collapsed
  * - Badge support for counts
  */
@@ -42,8 +42,8 @@ export const SidebarNavItem = React.forwardRef<HTMLAnchorElement, SidebarNavItem
           'hover:no-underline group relative',
           isNested && 'pl-11',
           isActive
-            ? 'bg-primary text-white shadow-sm'
-            : 'text-secondary hover:bg-surface/50',
+            ? 'bg-primary/5 text-primary shadow-[inset_0_0_0_1px_rgba(0,100,102,0.1)]'
+            : 'text-text/70 hover:bg-surface hover:text-secondary',
           !isExpanded && !isNested && 'justify-center'
         )}
         title={!isExpanded ? item.label : undefined}
@@ -51,7 +51,10 @@ export const SidebarNavItem = React.forwardRef<HTMLAnchorElement, SidebarNavItem
       >
         {/* Icon */}
         {item.icon && (
-          <span className="flex-shrink-0 flex items-center justify-center">
+          <span className={cn(
+            "flex-shrink-0 flex items-center justify-center transition-colors",
+            isActive ? "text-primary" : "text-text/40 group-hover:text-secondary"
+          )}>
             {item.icon}
           </span>
         )}
@@ -67,10 +70,10 @@ export const SidebarNavItem = React.forwardRef<HTMLAnchorElement, SidebarNavItem
         {isExpanded && item.badge !== undefined && item.badge > 0 && (
           <span
             className={cn(
-              'flex-shrink-0 px-2 py-0.5 text-xs font-medium rounded-full',
+              'flex-shrink-0 px-2 py-0.5 text-[10px] font-bold rounded-full uppercase tracking-tight',
               isActive
-                ? 'bg-white/20 text-white'
-                : 'bg-primary/10 text-primary'
+                ? 'bg-primary/20 text-primary'
+                : 'bg-surface text-text/50'
             )}
           >
             {item.badge}
@@ -79,7 +82,7 @@ export const SidebarNavItem = React.forwardRef<HTMLAnchorElement, SidebarNavItem
 
         {/* Tooltip for collapsed state */}
         {!isExpanded && !isNested && (
-          <span className="absolute left-full ml-2 px-2 py-1 bg-secondary text-white text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 pointer-events-none">
+          <span className="absolute left-full ml-4 px-2 py-1 bg-secondary text-white text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 pointer-events-none shadow-lg">
             {item.label}
           </span>
         )}

@@ -1,11 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight, Check, AlertCircle, Clock, Loader2 } from 'lucide-react';
 
 import { useCmsError } from '@/contexts/CmsErrorContext';
-import { useCmsHeaderSlots } from '@/contexts/CmsHeaderSlotsContext';
 import { usePostEditor, EditorState } from '@/hooks/usePostEditor';
 import { usePublishPost } from '@/hooks/queries/useCmsMutations';
 import { cn } from '@/lib/utils';
@@ -32,7 +31,6 @@ const DEFAULT_STATE: EditorState = {
 export function Editor({ postId, initialData }: EditorProps) {
   const router = useRouter();
   const { showError } = useCmsError();
-  const { setActions } = useCmsHeaderSlots();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const publishMutation = usePublishPost();
@@ -97,29 +95,33 @@ export function Editor({ postId, initialData }: EditorProps) {
   const isBusy = isSaving || publishMutation.isPending;
   const editorDisabled = publishMutation.isPending;
 
-  useEffect(() => {
-    setActions(
-      <EditorHeaderActions
-        isDirty={isDirty}
-        isSaving={isBusy}
-        lastSaved={lastSaved}
-        saveError={saveError}
-        onSave={explicitSave}
-        onPublish={handlePublish}
-        canPublish={canPublish}
-        publishDisabledReason={publishDisabledReason}
-        postStatus={state.status}
-      />
-    );
-
-    return () => {
-      setActions(null);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDirty, isBusy, lastSaved, saveError, state.status]);
-
   return (
     <div className="h-full flex flex-col bg-background pointer-events-auto">
+      {/* Editor Actions Bar */}
+      <div className="flex items-center justify-between mb-6 bg-white border border-surface rounded-xl p-3 shadow-sm">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => router.push('/cms/posts')}
+            className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-sm font-medium text-text/60 hover:text-secondary hover:bg-surface transition-colors"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            Back to Posts
+          </button>
+        </div>
+        
+        <EditorHeaderActions
+          isDirty={isDirty}
+          isSaving={isBusy}
+          lastSaved={lastSaved}
+          saveError={saveError}
+          onSave={explicitSave}
+          onPublish={handlePublish}
+          canPublish={canPublish}
+          publishDisabledReason={publishDisabledReason}
+          postStatus={state.status}
+        />
+      </div>
+
       <div className="flex-1 overflow-y-auto flex flex-col lg:flex-row pointer-events-auto relative">
         <div className="flex-1 min-w-0 pointer-events-auto">
           <div className="max-w-3xl mx-auto w-full">

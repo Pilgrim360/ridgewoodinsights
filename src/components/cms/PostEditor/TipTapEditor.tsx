@@ -7,7 +7,6 @@ import { uploadPostImage } from '@/lib/cms/storage';
 import { cn } from '@/lib/utils';
 import { createPostEditorExtensions } from '@/lib/tiptap/editorExtensions';
 import { sanitizePastedHtml } from '@/lib/tiptap/sanitize';
-import { useCmsHeaderSlots } from '@/contexts/CmsHeaderSlotsContext';
 
 import { EditorImageBubbleMenu } from './EditorImageBubbleMenu';
 import { EditorToolbar } from './EditorToolbar';
@@ -31,8 +30,6 @@ export function TipTapEditor({
   characterLimit = 50000,
   onError,
 }: TipTapEditorProps) {
-  const { setSubHeader } = useCmsHeaderSlots();
-
   const [isPastingUpload, setIsPastingUpload] = useState(false);
   const editorRef = useRef<Editor | null>(null);
 
@@ -131,23 +128,6 @@ export function TipTapEditor({
     editor.setEditable(!disabled);
   }, [editor, disabled]);
 
-  useEffect(() => {
-    if (!editor) return;
-
-    setSubHeader(
-      <EditorToolbar
-        editor={editor}
-        disabled={disabled}
-        onError={onError}
-        className="w-full border-0 rounded-none bg-transparent p-0"
-      />
-    );
-
-    return () => {
-      setSubHeader(null);
-    };
-  }, [editor, disabled, onError, setSubHeader, editor?.state]);
-
   const stats = useMemo(() => {
     if (!editor) {
       return {
@@ -163,11 +143,21 @@ export function TipTapEditor({
   if (!editor) return null;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <EditorImageBubbleMenu editor={editor} disabled={disabled} onError={onError} />
 
-      <div className="overflow-hidden rounded-lg border border-surface bg-white">
-        <div className="px-4 pt-4 pb-3">
+      <div className="overflow-hidden rounded-xl border border-surface bg-white shadow-sm">
+        {/* Sticky Toolbar */}
+        <div className="sticky top-0 z-20 border-b border-surface bg-white/80 backdrop-blur-md">
+          <EditorToolbar
+            editor={editor}
+            disabled={disabled}
+            onError={onError}
+            className="w-full border-0 rounded-none bg-transparent"
+          />
+        </div>
+
+        <div className="px-6 pt-8 pb-4">
           <input
             type="text"
             value={title}
@@ -175,25 +165,27 @@ export function TipTapEditor({
             disabled={disabled}
             placeholder="Post title…"
             className={cn(
-              'w-full bg-transparent text-3xl font-bold text-secondary',
-              'placeholder:text-text/30 focus:outline-none',
+              'w-full bg-transparent text-4xl font-bold text-secondary',
+              'placeholder:text-text/20 focus:outline-none tracking-tight',
               disabled && 'text-text/50'
             )}
           />
         </div>
 
-        <div className="border-t border-surface">
+        <div className="px-2">
           <EditorContent editor={editor} />
         </div>
 
-        <div className="flex items-center justify-between border-t border-surface bg-background px-4 py-2 text-xs text-text/70">
-          <span>
-            Words:{' '}
-            <span className="font-medium text-secondary">{stats.words.toLocaleString()}</span>
-          </span>
+        <div className="flex items-center justify-between border-t border-surface bg-background/50 px-6 py-3 text-xs text-text/50">
+          <div className="flex items-center gap-4">
+            <span>
+              Words:{' '}
+              <span className="font-medium text-secondary">{stats.words.toLocaleString()}</span>
+            </span>
+          </div>
 
           {isPastingUpload ? (
-            <span className="inline-flex items-center gap-2">
+            <span className="inline-flex items-center gap-2 text-primary font-medium">
               <span className="h-3 w-3 animate-spin rounded-full border-2 border-primary border-t-transparent" />
               Uploading…
             </span>

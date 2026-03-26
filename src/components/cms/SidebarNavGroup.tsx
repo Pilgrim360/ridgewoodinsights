@@ -17,7 +17,7 @@ interface SidebarNavGroupProps {
 }
 
 /**
- * SidebarNavGroup - Expandable submenu group
+ * SidebarNavGroup - Expandable submenu group with refined SaaS styling
  * 
  * Features:
  * - Main item is clickable link (routes to first item)
@@ -49,8 +49,10 @@ export const SidebarNavGroup = React.forwardRef<HTMLDivElement, SidebarNavGroupP
             onClick={onItemClick}
             className={cn(
               'flex-1 flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200',
-              'hover:bg-surface/50 group',
-              hasActiveChild && 'bg-primary/5',
+              'hover:no-underline group',
+              hasActiveChild 
+                ? 'bg-primary/5 text-primary' 
+                : 'text-text/70 hover:bg-surface hover:text-secondary',
               !isExpanded && 'justify-center'
             )}
             title={!isExpanded ? group.label : undefined}
@@ -58,8 +60,8 @@ export const SidebarNavGroup = React.forwardRef<HTMLDivElement, SidebarNavGroupP
             {/* Icon */}
             <span
               className={cn(
-                'flex-shrink-0 flex items-center justify-center',
-                hasActiveChild ? 'text-primary' : 'text-secondary'
+                'flex-shrink-0 flex items-center justify-center transition-colors',
+                hasActiveChild ? 'text-primary' : 'text-text/40 group-hover:text-secondary'
               )}
             >
               {group.icon}
@@ -69,8 +71,7 @@ export const SidebarNavGroup = React.forwardRef<HTMLDivElement, SidebarNavGroupP
             {isExpanded && (
               <span
                 className={cn(
-                  'flex-1 text-left text-sm font-medium whitespace-nowrap',
-                  hasActiveChild ? 'text-primary' : 'text-secondary'
+                  'flex-1 text-left text-sm font-medium whitespace-nowrap'
                 )}
               >
                 {group.label}
@@ -79,7 +80,7 @@ export const SidebarNavGroup = React.forwardRef<HTMLDivElement, SidebarNavGroupP
 
             {/* Tooltip for collapsed state */}
             {!isExpanded && (
-              <span className="absolute left-full ml-2 px-2 py-1 bg-secondary text-white text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 pointer-events-none">
+              <span className="absolute left-full ml-4 px-2 py-1 bg-secondary text-white text-xs rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap z-50 pointer-events-none shadow-lg">
                 {group.label}
               </span>
             )}
@@ -89,13 +90,14 @@ export const SidebarNavGroup = React.forwardRef<HTMLDivElement, SidebarNavGroupP
           {isExpanded && (
             <button
               onClick={(e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 onToggleGroup();
               }}
               className={cn(
                 'flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-200',
-                'hover:bg-surface/50 mr-1',
-                'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2'
+                'hover:bg-surface mr-1 text-text/40 hover:text-secondary',
+                'focus:outline-none focus:ring-2 focus:ring-primary/20'
               )}
               aria-expanded={isGroupExpanded}
               aria-controls={`submenu-${group.id}`}
@@ -104,7 +106,6 @@ export const SidebarNavGroup = React.forwardRef<HTMLDivElement, SidebarNavGroupP
               <ChevronDown
                 className={cn(
                   'w-4 h-4 transition-transform duration-200',
-                  hasActiveChild ? 'text-primary' : 'text-secondary',
                   isGroupExpanded && 'rotate-180'
                 )}
               />

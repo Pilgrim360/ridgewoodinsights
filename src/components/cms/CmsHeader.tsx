@@ -11,6 +11,12 @@ interface CmsHeaderProps {
   onSearchOpen?: () => void;
 }
 
+/**
+ * CmsHeader - Minimal mobile-only header
+ * 
+ * Only visible on mobile devices (< md).
+ * Provides access to sidebar toggle and search.
+ */
 export const CmsHeader = React.forwardRef<HTMLElement, CmsHeaderProps>(
   ({ onMenuToggle, isMobileMenuOpen, onSearchOpen }, ref) => {
     const { slots } = useCmsHeaderSlots();
@@ -19,8 +25,8 @@ export const CmsHeader = React.forwardRef<HTMLElement, CmsHeaderProps>(
       <header
         ref={ref}
         className={cn(
-          'bg-white border-b border-surface px-4 py-3 md:px-6',
-          'flex items-center justify-between gap-4'
+          'md:hidden bg-white border-b border-surface px-4 py-2',
+          'flex items-center justify-between gap-4 h-14 sticky top-0 z-30'
         )}
         role="banner"
       >
@@ -28,9 +34,9 @@ export const CmsHeader = React.forwardRef<HTMLElement, CmsHeaderProps>(
         <button
           onClick={onMenuToggle}
           className={cn(
-            'md:hidden flex-shrink-0 w-9 h-9 flex items-center justify-center',
+            'flex-shrink-0 w-9 h-9 flex items-center justify-center',
             'rounded-lg text-secondary hover:bg-surface',
-            'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+            'focus:outline-none focus:ring-2 focus:ring-primary/20',
             'transition-colors'
           )}
           aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
@@ -44,34 +50,30 @@ export const CmsHeader = React.forwardRef<HTMLElement, CmsHeaderProps>(
           )}
         </button>
 
-        {/* Title / Breadcrumbs area */}
-        <div className="flex-1 flex items-center gap-2 min-w-0">
+        {/* Title area */}
+        <div className="flex-1 flex items-center justify-center min-w-0">
           {slots.title ? (
-            <div className="truncate">{slots.title}</div>
-          ) : null}
+            <div className="truncate font-semibold text-sm text-secondary">{slots.title}</div>
+          ) : (
+            <span className="font-bold text-primary tracking-tight">RIDGEWOOD</span>
+          )}
         </div>
 
-        {/* Right side: search + actions */}
-        <div className="flex items-center gap-2">
+        {/* Right side: search */}
+        <div className="flex items-center gap-1 w-9 justify-end">
           {onSearchOpen && (
             <button
               onClick={onSearchOpen}
               className={cn(
-                'flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm',
-                'text-text/50 bg-background border border-surface',
-                'hover:border-primary/30 hover:text-text/70',
-                'transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50'
+                'flex items-center justify-center w-9 h-9 rounded-lg',
+                'text-text/50 hover:bg-surface hover:text-secondary',
+                'transition-colors focus:outline-none'
               )}
-              aria-label="Search (Ctrl+K)"
+              aria-label="Search"
             >
-              <Search className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline text-xs">Search…</span>
-              <kbd className="hidden sm:inline text-xs bg-surface px-1 py-0.5 rounded font-mono">
-                ⌘K
-              </kbd>
+              <Search className="w-5 h-5" />
             </button>
           )}
-          {slots.actions}
         </div>
       </header>
     );
