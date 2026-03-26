@@ -5,6 +5,7 @@ export { SidebarNav } from './SidebarNav';
 export { SidebarNavItem } from './SidebarNavItem';
 export { SidebarNavGroup } from './SidebarNavGroup';
 export { SidebarFooter } from './SidebarFooter';
+export { UserProfileDropdown } from './UserProfileDropdown';
 
 // CMS Header
 export { CmsHeader } from './CmsHeader';

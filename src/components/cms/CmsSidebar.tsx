@@ -16,6 +16,7 @@ import {
 
 interface CmsSidebarProps {
   state: SidebarState;
+  onSearchOpen?: () => void;
 }
 
 /**
@@ -30,7 +31,7 @@ interface CmsSidebarProps {
  * - Accessible keyboard navigation
  */
 export const CmsSidebar = React.forwardRef<HTMLDivElement, CmsSidebarProps>(
-  ({ state }, ref) => {
+  ({ state, onSearchOpen }, ref) => {
     const { isExpanded, isMobileOpen, expandedGroups, toggleGroup, closeMobileMenu } = state;
     const focusTrapRef = useRef<HTMLDivElement>(null);
 
@@ -39,12 +40,12 @@ export const CmsSidebar = React.forwardRef<HTMLDivElement, CmsSidebarProps>(
       {
         href: '/cms',
         label: 'Dashboard',
-        icon: <LayoutDashboard className="w-5 h-5" />,
+        icon: <LayoutDashboard className="w-4 h-4" />,
       },
       {
         id: 'posts',
         label: 'Posts',
-        icon: <FileText className="w-5 h-5" />,
+        icon: <FileText className="w-4 h-4" />,
         items: [
           { href: '/cms/posts', label: 'All Posts', icon: null },
           { href: '/cms/posts?status=draft', label: 'Drafts', icon: null },
@@ -55,17 +56,17 @@ export const CmsSidebar = React.forwardRef<HTMLDivElement, CmsSidebarProps>(
       {
         href: '/cms/categories',
         label: 'Categories',
-        icon: <Tag className="w-5 h-5" />,
+        icon: <Tag className="w-4 h-4" />,
       },
       {
         href: '/cms/media',
         label: 'Media Library',
-        icon: <ImageIcon className="w-5 h-5" />,
+        icon: <ImageIcon className="w-4 h-4" />,
       },
       {
         href: '/cms/settings',
         label: 'Settings',
-        icon: <Settings className="w-5 h-5" />,
+        icon: <Settings className="w-4 h-4" />,
       },
     ];
 
@@ -137,7 +138,7 @@ export const CmsSidebar = React.forwardRef<HTMLDivElement, CmsSidebarProps>(
           role="navigation"
           aria-label="Main navigation"
         >
-          <SidebarHeader isExpanded={isExpanded} />
+          <SidebarHeader isExpanded={isExpanded} onSearchOpen={onSearchOpen} />
           
           <SidebarNav
             items={navItems}
