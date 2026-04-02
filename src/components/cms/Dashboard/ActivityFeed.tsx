@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { CheckCircle2, FileEdit, RefreshCw, ChevronRight } from 'lucide-react';
+import { CheckCircle2, FileEdit, RefreshCw, ChevronRight, Eye } from 'lucide-react';
 import { RecentActivity } from '@/types/cms';
 import { formatRelativeTime } from '@/lib/cms/dates';
 import { cn } from '@/lib/utils';
@@ -100,7 +100,10 @@ export function ActivityFeed({
   }
 
   return (
-    <div className={cn('rounded-xl border border-surface bg-white overflow-hidden', className)} {...props}>
+    <div
+      className={cn('rounded-xl border border-surface bg-white overflow-hidden', className)}
+      {...props}
+    >
       <div className="px-6 py-4 border-b border-surface flex items-center justify-between">
         <h3 className="text-base font-semibold text-secondary">Recent Activity</h3>
         <Link
@@ -116,34 +119,53 @@ export function ActivityFeed({
         {activities.map((activity) => {
           const config = ACTIVITY_CONFIG[activity.type];
           return (
-            <Link
+            <div
               key={activity.id}
-              href={`/cms/posts/${activity.post_id}`}
               className="flex items-center gap-4 px-6 py-3.5 hover:bg-background transition-colors group"
             >
-              <ActivityIcon type={activity.type} />
+              <Link
+                href={`/cms/posts/${activity.post_id}`}
+                className="flex flex-1 items-center gap-4 min-w-0"
+              >
+                <ActivityIcon type={activity.type} />
 
-              <div className="flex-1 min-w-0">
-                <span
-                  className={cn(
-                    'text-xs font-semibold uppercase tracking-wide',
-                    config.labelClass
-                  )}
-                >
-                  {config.label}
-                </span>
-                <p className="text-sm font-medium text-secondary truncate mt-0.5">
-                  {activity.post_title}
-                </p>
-              </div>
+                <div className="flex-1 min-w-0">
+                  <span
+                    className={cn(
+                      'text-xs font-semibold uppercase tracking-wide',
+                      config.labelClass
+                    )}
+                  >
+                    {config.label}
+                  </span>
+                  <p className="text-sm font-medium text-secondary truncate mt-0.5">
+                    {activity.post_title}
+                  </p>
+                </div>
+              </Link>
 
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <span className="text-xs text-text/50">
+              <div className="flex items-center gap-3 flex-shrink-0">
+                <span className="hidden sm:block text-xs text-text/50">
                   {formatRelativeTime(activity.created_at)}
                 </span>
-                <ChevronRight className="w-3.5 h-3.5 text-text/30 group-hover:text-text/60 transition-colors" />
+
+                {activity.type === 'post_published' && activity.post_slug && (
+                  <a
+                    href={`/insights/${activity.post_slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-1.5 rounded-md hover:bg-surface text-text/40 hover:text-primary transition-colors"
+                    title="View live post"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                  </a>
+                )}
+
+                <Link href={`/cms/posts/${activity.post_id}`} className="group-hover:translate-x-0.5 transition-transform duration-200">
+                  <ChevronRight className="w-3.5 h-3.5 text-text/30 group-hover:text-text/60 transition-colors" />
+                </Link>
               </div>
-            </Link>
+            </div>
           );
         })}
       </div>

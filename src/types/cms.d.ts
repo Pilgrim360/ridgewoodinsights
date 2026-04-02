@@ -70,6 +70,7 @@ export interface RecentActivity {
   type: 'post_published' | 'post_drafted' | 'post_updated';
   post_title: string;
   post_id: string;
+  post_slug?: string;
   created_at: string;
 }
 
