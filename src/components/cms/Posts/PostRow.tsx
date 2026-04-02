@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { MoreVertical, Edit2, Trash2 } from 'lucide-react';
+import { MoreVertical, Edit2, Trash2, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PostData, CategoryData } from '@/types/cms';
 import { formatDate } from '@/lib/cms/dates';
@@ -134,12 +134,25 @@ export function PostRow({
           {isMenuOpen && (
             <div
               className={cn(
-                'absolute right-0 mt-1 w-40 rounded-xl',
+                'absolute right-0 mt-1 w-48 rounded-xl',
                 'bg-white border border-surface shadow-lg',
                 'z-20 py-1 overflow-hidden'
               )}
               role="menu"
             >
+              <Link
+                href={`/insights/${post.slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(
+                  'flex items-center gap-2.5 px-4 py-2.5 text-sm',
+                  'text-text hover:bg-background transition-colors'
+                )}
+                role="menuitem"
+              >
+                <ExternalLink className="w-4 h-4" />
+                View Post
+              </Link>
               <Link
                 href={`/cms/posts/${post.id}`}
                 className={cn(
