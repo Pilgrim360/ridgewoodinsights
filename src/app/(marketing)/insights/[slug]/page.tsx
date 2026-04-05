@@ -116,76 +116,74 @@ export default async function BlogPostPage({ params }: PageProps) {
       />
       <ReadingProgress />
       
-      <article className="min-h-screen bg-white">
-        {/* Hero Section with Background Image */}
-        {post.image && (
-          <div className="relative w-full h-[60vh] md:h-[70vh] overflow-hidden">
-            {/* Background Image */}
-            <Image
-              src={post.image}
-              alt={post.title}
-              fill
-              className="object-cover"
-              priority
-            />
-            
-            {/* Gradient Overlay - Increased opacity for better contrast */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
-            
-            {/* Hero Content - Lower Left Positioning */}
-            <div className="absolute inset-0 flex items-end">
-              <Container maxWidth="xl">
-                <div className="max-w-4xl pb-8 md:pb-12 lg:pb-16 px-4">
-                  {/* Category Badge */}
-                  <div className="flex mb-3 md:mb-4">
-                    <Badge className="bg-white/90 text-secondary backdrop-blur-sm hover:bg-white transition-colors border-transparent px-3 py-1 text-xs">
-                      {post.category}
-                    </Badge>
-                  </div>
+      <article className="min-h-screen bg-white pb-20">
+        {/* Editorial Header Section */}
+        <header className="pt-16 pb-12 md:pt-24 md:pb-16 bg-white">
+          <Container maxWidth="xl">
+            <div className="max-w-3xl mx-auto text-center">
+              {/* Category Badge */}
+              <div className="flex justify-center mb-6">
+                <Badge className="bg-surface text-secondary/80 hover:bg-surface-darker transition-colors border-transparent px-3 py-1 text-xs uppercase tracking-widest font-semibold">
+                  {post.category}
+                </Badge>
+              </div>
 
-                  {/* Title */}
-                  <Heading 
-                    as={1} 
-                    className="text-2xl md:text-3xl lg:text-4xl font-sans font-bold text-white mb-3 md:mb-4 leading-tight tracking-tight"
-                  >
-                    {post.title}
-                  </Heading>
+              {/* Title */}
+              <Heading
+                as={1}
+                className="text-3xl md:text-4xl lg:text-5xl font-sans font-bold text-secondary mb-6 leading-tight tracking-tight"
+              >
+                {post.title}
+              </Heading>
 
-                  {/* Metadata */}
-                  <div className="flex flex-wrap items-center gap-2 md:gap-3 text-white/70 text-xs md:text-sm font-medium">
-                    <span>
-                      {formatDate(post.date)}
-                    </span>
-                    {post.readTime && (
-                      <>
-                        <span>•</span>
-                        <span>{post.readTime}</span>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </Container>
+              {/* Metadata */}
+              <div className="flex items-center justify-center gap-3 text-secondary/60 text-sm md:text-base font-medium">
+                <time dateTime={post.date}>
+                  {formatDate(post.date)}
+                </time>
+                {post.readTime && (
+                  <>
+                    <span className="text-secondary/30">•</span>
+                    <span>{post.readTime}</span>
+                  </>
+                )}
+              </div>
             </div>
-          </div>
+          </Container>
+        </header>
+
+        {/* Hero Image - Wide Bleed style */}
+        {post.image && (
+          <Container maxWidth="2xl" className="mb-16 md:mb-20">
+            <div className="relative w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden rounded-xl shadow-2xl shadow-secondary/5">
+              <Image
+                src={post.image}
+                alt={post.title}
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+          </Container>
         )}
 
         {/* Content Section */}
-        <Container maxWidth="xl" className="py-16 md:py-24">
-          <div className="flex flex-col md:flex-row gap-8 md:gap-12 lg:gap-24 relative">
-            
-            {/* Sidebar / Share Buttons - Sticky on Desktop */}
-            <div className="hidden md:block w-12 flex-shrink-0">
+        <Container maxWidth="xl">
+          <div className="relative">
+            {/* Desktop Share Buttons - Floating to the left */}
+            <div className="hidden xl:block absolute -left-24 top-0 h-full">
               <div className="sticky top-32">
+                 <p className="text-[10px] text-secondary/40 font-bold uppercase tracking-tighter mb-4 -rotate-90 origin-left translate-x-4">Share</p>
                  <ShareButtons title={post.title} />
               </div>
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 max-w-4xl mx-auto md:mx-0">
+            <div className="max-w-3xl mx-auto">
               <div 
-                className="prose prose-lg md:prose-xl prose-slate max-w-none 
+                className="prose prose-lg prose-slate max-w-none
                   prose-headings:text-secondary prose-headings:font-bold prose-headings:tracking-tight
-                  prose-p:text-text prose-p:leading-8 prose-p:font-light
+                  prose-p:text-text prose-p:leading-relaxed prose-p:font-normal
                   prose-strong:text-secondary prose-strong:font-semibold
                   prose-a:text-primary prose-a:no-underline prose-a:border-b prose-a:border-primary/30 hover:prose-a:border-primary transition-colors
                   prose-blockquote:border-l-primary prose-blockquote:text-secondary/80 prose-blockquote:italic
@@ -193,19 +191,23 @@ export default async function BlogPostPage({ params }: PageProps) {
                 dangerouslySetInnerHTML={{ __html: cleanContent }}
               />
 
-              {/* Mobile Share Buttons */}
-              <div className="md:hidden mt-12 pt-8 border-t border-surface">
+              {/* Share Buttons (Mobile and Tablet) */}
+              <div className="xl:hidden mt-12 pt-8 border-t border-surface">
                 <p className="text-sm text-secondary/60 mb-4 font-medium uppercase tracking-wider">Share this article</p>
                 <ShareButtons title={post.title} />
               </div>
 
               {/* Navigation Footer */}
-              <div className="mt-20 pt-10 border-t border-surface">
+              <div className="mt-20 pt-10 border-t border-surface flex items-center justify-between">
                 <Link href="/insights">
                   <Button variant="ghost" className="pl-0 text-secondary hover:text-primary hover:bg-transparent -ml-4 group">
                     <span className="mr-2 group-hover:-translate-x-1 transition-transform">←</span> Back to Insights
                   </Button>
                 </Link>
+
+                <div className="text-xs text-secondary/40 font-medium">
+                  © {new Date().getFullYear()} Ridgewood Insights
+                </div>
               </div>
             </div>
           </div>
