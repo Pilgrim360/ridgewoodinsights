@@ -2,8 +2,9 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { MoreVertical, Edit2, Trash2 } from 'lucide-react';
+import { MoreVertical, Edit2, Trash2, Copy, Eye } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useCmsError } from '@/contexts/CmsErrorContext';
 import { PostData, CategoryData } from '@/types/cms';
 import { formatDate } from '@/lib/cms/dates';
 
@@ -40,8 +41,10 @@ export function PostRow({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const menuRef = useRef<HTMLTableCellElement>(null);
+  const { showSuccess } = useCmsError();
 
   const categoryName = categories.find((c) => c.id === post.category_id)?.name ?? 'Uncategorized';
+  const publicUrl = `/insights/${post.slug}`;
 
   useEffect(() => {
     if (!isMenuOpen) return;
@@ -69,6 +72,17 @@ export function PostRow({
     }
   };
 
+  const handleCopyLink = async () => {
+    const fullUrl = `${window.location.origin}${publicUrl}`;
+    try {
+      await navigator.clipboard.writeText(fullUrl);
+      showSuccess('Link copied to clipboard');
+    } catch {
+      // Fallback
+    }
+    setIsMenuOpen(false);
+  };
+
   return (
     <>
       <tr
@@ -88,12 +102,23 @@ export function PostRow({
         </td>
 
         <td className="px-4 py-3 text-sm">
-          <Link
-            href={`/cms/posts/${post.id}`}
-            className="font-medium text-secondary hover:text-primary transition-colors"
-          >
-            {post.title}
-          </Link>
+          <div className="flex items-center gap-2 group/title">
+            <Link
+              href={`/cms/posts/${post.id}`}
+              className="font-medium text-secondary hover:text-primary transition-colors"
+            >
+              {post.title}
+            </Link>
+            <a
+              href={publicUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-text/30 hover:text-primary transition-colors opacity-0 group-hover/title:opacity-100"
+              title={post.status === 'published' ? 'View live post' : 'Preview post'}
+            >
+              <Eye className="w-3.5 h-3.5" />
+            </a>
+          </div>
         </td>
 
         <td className="px-4 py-3 text-sm">
@@ -151,6 +176,33 @@ export function PostRow({
                 <Edit2 className="w-4 h-4" />
                 Edit
               </Link>
+
+              <a
+                href={publicUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(
+                  'flex items-center gap-2.5 px-4 py-2.5 text-sm',
+                  'text-secondary hover:bg-background transition-colors'
+                )}
+                role="menuitem"
+              >
+                <Eye className="w-4 h-4" />
+                {post.status === 'published' ? 'View Live' : 'Preview'}
+              </a>
+
+              <button
+                onClick={handleCopyLink}
+                className={cn(
+                  'w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-left',
+                  'text-secondary hover:bg-background transition-colors'
+                )}
+                role="menuitem"
+              >
+                <Copy className="w-4 h-4" />
+                Copy Link
+              </button>
+
               <button
                 onClick={handleDeleteClick}
                 disabled={isDeleting || isDeleteLoading}

@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronLeft, ChevronRight, Check, AlertCircle, Clock, Loader2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Check, AlertCircle, Clock, Loader2, Eye } from 'lucide-react';
 
 import { useCmsError } from '@/contexts/CmsErrorContext';
 import { usePostEditor, EditorState } from '@/hooks/usePostEditor';
@@ -119,6 +119,7 @@ export function Editor({ postId, initialData }: EditorProps) {
           canPublish={canPublish}
           publishDisabledReason={publishDisabledReason}
           postStatus={state.status}
+          postSlug={state.slug}
         />
       </div>
 
@@ -195,6 +196,7 @@ interface EditorHeaderActionsProps {
   canPublish: boolean;
   publishDisabledReason?: string;
   postStatus: 'draft' | 'published' | 'scheduled';
+  postSlug?: string;
 }
 
 function EditorHeaderActions({
@@ -207,11 +209,28 @@ function EditorHeaderActions({
   canPublish,
   publishDisabledReason,
   postStatus,
+  postSlug,
 }: EditorHeaderActionsProps) {
   const publishDisabled = isSaving || !canPublish;
 
   return (
     <div className="flex items-center gap-3">
+      {postSlug && (
+        <a
+          href={`/insights/${postSlug}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={cn(
+            'flex items-center gap-1.5 h-8 px-3 rounded-lg text-sm font-medium transition-colors',
+            'bg-white text-secondary border border-surface hover:bg-surface'
+          )}
+        >
+          <Eye className="w-4 h-4" />
+          <span className="hidden sm:inline">
+            {postStatus === 'published' ? 'View Live' : 'Preview'}
+          </span>
+        </a>
+      )}
       {/* Save status indicator */}
       <div className="hidden sm:flex items-center text-xs">
         {saveError ? (

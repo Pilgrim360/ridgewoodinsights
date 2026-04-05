@@ -51,7 +51,7 @@ export async function getRecentActivity(limit: number = 10): Promise<RecentActiv
   try {
     const { data, error } = await supabase
       .from('posts')
-      .select('id, title, status, updated_at, created_at')
+      .select('id, title, slug, status, updated_at, created_at')
       .order('updated_at', { ascending: false })
       .limit(limit);
 
@@ -71,6 +71,7 @@ export async function getRecentActivity(limit: number = 10): Promise<RecentActiv
             : 'post_updated',
       post_title: post.title,
       post_id: post.id,
+      post_slug: post.slug,
       created_at: post.updated_at || post.created_at,
     }));
   } catch (error) {

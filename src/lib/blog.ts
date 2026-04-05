@@ -46,6 +46,7 @@ export async function getPublishedPostsPage({
       id,
       title,
       slug,
+      status,
       excerpt,
       content_html,
       published_at,
@@ -132,7 +133,6 @@ export async function getPostBySlug(
     `
     )
     .eq('slug', slug)
-    .eq('status', 'published')
     .single();
 
   if (error || !post) return null;
