@@ -117,58 +117,60 @@ export default async function BlogPostPage({ params }: PageProps) {
       <ReadingProgress />
       
       <article className="min-h-screen bg-white pb-20">
-        {/* Editorial Header Section */}
-        <header className="pt-16 pb-12 md:pt-24 md:pb-16 bg-white">
-          <Container maxWidth="xl">
-            <div className="max-w-3xl mx-auto text-center">
-              {/* Category Badge */}
-              <div className="flex justify-center mb-6">
-                <Badge className="bg-surface text-secondary/80 hover:bg-surface-darker transition-colors border-transparent px-3 py-1 text-xs uppercase tracking-widest font-semibold">
-                  {post.category}
-                </Badge>
-              </div>
-
-              {/* Title */}
-              <Heading
-                as={1}
-                className="text-3xl md:text-4xl lg:text-5xl font-sans font-bold text-secondary mb-6 leading-tight tracking-tight"
-              >
-                {post.title}
-              </Heading>
-
-              {/* Metadata */}
-              <div className="flex items-center justify-center gap-3 text-secondary/60 text-sm md:text-base font-medium">
-                <time dateTime={post.date}>
-                  {formatDate(post.date)}
-                </time>
-                {post.readTime && (
-                  <>
-                    <span className="text-secondary/30">•</span>
-                    <span>{post.readTime}</span>
-                  </>
-                )}
-              </div>
-            </div>
-          </Container>
-        </header>
-
-        {/* Hero Image - Wide Bleed style */}
+        {/* Hero Section with Background Image */}
         {post.image && (
-          <Container maxWidth="2xl" className="mb-16 md:mb-20">
-            <div className="relative w-full aspect-[16/9] md:aspect-[21/9] overflow-hidden rounded-xl shadow-2xl shadow-secondary/5">
-              <Image
-                src={post.image}
-                alt={post.title}
-                fill
-                className="object-cover"
-                priority
-              />
+          <div className="relative w-full h-[60vh] md:h-[75vh] overflow-hidden">
+            {/* Background Image */}
+            <Image
+              src={post.image}
+              alt={post.title}
+              fill
+              className="object-cover"
+              priority
+            />
+
+            {/* Gradient Overlay - Sophisticated darkening for legibility */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/30" />
+
+            {/* Hero Content - Centered for refined balance */}
+            <div className="absolute inset-0 flex items-center justify-center text-center">
+              <Container maxWidth="xl">
+                <div className="max-w-4xl mx-auto px-4">
+                  {/* Category Badge */}
+                  <div className="flex justify-center mb-6">
+                    <Badge className="bg-white/95 text-secondary backdrop-blur-sm hover:bg-white transition-colors border-transparent px-4 py-1.5 text-[10px] md:text-xs uppercase tracking-[0.2em] font-bold">
+                      {post.category}
+                    </Badge>
+                  </div>
+
+                  {/* Title */}
+                  <Heading
+                    as={1}
+                    className="text-3xl md:text-5xl lg:text-6xl font-sans font-extrabold text-white mb-6 md:mb-8 leading-[1.1] tracking-tight drop-shadow-sm"
+                  >
+                    {post.title}
+                  </Heading>
+
+                  {/* Metadata */}
+                  <div className="flex items-center justify-center gap-4 text-white/80 text-sm md:text-base font-medium tracking-wide">
+                    <time dateTime={post.date}>
+                      {formatDate(post.date)}
+                    </time>
+                    {post.readTime && (
+                      <>
+                        <span className="text-white/40">•</span>
+                        <span>{post.readTime}</span>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </Container>
             </div>
-          </Container>
+          </div>
         )}
 
         {/* Content Section */}
-        <Container maxWidth="xl">
+        <Container maxWidth="xl" className="py-20 md:py-32">
           <div className="relative">
             {/* Desktop Share Buttons - Floating to the left */}
             <div className="hidden xl:block absolute -left-24 top-0 h-full">
@@ -180,6 +182,13 @@ export default async function BlogPostPage({ params }: PageProps) {
 
             {/* Main Content */}
             <div className="max-w-3xl mx-auto">
+              {/* Optional: Excerpt or Lead Paragraph */}
+              {post.excerpt && (
+                <p className="text-xl md:text-2xl text-secondary/70 font-light leading-relaxed mb-12 italic border-l-4 border-primary/20 pl-8">
+                  {post.excerpt}
+                </p>
+              )}
+
               <div 
                 className="prose prose-lg prose-slate max-w-none
                   prose-headings:text-secondary prose-headings:font-bold prose-headings:tracking-tight
