@@ -146,7 +146,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                   {/* Title */}
                   <Heading
                     as={1}
-                    className="text-xl md:text-3xl lg:text-4xl font-sans font-extrabold text-white mb-3 md:mb-4 leading-[1.1] tracking-tight drop-shadow-sm"
+                    className="text-2xl md:text-4xl lg:text-5xl font-sans font-extrabold text-white mb-3 md:mb-4 leading-[1.1] tracking-tight drop-shadow-sm"
                   >
                     {post.title}
                   </Heading>
@@ -170,7 +170,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         )}
 
         {/* Content Section */}
-        <Container maxWidth="xl" className="py-20 md:py-32">
+        <Container maxWidth="xl" className="py-12 md:py-16">
           <div className="relative">
             {/* Desktop Share Buttons - Floating to the left */}
             <div className="hidden xl:block absolute -left-24 top-0 h-full">
@@ -182,24 +182,17 @@ export default async function BlogPostPage({ params }: PageProps) {
 
             {/* Main Content */}
             <div className="max-w-3xl mx-auto">
-              {/* Optional: Excerpt or Lead Paragraph */}
-              {post.excerpt && (
-                <p className="text-xl md:text-2xl text-secondary/70 font-light leading-relaxed mb-8 italic border-l-4 border-primary/20 pl-8">
-                  {post.excerpt}
-                </p>
-              )}
-
               <div 
                 className="prose prose-lg prose-slate max-w-none
                   prose-headings:text-secondary prose-headings:font-bold prose-headings:tracking-tight
-                  prose-headings:mt-6 prose-headings:mb-3
+                  prose-headings:mt-4 prose-headings:mb-2
                   prose-p:text-text prose-p:leading-relaxed prose-p:font-normal
-                  prose-p:mb-3
+                  prose-p:mb-2
                   prose-strong:text-secondary prose-strong:font-semibold
                   prose-a:text-primary prose-a:no-underline prose-a:border-b prose-a:border-primary/30 hover:prose-a:border-primary transition-colors
-                  prose-blockquote:border-l-primary prose-blockquote:text-secondary/80 prose-blockquote:italic prose-blockquote:my-4
-                  prose-ul:my-3 prose-ol:my-3 prose-li:my-0.5
-                  prose-img:rounded-lg prose-img:shadow-sm prose-img:my-6"
+                  prose-blockquote:border-l-primary prose-blockquote:text-secondary/80 prose-blockquote:italic prose-blockquote:my-2
+                  prose-ul:my-2 prose-ol:my-2 prose-li:my-0
+                  prose-img:rounded-lg prose-img:shadow-sm prose-img:my-4"
                 dangerouslySetInnerHTML={{ __html: cleanContent }}
               />
 
