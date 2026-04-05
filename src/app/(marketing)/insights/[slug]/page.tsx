@@ -210,16 +210,12 @@ export default async function BlogPostPage({ params }: PageProps) {
               </div>
 
               {/* Navigation Footer */}
-              <div className="mt-20 pt-10 border-t border-surface flex items-center justify-between">
+              <div className="mt-20 pt-10 border-t border-surface">
                 <Link href="/insights">
                   <Button variant="ghost" className="pl-0 text-secondary hover:text-primary hover:bg-transparent -ml-4 group">
                     <span className="mr-2 group-hover:-translate-x-1 transition-transform">←</span> Back to Insights
                   </Button>
                 </Link>
-
-                <div className="text-xs text-secondary/40 font-medium">
-                  © {new Date().getFullYear()} Ridgewood Insights
-                </div>
               </div>
             </div>
           </div>
