@@ -109,17 +109,15 @@ export function PostRow({
             >
               {post.title}
             </Link>
-            {post.status === 'published' && (
-              <a
-                href={publicUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-text/30 hover:text-primary transition-colors opacity-0 group-hover/title:opacity-100"
-                title="View live post"
-              >
-                <Eye className="w-3.5 h-3.5" />
-              </a>
-            )}
+            <a
+              href={publicUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-text/30 hover:text-primary transition-colors opacity-0 group-hover/title:opacity-100"
+              title={post.status === 'published' ? 'View live post' : 'Preview post'}
+            >
+              <Eye className="w-3.5 h-3.5" />
+            </a>
           </div>
         </td>
 
@@ -179,21 +177,19 @@ export function PostRow({
                 Edit
               </Link>
 
-              {post.status === 'published' && (
-                <a
-                  href={publicUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={cn(
-                    'flex items-center gap-2.5 px-4 py-2.5 text-sm',
-                    'text-secondary hover:bg-background transition-colors'
-                  )}
-                  role="menuitem"
-                >
-                  <Eye className="w-4 h-4" />
-                  View Live
-                </a>
-              )}
+              <a
+                href={publicUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(
+                  'flex items-center gap-2.5 px-4 py-2.5 text-sm',
+                  'text-secondary hover:bg-background transition-colors'
+                )}
+                role="menuitem"
+              >
+                <Eye className="w-4 h-4" />
+                {post.status === 'published' ? 'View Live' : 'Preview'}
+              </a>
 
               <button
                 onClick={handleCopyLink}

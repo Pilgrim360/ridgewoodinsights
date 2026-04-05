@@ -149,13 +149,13 @@ export function ActivityFeed({
                   {formatRelativeTime(activity.created_at)}
                 </span>
 
-                {activity.type === 'post_published' && activity.post_slug && (
+                {activity.post_slug && (
                   <a
                     href={`/insights/${activity.post_slug}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-1.5 rounded-md hover:bg-surface text-text/40 hover:text-primary transition-colors"
-                    title="View live post"
+                    title={activity.type === 'post_published' ? 'View live post' : 'Preview post'}
                   >
                     <Eye className="w-3.5 h-3.5" />
                   </a>

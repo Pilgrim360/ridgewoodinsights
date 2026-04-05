@@ -215,7 +215,7 @@ function EditorHeaderActions({
 
   return (
     <div className="flex items-center gap-3">
-      {postStatus === 'published' && postSlug && (
+      {postSlug && (
         <a
           href={`/insights/${postSlug}`}
           target="_blank"
@@ -226,7 +226,9 @@ function EditorHeaderActions({
           )}
         >
           <Eye className="w-4 h-4" />
-          <span className="hidden sm:inline">View Live</span>
+          <span className="hidden sm:inline">
+            {postStatus === 'published' ? 'View Live' : 'Preview'}
+          </span>
         </a>
       )}
       {/* Save status indicator */}
