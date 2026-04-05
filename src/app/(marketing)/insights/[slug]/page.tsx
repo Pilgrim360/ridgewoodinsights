@@ -74,7 +74,6 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   const cleanContent = sanitizeContent(post.content);
 
-  // Generate structured data for blog post
   const postUrl = `${BASE_URL}/insights/${slug}`;
   const blogPostingSchema = generateBlogPostingSchema({
     headline: post.title,
@@ -93,7 +92,6 @@ export default async function BlogPostPage({ params }: PageProps) {
     keywords: [post.category, 'accounting Zambia', 'tax services', 'business insights'],
   });
 
-  // Generate breadcrumb schema
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: 'Home', url: BASE_URL },
     { name: 'Insights', url: `${BASE_URL}/insights` },
@@ -115,95 +113,99 @@ export default async function BlogPostPage({ params }: PageProps) {
         }}
       />
       <ReadingProgress />
-      
+
       <article className="min-h-screen bg-white">
-        {/* Hero Section with Background Image */}
-        {post.image && (
-          <div className="relative w-full h-[60vh] md:h-[70vh] overflow-hidden">
-            {/* Background Image */}
-            <Image
-              src={post.image}
-              alt={post.title}
-              fill
-              className="object-cover"
-              priority
-            />
-            
-            {/* Gradient Overlay - Increased opacity for better contrast */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
-            
-            {/* Hero Content - Lower Left Positioning */}
+        {post.image ? (
+          <div className="relative h-[44vh] min-h-[320px] w-full overflow-hidden md:h-[52vh]">
+            <Image src={post.image} alt={post.title} fill className="object-cover" priority />
+
+            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/35 to-black/10" />
+
             <div className="absolute inset-0 flex items-end">
               <Container maxWidth="xl">
-                <div className="max-w-4xl pb-8 md:pb-12 lg:pb-16 px-4">
-                  {/* Category Badge */}
-                  <div className="flex mb-3 md:mb-4">
-                    <Badge className="bg-white/90 text-secondary backdrop-blur-sm hover:bg-white transition-colors border-transparent px-3 py-1 text-xs">
-                      {post.category}
-                    </Badge>
-                  </div>
+                <header className="max-w-3xl px-4 pb-10 md:pb-14">
+                  <Badge className="mb-4 border-transparent bg-white/90 px-3 py-1 text-xs text-secondary backdrop-blur-sm">
+                    {post.category}
+                  </Badge>
 
-                  {/* Title */}
-                  <Heading 
-                    as={1} 
-                    className="text-2xl md:text-3xl lg:text-4xl font-sans font-bold text-white mb-3 md:mb-4 leading-tight tracking-tight"
+                  <Heading
+                    as={1}
+                    className="mb-4 text-balance text-3xl font-bold leading-tight tracking-tight text-white md:text-4xl lg:text-5xl"
                   >
                     {post.title}
                   </Heading>
 
-                  {/* Metadata */}
-                  <div className="flex flex-wrap items-center gap-2 md:gap-3 text-white/70 text-xs md:text-sm font-medium">
-                    <span>
-                      {formatDate(post.date)}
-                    </span>
+                  {post.excerpt && (
+                    <p className="mb-5 max-w-2xl text-base leading-relaxed text-white/90 md:text-lg">
+                      {post.excerpt}
+                    </p>
+                  )}
+
+                  <div className="flex flex-wrap items-center gap-2 text-sm font-medium text-white/80">
+                    <span>{formatDate(post.date)}</span>
                     {post.readTime && (
                       <>
-                        <span>•</span>
+                        <span aria-hidden="true">•</span>
                         <span>{post.readTime}</span>
                       </>
                     )}
                   </div>
-                </div>
+                </header>
               </Container>
             </div>
           </div>
+        ) : (
+          <Container maxWidth="xl" className="border-b border-surface py-12 md:py-16">
+            <header className="mx-auto max-w-3xl px-4 text-center md:px-0">
+              <Badge className="mb-4 border-transparent bg-primary/10 px-3 py-1 text-xs text-primary">{post.category}</Badge>
+              <Heading as={1} className="mb-4 text-balance text-3xl font-bold leading-tight tracking-tight md:text-4xl">
+                {post.title}
+              </Heading>
+              {post.excerpt && <p className="mb-6 text-base leading-relaxed text-text md:text-lg">{post.excerpt}</p>}
+              <div className="flex flex-wrap items-center justify-center gap-2 text-sm font-medium text-text/80">
+                <span>{formatDate(post.date)}</span>
+                {post.readTime && (
+                  <>
+                    <span aria-hidden="true">•</span>
+                    <span>{post.readTime}</span>
+                  </>
+                )}
+              </div>
+            </header>
+          </Container>
         )}
 
-        {/* Content Section */}
-        <Container maxWidth="xl" className="py-16 md:py-24">
-          <div className="flex flex-col md:flex-row gap-8 md:gap-12 lg:gap-24 relative">
-            
-            {/* Sidebar / Share Buttons - Sticky on Desktop */}
-            <div className="hidden md:block w-12 flex-shrink-0">
-              <div className="sticky top-32">
-                 <ShareButtons title={post.title} />
+        <Container maxWidth="xl" className="py-12 md:py-16 lg:py-20">
+          <div className="relative flex flex-col gap-8 md:flex-row md:gap-10 lg:gap-12">
+            <aside className="hidden w-12 flex-shrink-0 md:block" aria-label="Share this article">
+              <div className="sticky top-28">
+                <ShareButtons title={post.title} />
               </div>
-            </div>
+            </aside>
 
-            {/* Main Content */}
-            <div className="flex-1 max-w-4xl mx-auto md:mx-0">
-              <div 
-                className="prose prose-lg md:prose-xl prose-slate max-w-none 
-                  prose-headings:text-secondary prose-headings:font-bold prose-headings:tracking-tight
-                  prose-p:text-text prose-p:leading-8 prose-p:font-light
+            <div className="mx-auto w-full max-w-[72ch] md:mx-0">
+              <div
+                className="prose prose-base max-w-none text-text md:prose-lg
+                  prose-headings:text-secondary prose-headings:font-semibold prose-headings:tracking-tight prose-headings:scroll-mt-28
+                  prose-h2:mt-12 prose-h2:mb-4 prose-h3:mt-8 prose-h3:mb-3
+                  prose-p:leading-8 prose-p:mb-6
                   prose-strong:text-secondary prose-strong:font-semibold
-                  prose-a:text-primary prose-a:no-underline prose-a:border-b prose-a:border-primary/30 hover:prose-a:border-primary transition-colors
-                  prose-blockquote:border-l-primary prose-blockquote:text-secondary/80 prose-blockquote:italic
-                  prose-img:rounded-lg prose-img:shadow-sm"
+                  prose-a:text-primary prose-a:font-medium prose-a:no-underline prose-a:border-b prose-a:border-primary/30 hover:prose-a:border-primary
+                  prose-ul:my-6 prose-ol:my-6 prose-li:my-1 prose-li:marker:text-primary
+                  prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-background prose-blockquote:px-5 prose-blockquote:py-3 prose-blockquote:text-secondary/90
+                  prose-img:my-10 prose-img:rounded-xl prose-img:shadow-sm"
                 dangerouslySetInnerHTML={{ __html: cleanContent }}
               />
 
-              {/* Mobile Share Buttons */}
-              <div className="md:hidden mt-12 pt-8 border-t border-surface">
-                <p className="text-sm text-secondary/60 mb-4 font-medium uppercase tracking-wider">Share this article</p>
+              <div className="mt-12 border-t border-surface pt-8 md:hidden">
+                <p className="mb-4 text-xs font-semibold uppercase tracking-[0.12em] text-secondary/70">Share this article</p>
                 <ShareButtons title={post.title} />
               </div>
 
-              {/* Navigation Footer */}
-              <div className="mt-20 pt-10 border-t border-surface">
+              <div className="mt-14 border-t border-surface pt-8">
                 <Link href="/insights">
-                  <Button variant="ghost" className="pl-0 text-secondary hover:text-primary hover:bg-transparent -ml-4 group">
-                    <span className="mr-2 group-hover:-translate-x-1 transition-transform">←</span> Back to Insights
+                  <Button variant="ghost" className="-ml-4 pl-0 text-secondary hover:bg-transparent hover:text-primary group">
+                    <span className="mr-2 transition-transform group-hover:-translate-x-1">←</span> Back to Insights
                   </Button>
                 </Link>
               </div>
