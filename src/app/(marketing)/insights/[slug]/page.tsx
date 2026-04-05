@@ -132,13 +132,13 @@ export default async function BlogPostPage({ params }: PageProps) {
             {/* Gradient Overlay - Sophisticated darkening for legibility */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/30" />
 
-            {/* Hero Content - Centered for refined balance */}
-            <div className="absolute inset-0 flex items-center justify-center text-center">
+            {/* Hero Content - Skewed to the bottom for image visibility */}
+            <div className="absolute inset-0 flex items-end justify-center text-center pb-8 md:pb-12">
               <Container maxWidth="xl">
                 <div className="max-w-4xl mx-auto px-4">
                   {/* Category Badge */}
-                  <div className="flex justify-center mb-6">
-                    <Badge className="bg-white/95 text-secondary backdrop-blur-sm hover:bg-white transition-colors border-transparent px-4 py-1.5 text-[10px] md:text-xs uppercase tracking-[0.2em] font-bold">
+                  <div className="flex justify-center mb-3">
+                    <Badge className="bg-white/95 text-secondary backdrop-blur-sm hover:bg-white transition-colors border-transparent px-2 py-0.5 text-[8px] md:text-[9px] uppercase tracking-[0.2em] font-bold">
                       {post.category}
                     </Badge>
                   </div>
@@ -146,7 +146,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                   {/* Title */}
                   <Heading
                     as={1}
-                    className="text-2xl md:text-4xl lg:text-5xl font-sans font-extrabold text-white mb-4 md:mb-6 leading-[1.1] tracking-tight drop-shadow-sm"
+                    className="text-xl md:text-3xl lg:text-4xl font-sans font-extrabold text-white mb-3 md:mb-4 leading-[1.1] tracking-tight drop-shadow-sm"
                   >
                     {post.title}
                   </Heading>
@@ -184,7 +184,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             <div className="max-w-3xl mx-auto">
               {/* Optional: Excerpt or Lead Paragraph */}
               {post.excerpt && (
-                <p className="text-xl md:text-2xl text-secondary/70 font-light leading-relaxed mb-12 italic border-l-4 border-primary/20 pl-8">
+                <p className="text-xl md:text-2xl text-secondary/70 font-light leading-relaxed mb-8 italic border-l-4 border-primary/20 pl-8">
                   {post.excerpt}
                 </p>
               )}
@@ -192,14 +192,14 @@ export default async function BlogPostPage({ params }: PageProps) {
               <div 
                 className="prose prose-lg prose-slate max-w-none
                   prose-headings:text-secondary prose-headings:font-bold prose-headings:tracking-tight
-                  prose-headings:mt-12 prose-headings:mb-6
+                  prose-headings:mt-6 prose-headings:mb-3
                   prose-p:text-text prose-p:leading-relaxed prose-p:font-normal
-                  prose-p:mb-8
+                  prose-p:mb-3
                   prose-strong:text-secondary prose-strong:font-semibold
                   prose-a:text-primary prose-a:no-underline prose-a:border-b prose-a:border-primary/30 hover:prose-a:border-primary transition-colors
-                  prose-blockquote:border-l-primary prose-blockquote:text-secondary/80 prose-blockquote:italic prose-blockquote:my-10
-                  prose-ul:my-8 prose-ol:my-8 prose-li:my-3
-                  prose-img:rounded-lg prose-img:shadow-sm prose-img:my-12"
+                  prose-blockquote:border-l-primary prose-blockquote:text-secondary/80 prose-blockquote:italic prose-blockquote:my-4
+                  prose-ul:my-3 prose-ol:my-3 prose-li:my-0.5
+                  prose-img:rounded-lg prose-img:shadow-sm prose-img:my-6"
                 dangerouslySetInnerHTML={{ __html: cleanContent }}
               />
 
