@@ -146,7 +146,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                   {/* Title */}
                   <Heading
                     as={1}
-                    className="text-3xl md:text-5xl lg:text-6xl font-sans font-extrabold text-white mb-6 md:mb-8 leading-[1.1] tracking-tight drop-shadow-sm"
+                    className="text-2xl md:text-4xl lg:text-5xl font-sans font-extrabold text-white mb-4 md:mb-6 leading-[1.1] tracking-tight drop-shadow-sm"
                   >
                     {post.title}
                   </Heading>
@@ -192,11 +192,14 @@ export default async function BlogPostPage({ params }: PageProps) {
               <div 
                 className="prose prose-lg prose-slate max-w-none
                   prose-headings:text-secondary prose-headings:font-bold prose-headings:tracking-tight
+                  prose-headings:mt-12 prose-headings:mb-6
                   prose-p:text-text prose-p:leading-relaxed prose-p:font-normal
+                  prose-p:mb-8
                   prose-strong:text-secondary prose-strong:font-semibold
                   prose-a:text-primary prose-a:no-underline prose-a:border-b prose-a:border-primary/30 hover:prose-a:border-primary transition-colors
-                  prose-blockquote:border-l-primary prose-blockquote:text-secondary/80 prose-blockquote:italic
-                  prose-img:rounded-lg prose-img:shadow-sm"
+                  prose-blockquote:border-l-primary prose-blockquote:text-secondary/80 prose-blockquote:italic prose-blockquote:my-10
+                  prose-ul:my-8 prose-ol:my-8 prose-li:my-3
+                  prose-img:rounded-lg prose-img:shadow-sm prose-img:my-12"
                 dangerouslySetInnerHTML={{ __html: cleanContent }}
               />
 
