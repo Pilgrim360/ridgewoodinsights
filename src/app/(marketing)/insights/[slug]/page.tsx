@@ -114,7 +114,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           __html: JSON.stringify(breadcrumbSchema),
         }}
       />
-      <ReadingProgress />
+      <ReadingProgress targetSelector="article" />
       
       <article className="min-h-screen bg-white pb-20">
         {/* Hero Section with Background Image */}
