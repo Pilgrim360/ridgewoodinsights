@@ -114,12 +114,12 @@ export default async function BlogPostPage({ params }: PageProps) {
           __html: JSON.stringify(breadcrumbSchema),
         }}
       />
-      <ReadingProgress />
+      <ReadingProgress targetSelector="article" />
       
-      <article className="min-h-screen bg-white">
+      <article className="min-h-screen bg-white pb-20">
         {/* Hero Section with Background Image */}
         {post.image && (
-          <div className="relative w-full h-[60vh] md:h-[70vh] overflow-hidden">
+          <div className="relative w-full h-[60vh] md:h-[75vh] overflow-hidden">
             {/* Background Image */}
             <Image
               src={post.image}
@@ -128,37 +128,37 @@ export default async function BlogPostPage({ params }: PageProps) {
               className="object-cover"
               priority
             />
-            
-            {/* Gradient Overlay - Increased opacity for better contrast */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
-            
-            {/* Hero Content - Lower Left Positioning */}
-            <div className="absolute inset-0 flex items-end">
+
+            {/* Gradient Overlay - Sophisticated darkening for legibility */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/30" />
+
+            {/* Hero Content - Skewed to the bottom for image visibility */}
+            <div className="absolute inset-0 flex items-end justify-center text-center pb-8 md:pb-12">
               <Container maxWidth="xl">
-                <div className="max-w-4xl pb-8 md:pb-12 lg:pb-16 px-4">
+                <div className="max-w-4xl mx-auto px-4">
                   {/* Category Badge */}
-                  <div className="flex mb-3 md:mb-4">
-                    <Badge className="bg-white/90 text-secondary backdrop-blur-sm hover:bg-white transition-colors border-transparent px-3 py-1 text-xs">
+                  <div className="flex justify-center mb-3">
+                    <Badge className="bg-white/95 text-secondary backdrop-blur-sm hover:bg-white transition-colors border-transparent px-2 py-0.5 text-[8px] md:text-[9px] uppercase tracking-[0.2em] font-bold">
                       {post.category}
                     </Badge>
                   </div>
 
                   {/* Title */}
-                  <Heading 
-                    as={1} 
-                    className="text-2xl md:text-3xl lg:text-4xl font-sans font-bold text-white mb-3 md:mb-4 leading-tight tracking-tight"
+                  <Heading
+                    as={1}
+                    className="text-2xl md:text-4xl lg:text-5xl font-sans font-extrabold text-white mb-3 md:mb-4 leading-[1.1] tracking-tight drop-shadow-sm"
                   >
                     {post.title}
                   </Heading>
 
                   {/* Metadata */}
-                  <div className="flex flex-wrap items-center gap-2 md:gap-3 text-white/70 text-xs md:text-sm font-medium">
-                    <span>
+                  <div className="flex items-center justify-center gap-4 text-white/80 text-sm md:text-base font-medium tracking-wide">
+                    <time dateTime={post.date}>
                       {formatDate(post.date)}
-                    </span>
+                    </time>
                     {post.readTime && (
                       <>
-                        <span>•</span>
+                        <span className="text-white/40">•</span>
                         <span>{post.readTime}</span>
                       </>
                     )}
@@ -170,31 +170,34 @@ export default async function BlogPostPage({ params }: PageProps) {
         )}
 
         {/* Content Section */}
-        <Container maxWidth="xl" className="py-16 md:py-24">
-          <div className="flex flex-col md:flex-row gap-8 md:gap-12 lg:gap-24 relative">
-            
-            {/* Sidebar / Share Buttons - Sticky on Desktop */}
-            <div className="hidden md:block w-12 flex-shrink-0">
+        <Container maxWidth="xl" className="py-12 md:py-16">
+          <div className="relative">
+            {/* Desktop Share Buttons - Floating to the left */}
+            <div className="hidden xl:block absolute -left-24 top-0 h-full">
               <div className="sticky top-32">
+                 <p className="text-[10px] text-secondary/40 font-bold uppercase tracking-tighter mb-4 -rotate-90 origin-left translate-x-4">Share</p>
                  <ShareButtons title={post.title} />
               </div>
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 max-w-4xl mx-auto md:mx-0">
+            <div className="max-w-3xl mx-auto">
               <div 
-                className="prose prose-lg md:prose-xl prose-slate max-w-none 
+                className="prose prose-lg prose-slate max-w-none
                   prose-headings:text-secondary prose-headings:font-bold prose-headings:tracking-tight
-                  prose-p:text-text prose-p:leading-8 prose-p:font-light
+                  prose-headings:mt-4 prose-headings:mb-2
+                  prose-p:text-text prose-p:leading-relaxed prose-p:font-normal
+                  prose-p:mb-2
                   prose-strong:text-secondary prose-strong:font-semibold
                   prose-a:text-primary prose-a:no-underline prose-a:border-b prose-a:border-primary/30 hover:prose-a:border-primary transition-colors
-                  prose-blockquote:border-l-primary prose-blockquote:text-secondary/80 prose-blockquote:italic
-                  prose-img:rounded-lg prose-img:shadow-sm"
+                  prose-blockquote:border-l-primary prose-blockquote:text-secondary/80 prose-blockquote:italic prose-blockquote:my-2
+                  prose-ul:my-2 prose-ol:my-2 prose-li:my-0
+                  prose-img:rounded-lg prose-img:shadow-sm prose-img:my-4"
                 dangerouslySetInnerHTML={{ __html: cleanContent }}
               />
 
-              {/* Mobile Share Buttons */}
-              <div className="md:hidden mt-12 pt-8 border-t border-surface">
+              {/* Share Buttons (Mobile and Tablet) */}
+              <div className="xl:hidden mt-12 pt-8 border-t border-surface">
                 <p className="text-sm text-secondary/60 mb-4 font-medium uppercase tracking-wider">Share this article</p>
                 <ShareButtons title={post.title} />
               </div>
