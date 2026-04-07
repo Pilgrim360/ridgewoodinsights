@@ -40,6 +40,7 @@ export const LineHeight = Extension.create<LineHeightOptions>({
 
               return {
                 style: `line-height: ${attributes.lineHeight}`,
+                'data-line-height': attributes.lineHeight,
               };
             },
           },

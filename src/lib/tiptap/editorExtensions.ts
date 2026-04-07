@@ -24,6 +24,8 @@ import { IframeEmbed } from './extensions/IframeEmbed';
 import { AudioEmbed } from './extensions/AudioEmbed';
 import { ImageExtended } from './extensions/ImageExtended';
 import { HeadingWithId } from './extensions/HeadingWithId';
+import { SlashCommand } from './extensions/SlashCommand';
+import { slashCommandSuggestion } from './slashCommandSuggestion';
 
 export interface PostEditorExtensionsOptions {
   placeholder?: string;
@@ -86,6 +88,9 @@ export function createPostEditorExtensions({
     }),
     Placeholder.configure({
       placeholder,
+    }),
+    SlashCommand.configure({
+      suggestion: slashCommandSuggestion,
     }),
   ];
 }

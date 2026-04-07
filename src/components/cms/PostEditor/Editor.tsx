@@ -96,9 +96,9 @@ export function Editor({ postId, initialData }: EditorProps) {
   const editorDisabled = publishMutation.isPending;
 
   return (
-    <div className="h-full flex flex-col bg-background pointer-events-auto">
+    <div className="h-full flex flex-col bg-background pointer-events-auto -mt-6 -mx-4 md:-mx-8">
       {/* Editor Actions Bar */}
-      <div className="flex items-center justify-between mb-6 bg-white border border-surface rounded-xl p-3 shadow-sm">
+      <div className="flex items-center justify-between mb-6 bg-white border-b border-surface p-3 shadow-sm sticky top-0 z-30">
         <div className="flex items-center gap-2">
           <button
             onClick={() => router.push('/cms/posts')}
@@ -123,8 +123,8 @@ export function Editor({ postId, initialData }: EditorProps) {
         />
       </div>
 
-      <div className="flex-1 overflow-y-auto flex flex-col lg:flex-row pointer-events-auto relative">
-        <div className="flex-1 min-w-0 pointer-events-auto">
+      <div className="flex-1 overflow-y-auto flex flex-col lg:flex-row pointer-events-auto relative px-4 md:px-8">
+        <div className="flex-1 min-w-0 pointer-events-auto pb-20">
           <div className="max-w-3xl mx-auto w-full">
             <TipTapEditor
               title={state.title}

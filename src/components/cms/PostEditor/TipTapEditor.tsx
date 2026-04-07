@@ -9,6 +9,7 @@ import { createPostEditorExtensions } from '@/lib/tiptap/editorExtensions';
 import { sanitizePastedHtml } from '@/lib/tiptap/sanitize';
 
 import { EditorImageBubbleMenu } from './EditorImageBubbleMenu';
+import { EditorTextBubbleMenu } from './EditorTextBubbleMenu';
 import { EditorToolbar } from './EditorToolbar';
 
 export interface TipTapEditorProps {
@@ -52,10 +53,10 @@ export function TipTapEditor({
     editorProps: {
       attributes: {
         class: cn(
-          'prose prose-sm max-w-none',
+          'prose prose-lg max-w-none',
           'prose-headings:text-secondary prose-p:text-text',
           'prose-a:text-primary',
-          'min-h-[28rem] px-4 py-4 outline-none'
+          'min-h-[40rem] px-8 py-12 outline-none'
         ),
       },
       transformPastedHTML: sanitizePastedHtml,
@@ -145,10 +146,11 @@ export function TipTapEditor({
   return (
     <div className="space-y-4">
       <EditorImageBubbleMenu editor={editor} disabled={disabled} onError={onError} />
+      <EditorTextBubbleMenu editor={editor} disabled={disabled} />
 
       <div className="overflow-hidden rounded-xl border border-surface bg-white shadow-sm">
         {/* Sticky Toolbar */}
-        <div className="sticky top-0 z-20 border-b border-surface bg-white/80 backdrop-blur-md">
+        <div className="sticky top-14 z-20 border-b border-surface bg-white/80 backdrop-blur-md">
           <EditorToolbar
             editor={editor}
             disabled={disabled}

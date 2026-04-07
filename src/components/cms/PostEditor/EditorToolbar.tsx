@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { type Editor } from '@tiptap/react';
 import {
   Bold,
@@ -74,6 +74,12 @@ export function EditorToolbar({
 
   const [isUploading, setIsUploading] = useState(false);
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
+
+  useEffect(() => {
+    const handleOpenMediaModal = () => setIsMediaModalOpen(true);
+    window.addEventListener('cms:open-media-modal', handleOpenMediaModal);
+    return () => window.removeEventListener('cms:open-media-modal', handleOpenMediaModal);
+  }, []);
 
 
   const headings = useMemo(
