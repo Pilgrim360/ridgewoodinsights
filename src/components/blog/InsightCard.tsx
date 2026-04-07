@@ -78,7 +78,7 @@ export const InsightCard = ({ insight, layout = 'grid' }: InsightCardProps) => {
       className={cn(
         'group p-0 overflow-hidden',
         'transition-all duration-300 motion-reduce:transition-none',
-        'focus-within:ring-2 focus-within:ring-primary/30 focus-within:ring-offset-2',
+        'focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:outline-none',
         isFeatured && 'shadow-xl'
       )}
       asChild
