@@ -75,7 +75,7 @@ export function ServicesOverview({
             <Card
               key={service.id}
               variant="default"
-              className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2"
+              className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none"
               asChild
             >
               <Link
