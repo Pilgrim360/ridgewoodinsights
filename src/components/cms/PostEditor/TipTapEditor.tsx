@@ -9,6 +9,7 @@ import { createPostEditorExtensions } from '@/lib/tiptap/editorExtensions';
 import { sanitizePastedHtml } from '@/lib/tiptap/sanitize';
 
 import { EditorImageBubbleMenu } from './EditorImageBubbleMenu';
+import { EditorFloatingMenu } from './EditorFloatingMenu';
 import { EditorToolbar } from './EditorToolbar';
 
 export interface TipTapEditorProps {
@@ -59,8 +60,14 @@ export function TipTapEditor({
         ),
       },
       transformPastedHTML: sanitizePastedHtml,
+      transformPastedText: (text: string) => {
+        return text;
+      },
       handlePaste: (_view, event) => {
-        const files = Array.from(event.clipboardData?.files ?? []);
+        const clipboardData = event.clipboardData;
+        if (!clipboardData) return false;
+
+        const files = Array.from(clipboardData.files);
         const imageFiles = files.filter((file) => file.type.startsWith('image/'));
 
         if (imageFiles.length === 0) return false;
@@ -145,6 +152,7 @@ export function TipTapEditor({
   return (
     <div className="space-y-4">
       <EditorImageBubbleMenu editor={editor} disabled={disabled} onError={onError} />
+      <EditorFloatingMenu editor={editor} disabled={disabled} />
 
       <div className="overflow-hidden rounded-xl border border-surface bg-white shadow-sm">
         {/* Sticky Toolbar */}

@@ -12,12 +12,19 @@ export function ToolbarButton({
   className,
   isActive,
   disabled,
+  children,
   ...props
 }: ToolbarButtonProps) {
+  const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
   return (
     <button
       type="button"
       disabled={disabled}
+      onPointerDown={handlePointerDown}
       className={cn(
         'inline-flex items-center justify-center',
         'h-9 min-w-9 px-2 rounded-md border',
@@ -31,6 +38,8 @@ export function ToolbarButton({
         className
       )}
       {...props}
-    />
+    >
+      {children}
+    </button>
   );
 }

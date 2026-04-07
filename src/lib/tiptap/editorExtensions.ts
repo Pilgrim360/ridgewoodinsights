@@ -37,6 +37,14 @@ export function createPostEditorExtensions({
   return [
     StarterKit.configure({
       heading: false,
+      bulletList: {
+        keepMarks: true,
+        keepAttributes: false,
+      },
+      orderedList: {
+        keepMarks: true,
+        keepAttributes: false,
+      },
     }),
     HeadingWithId.configure({
       levels: [1, 2, 3, 4, 5, 6],
