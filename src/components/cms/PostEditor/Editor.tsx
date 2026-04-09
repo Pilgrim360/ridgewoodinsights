@@ -128,22 +128,24 @@ export function Editor({ postId, initialData }: EditorProps) {
           />
         </div>
 
-        {/* Affixed Toolbar - spans full width, unified with actions bar */}
+        {/* Affixed Toolbar - aligned with writing area */}
         {editorInstance && (
-          <div className="border-b border-surface border-t border-x-0 bg-white/95 backdrop-blur-sm">
-            <EditorToolbar
-              editor={editorInstance}
-              disabled={editorDisabled}
-              onError={showError}
-              className="border-0 rounded-none"
-            />
+          <div className="max-w-3xl mx-auto px-4 sm:px-0">
+            <div className="border-b border-surface border-t border-x-0 bg-white/95 backdrop-blur-sm rounded-b-lg">
+              <EditorToolbar
+                editor={editorInstance}
+                disabled={editorDisabled}
+                onError={showError}
+                className="border-0 rounded-none"
+              />
+            </div>
           </div>
         )}
       </div>
 
       <div className="flex-1 overflow-y-auto flex flex-col lg:flex-row pointer-events-auto relative">
-        <div className="flex-1 min-w-0 pointer-events-auto">
-          <div className="max-w-3xl mx-auto w-full">
+        <div className="flex-1 min-w-0 pointer-events-auto pt-6">
+          <div className="max-w-3xl mx-auto w-full px-4 sm:px-0">
             <TipTapEditor
               title={state.title}
               onTitleChange={(value) => updateField('title', value)}
