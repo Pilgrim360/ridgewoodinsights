@@ -9,7 +9,6 @@ import { createPostEditorExtensions } from '@/lib/tiptap/editorExtensions';
 import { sanitizePastedHtml } from '@/lib/tiptap/sanitize';
 
 import { EditorImageBubbleMenu } from './EditorImageBubbleMenu';
-import { EditorToolbar } from './EditorToolbar';
 
 export interface TipTapEditorProps {
   title: string;
@@ -19,6 +18,7 @@ export interface TipTapEditorProps {
   disabled?: boolean;
   characterLimit?: number;
   onError?: (message: string) => void;
+  onEditorReady?: (editor: Editor | null) => void;
 }
 
 export function TipTapEditor({
@@ -29,6 +29,7 @@ export function TipTapEditor({
   disabled,
   characterLimit = 50000,
   onError,
+  onEditorReady,
 }: TipTapEditorProps) {
   const [isPastingUpload, setIsPastingUpload] = useState(false);
   const editorRef = useRef<Editor | null>(null);
@@ -42,9 +43,11 @@ export function TipTapEditor({
     editable: !disabled,
     onCreate: ({ editor: ed }) => {
       editorRef.current = ed;
+      onEditorReady?.(ed);
     },
     onDestroy: () => {
       editorRef.current = null;
+      onEditorReady?.(null);
     },
     onUpdate: ({ editor: ed }) => {
       onChange(ed.getHTML());
@@ -147,16 +150,6 @@ export function TipTapEditor({
       <EditorImageBubbleMenu editor={editor} disabled={disabled} onError={onError} />
 
       <div className="overflow-hidden rounded-xl border border-surface bg-white shadow-sm">
-        {/* Sticky Toolbar */}
-        <div className="sticky top-0 z-20 border-b border-surface bg-white/80 backdrop-blur-md">
-          <EditorToolbar
-            editor={editor}
-            disabled={disabled}
-            onError={onError}
-            className="w-full border-0 rounded-none bg-transparent"
-          />
-        </div>
-
         <div className="px-6 pt-8 pb-4">
           <input
             type="text"
