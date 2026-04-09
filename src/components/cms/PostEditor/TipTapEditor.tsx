@@ -7,6 +7,7 @@ import { uploadPostImage } from '@/lib/cms/storage';
 import { cn } from '@/lib/utils';
 import { createPostEditorExtensions } from '@/lib/tiptap/editorExtensions';
 import { sanitizePastedHtml } from '@/lib/tiptap/sanitize';
+import { useCmsHeaderSlots } from '@/contexts/CmsHeaderSlotsContext';
 
 import { EditorImageBubbleMenu } from './EditorImageBubbleMenu';
 import { EditorToolbar } from './EditorToolbar';
@@ -32,6 +33,7 @@ export function TipTapEditor({
 }: TipTapEditorProps) {
   const [isPastingUpload, setIsPastingUpload] = useState(false);
   const editorRef = useRef<Editor | null>(null);
+  const { setSubHeader } = useCmsHeaderSlots();
 
   const editor = useEditor({
     extensions: createPostEditorExtensions({
@@ -128,6 +130,23 @@ export function TipTapEditor({
     editor.setEditable(!disabled);
   }, [editor, disabled]);
 
+  useEffect(() => {
+    if (!editor) return;
+
+    setSubHeader(
+      <EditorToolbar
+        editor={editor}
+        disabled={disabled}
+        onError={onError}
+        className="w-full border-0 rounded-none bg-transparent"
+      />
+    );
+
+    return () => {
+      setSubHeader(null);
+    };
+  }, [editor, disabled, onError, setSubHeader]);
+
   const stats = useMemo(() => {
     if (!editor) {
       return {
@@ -147,16 +166,6 @@ export function TipTapEditor({
       <EditorImageBubbleMenu editor={editor} disabled={disabled} onError={onError} />
 
       <div className="overflow-hidden rounded-xl border border-surface bg-white shadow-sm">
-        {/* Sticky Toolbar */}
-        <div className="sticky top-0 z-20 border-b border-surface bg-white/80 backdrop-blur-md">
-          <EditorToolbar
-            editor={editor}
-            disabled={disabled}
-            onError={onError}
-            className="w-full border-0 rounded-none bg-transparent"
-          />
-        </div>
-
         <div className="px-6 pt-8 pb-4">
           <input
             type="text"

@@ -222,7 +222,7 @@ export function EditorToolbar({
   return (
     <div
       className={cn(
-        'flex flex-wrap items-center gap-2 rounded-lg border border-surface bg-white p-2',
+        'flex flex-wrap items-center gap-2 rounded-lg border border-surface bg-white p-1',
         className
       )}
     >

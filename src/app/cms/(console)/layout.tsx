@@ -65,7 +65,7 @@ function CmsSubHeader() {
   if (!slots.subHeader) return null;
 
   return (
-    <div className="border-b border-surface bg-white px-4 py-2 md:px-6">
+    <div className="border-b border-surface bg-white/80 backdrop-blur-md px-4 py-1 md:px-6 sticky top-14 z-20">
       {slots.subHeader}
     </div>
   );
