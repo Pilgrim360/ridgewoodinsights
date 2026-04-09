@@ -189,4 +189,9 @@
   .cms-toolbar-slot > div::-webkit-scrollbar-thumb:hover {
     background: #9ca3af;
   }
+
+  /* Editor actions bar within toolbar - ensure proper spacing and layout */
+  .cms-toolbar-slot .editor-actions {
+    @apply flex items-center justify-between w-full;
+  }
 }
