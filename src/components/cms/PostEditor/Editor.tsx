@@ -11,6 +11,8 @@ import { cn } from '@/lib/utils';
 
 import { EditorSidebar } from './EditorSidebar';
 import { TipTapEditor } from './TipTapEditor';
+import { EditorToolbar } from './EditorToolbar';
+import { type Editor as TiptapEditor } from '@tiptap/react';
 
 interface EditorProps {
   postId?: string;
@@ -32,6 +34,7 @@ export function Editor({ postId, initialData }: EditorProps) {
   const router = useRouter();
   const { showError } = useCmsError();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [editorInstance, setEditorInstance] = useState<TiptapEditor | null>(null);
 
   const publishMutation = usePublishPost();
 
@@ -108,7 +111,7 @@ export function Editor({ postId, initialData }: EditorProps) {
             Back to Posts
           </button>
         </div>
-        
+
         <EditorHeaderActions
           isDirty={isDirty}
           isSaving={isBusy}
@@ -123,6 +126,18 @@ export function Editor({ postId, initialData }: EditorProps) {
         />
       </div>
 
+      {/* Affixed Toolbar - spans full width */}
+      {editorInstance && (
+        <div className="sticky top-0 z-20 mb-6">
+          <EditorToolbar
+            editor={editorInstance}
+            disabled={editorDisabled}
+            onError={showError}
+            className="border border-surface rounded-lg shadow-sm"
+          />
+        </div>
+      )}
+
       <div className="flex-1 overflow-y-auto flex flex-col lg:flex-row pointer-events-auto relative">
         <div className="flex-1 min-w-0 pointer-events-auto">
           <div className="max-w-3xl mx-auto w-full">
@@ -133,6 +148,7 @@ export function Editor({ postId, initialData }: EditorProps) {
               onChange={(value) => updateField('content', value)}
               disabled={editorDisabled}
               onError={showError}
+              onEditorReady={setEditorInstance}
             />
           </div>
         </div>
