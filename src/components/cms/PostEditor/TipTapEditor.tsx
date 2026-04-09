@@ -9,7 +9,7 @@ import { createPostEditorExtensions } from '@/lib/tiptap/editorExtensions';
 import { sanitizePastedHtml } from '@/lib/tiptap/sanitize';
 
 import { EditorImageBubbleMenu } from './EditorImageBubbleMenu';
-import { EditorToolbar } from './EditorToolbar';
+import { EditorToolbarGlobal } from './EditorToolbarGlobal';
 
 export interface TipTapEditorProps {
   title: string;
@@ -145,18 +145,9 @@ export function TipTapEditor({
   return (
     <div className="space-y-4">
       <EditorImageBubbleMenu editor={editor} disabled={disabled} onError={onError} />
+      <EditorToolbarGlobal editor={editor} disabled={disabled} onError={onError} />
 
       <div className="overflow-hidden rounded-xl border border-surface bg-white shadow-sm">
-        {/* Sticky Toolbar */}
-        <div className="sticky top-0 z-20 border-b border-surface bg-white/80 backdrop-blur-md">
-          <EditorToolbar
-            editor={editor}
-            disabled={disabled}
-            onError={onError}
-            className="w-full border-0 rounded-none bg-transparent"
-          />
-        </div>
-
         <div className="px-6 pt-8 pb-4">
           <input
             type="text"

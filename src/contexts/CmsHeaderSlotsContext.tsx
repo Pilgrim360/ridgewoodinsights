@@ -12,6 +12,7 @@ export interface CmsHeaderSlots {
   title: React.ReactNode | null;
   actions: React.ReactNode | null;
   subHeader: React.ReactNode | null;
+  toolbar: React.ReactNode | null;
 }
 
 interface CmsHeaderSlotsContextValue {
@@ -19,6 +20,7 @@ interface CmsHeaderSlotsContextValue {
   setTitle: (title: React.ReactNode | null) => void;
   setActions: (actions: React.ReactNode | null) => void;
   setSubHeader: (subHeader: React.ReactNode | null) => void;
+  setToolbar: (toolbar: React.ReactNode | null) => void;
   clear: () => void;
 }
 
@@ -35,6 +37,7 @@ export function CmsHeaderSlotsProvider({
     title: null,
     actions: null,
     subHeader: null,
+    toolbar: null,
   });
 
   const setTitle = useCallback((title: React.ReactNode | null) => {
@@ -49,8 +52,12 @@ export function CmsHeaderSlotsProvider({
     setSlots((prev) => ({ ...prev, subHeader }));
   }, []);
 
+  const setToolbar = useCallback((toolbar: React.ReactNode | null) => {
+    setSlots((prev) => ({ ...prev, toolbar }));
+  }, []);
+
   const clear = useCallback(() => {
-    setSlots({ title: null, actions: null, subHeader: null });
+    setSlots({ title: null, actions: null, subHeader: null, toolbar: null });
   }, []);
 
   const value = useMemo(
@@ -59,9 +66,10 @@ export function CmsHeaderSlotsProvider({
       setTitle,
       setActions,
       setSubHeader,
+      setToolbar,
       clear,
     }),
-    [slots, setTitle, setActions, setSubHeader, clear]
+    [slots, setTitle, setActions, setSubHeader, setToolbar, clear]
   );
 
   return (

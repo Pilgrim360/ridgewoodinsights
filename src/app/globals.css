@@ -144,3 +144,49 @@
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
 }
+
+/* Editor Toolbar Global Positioning */
+/* Position toolbar to sit below CMS header and span full width */
+@layer components {
+  .cms-toolbar-slot {
+    @apply sticky top-0 z-40;
+  }
+
+  /* Ensure toolbar adapts to sidebar state on desktop */
+  @media (min-width: 768px) {
+    .cms-toolbar-slot {
+      /* Toolbar spans full width including sidebar space at desktop */
+      @apply sticky top-0 z-40;
+    }
+  }
+
+  /* Mobile responsive: ensure toolbar is accessible */
+  @media (max-width: 767px) {
+    .cms-toolbar-slot {
+      @apply sticky top-0 z-40;
+    }
+  }
+
+  /* Prevent toolbar content from being cut off */
+  .cms-toolbar-slot > div {
+    @apply overflow-x-auto;
+  }
+
+  /* Scrollbar styling for toolbar overflow */
+  .cms-toolbar-slot > div::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .cms-toolbar-slot > div::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .cms-toolbar-slot > div::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 2px;
+  }
+
+  .cms-toolbar-slot > div::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+  }
+}

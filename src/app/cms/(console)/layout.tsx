@@ -46,6 +46,8 @@ export default function DashboardLayout({
 
           <CmsSubHeader />
 
+          <CmsToolbarSlot />
+
           <main className="flex-1 overflow-y-auto overflow-x-hidden">
             <div className="container mx-auto max-w-7xl px-4 py-6 md:px-8">
               {children}
@@ -67,6 +69,18 @@ function CmsSubHeader() {
   return (
     <div className="border-b border-surface bg-white px-4 py-2 md:px-6">
       {slots.subHeader}
+    </div>
+  );
+}
+
+function CmsToolbarSlot() {
+  const { slots } = useCmsHeaderSlots();
+
+  if (!slots.toolbar) return null;
+
+  return (
+    <div className="cms-toolbar-slot">
+      {slots.toolbar}
     </div>
   );
 }
