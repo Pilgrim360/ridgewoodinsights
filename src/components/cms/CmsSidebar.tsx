@@ -132,7 +132,7 @@ export const CmsSidebar = React.forwardRef<HTMLDivElement, CmsSidebarProps>(
           ref={ref}
           className={cn(
             'hidden md:flex flex-col h-screen bg-white border-r border-surface overflow-hidden',
-            'transition-all duration-200 ease-in-out relative z-40',
+            'transition-all duration-200 ease-in-out relative z-50',
             isExpanded ? 'w-60' : 'w-16'
           )}
           role="navigation"

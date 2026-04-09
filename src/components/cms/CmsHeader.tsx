@@ -28,7 +28,7 @@ export const CmsHeader = React.forwardRef<HTMLElement, CmsHeaderProps>(
         ref={ref}
         className={cn(
           'bg-white border-b border-surface px-4 py-2',
-          'flex items-center justify-between gap-4 h-14 sticky top-0 z-30',
+          'flex items-center justify-between gap-4 h-14 sticky top-0 z-40',
           !hasHeaderContent && 'md:hidden'
         )}
         role="banner"
@@ -59,7 +59,7 @@ export const CmsHeader = React.forwardRef<HTMLElement, CmsHeaderProps>(
           slots.title ? "justify-start" : "justify-center"
         )}>
           {slots.title ? (
-            <div className="truncate font-semibold text-sm text-secondary">{slots.title}</div>
+            <div className="truncate font-semibold text-sm text-secondary pointer-events-auto">{slots.title}</div>
           ) : (
             <span className="md:hidden font-bold text-primary tracking-tight">RIDGEWOOD</span>
           )}
@@ -67,7 +67,7 @@ export const CmsHeader = React.forwardRef<HTMLElement, CmsHeaderProps>(
 
         {/* Actions slot */}
         {slots.actions && (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 pointer-events-auto flex-shrink-0">
             {slots.actions}
           </div>
         )}
