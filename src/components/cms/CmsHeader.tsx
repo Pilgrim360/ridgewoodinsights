@@ -59,7 +59,7 @@ export const CmsHeader = React.forwardRef<HTMLElement, CmsHeaderProps>(
           slots.title ? "justify-start" : "justify-center"
         )}>
           {slots.title ? (
-            <div className="truncate font-semibold text-sm text-secondary pointer-events-auto">{slots.title}</div>
+            <div className="truncate font-semibold text-sm text-secondary">{slots.title}</div>
           ) : (
             <span className="md:hidden font-bold text-primary tracking-tight">RIDGEWOOD</span>
           )}
@@ -67,7 +67,7 @@ export const CmsHeader = React.forwardRef<HTMLElement, CmsHeaderProps>(
 
         {/* Actions slot */}
         {slots.actions && (
-          <div className="flex items-center gap-3 pointer-events-auto flex-shrink-0">
+          <div className="flex items-center gap-3 flex-shrink-0">
             {slots.actions}
           </div>
         )}

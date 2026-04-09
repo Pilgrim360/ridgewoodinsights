@@ -147,9 +147,9 @@ export function Editor({ postId, initialData }: EditorProps) {
   }, [setTitle, setActions]);
 
   return (
-    <div className="flex flex-col bg-background pointer-events-auto">
-      <div className="flex-1 flex flex-col lg:flex-row relative pointer-events-auto">
-        <div className="flex-1 min-w-0 pointer-events-auto">
+    <div className="flex flex-col bg-background">
+      <div className="flex-1 flex flex-col lg:flex-row relative">
+        <div className="flex-1 min-w-0">
           <div className="max-w-3xl mx-auto w-full">
             <TipTapEditor
               title={state.title}
