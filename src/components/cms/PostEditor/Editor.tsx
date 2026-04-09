@@ -11,6 +11,8 @@ import { cn } from '@/lib/utils';
 
 import { EditorSidebar } from './EditorSidebar';
 import { TipTapEditor } from './TipTapEditor';
+import { EditorToolbar } from './EditorToolbar';
+import { type Editor as TiptapEditor } from '@tiptap/react';
 
 interface EditorProps {
   postId?: string;
@@ -32,6 +34,7 @@ export function Editor({ postId, initialData }: EditorProps) {
   const router = useRouter();
   const { showError } = useCmsError();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [editorInstance, setEditorInstance] = useState<TiptapEditor | null>(null);
 
   const publishMutation = usePublishPost();
 
@@ -97,30 +100,45 @@ export function Editor({ postId, initialData }: EditorProps) {
 
   return (
     <div className="h-full flex flex-col bg-background pointer-events-auto">
-      {/* Editor Actions Bar */}
-      <div className="flex items-center justify-between mb-6 bg-white border border-surface rounded-xl p-3 shadow-sm">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => router.push('/cms/posts')}
-            className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-sm font-medium text-text/60 hover:text-secondary hover:bg-surface transition-colors"
-          >
-            <ChevronLeft className="w-4 h-4" />
-            Back to Posts
-          </button>
+      {/* Sticky Header Unit: Nav/Status Bar + Toolbar */}
+      <div className="sticky top-0 z-30">
+        {/* Editor Actions Bar */}
+        <div className="flex items-center justify-between bg-white border border-b border-surface border-t-0 border-x-0 p-3 shadow-sm">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => router.push('/cms/posts')}
+              className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-sm font-medium text-text/60 hover:text-secondary hover:bg-surface transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Back to Posts
+            </button>
+          </div>
+
+          <EditorHeaderActions
+            isDirty={isDirty}
+            isSaving={isBusy}
+            lastSaved={lastSaved}
+            saveError={saveError}
+            onSave={explicitSave}
+            onPublish={handlePublish}
+            canPublish={canPublish}
+            publishDisabledReason={publishDisabledReason}
+            postStatus={state.status}
+            postSlug={state.slug}
+          />
         </div>
-        
-        <EditorHeaderActions
-          isDirty={isDirty}
-          isSaving={isBusy}
-          lastSaved={lastSaved}
-          saveError={saveError}
-          onSave={explicitSave}
-          onPublish={handlePublish}
-          canPublish={canPublish}
-          publishDisabledReason={publishDisabledReason}
-          postStatus={state.status}
-          postSlug={state.slug}
-        />
+
+        {/* Affixed Toolbar - spans full width, unified with actions bar */}
+        {editorInstance && (
+          <div className="border-b border-surface border-t border-x-0 bg-white/95 backdrop-blur-sm">
+            <EditorToolbar
+              editor={editorInstance}
+              disabled={editorDisabled}
+              onError={showError}
+              className="border-0 rounded-none"
+            />
+          </div>
+        )}
       </div>
 
       <div className="flex-1 overflow-y-auto flex flex-col lg:flex-row pointer-events-auto relative">
@@ -133,6 +151,7 @@ export function Editor({ postId, initialData }: EditorProps) {
               onChange={(value) => updateField('content', value)}
               disabled={editorDisabled}
               onError={showError}
+              onEditorReady={setEditorInstance}
             />
           </div>
         </div>
