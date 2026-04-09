@@ -32,7 +32,7 @@ const DEFAULT_STATE: EditorState = {
 export function Editor({ postId, initialData }: EditorProps) {
   const router = useRouter();
   const { showError } = useCmsError();
-  const { setTitle, setActions, clear: clearSlots } = useCmsHeaderSlots();
+  const { setTitle, setActions } = useCmsHeaderSlots();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const publishMutation = usePublishPost();
@@ -122,14 +122,9 @@ export function Editor({ postId, initialData }: EditorProps) {
         postSlug={state.slug}
       />
     );
-
-    return () => {
-      clearSlots();
-    };
   }, [
     setTitle,
     setActions,
-    clearSlots,
     router,
     isDirty,
     isBusy,
@@ -143,10 +138,18 @@ export function Editor({ postId, initialData }: EditorProps) {
     state.slug,
   ]);
 
+  // Cleanup header on unmount
+  useEffect(() => {
+    return () => {
+      setTitle(null);
+      setActions(null);
+    };
+  }, [setTitle, setActions]);
+
   return (
-    <div className="flex flex-col bg-background pointer-events-auto">
-      <div className="flex-1 flex flex-col lg:flex-row pointer-events-auto relative">
-        <div className="flex-1 min-w-0 pointer-events-auto">
+    <div className="flex flex-col bg-background">
+      <div className="flex-1 flex flex-col lg:flex-row relative">
+        <div className="flex-1 min-w-0">
           <div className="max-w-3xl mx-auto w-full">
             <TipTapEditor
               title={state.title}

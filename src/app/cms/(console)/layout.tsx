@@ -9,6 +9,7 @@ import {
   useCmsHeaderSlots,
 } from '@/contexts/CmsHeaderSlotsContext';
 import { useSidebarState } from '@/hooks/useSidebarState';
+import { cn } from '@/lib/utils';
 
 export default function DashboardLayout({
   children,
@@ -62,10 +63,13 @@ export default function DashboardLayout({
 function CmsSubHeader() {
   const { slots } = useCmsHeaderSlots();
 
-  if (!slots.subHeader) return null;
-
   return (
-    <div className="border-b border-surface bg-white/80 backdrop-blur-md px-4 py-1 md:px-6 sticky top-14 z-20">
+    <div
+      className={cn(
+        "border-b border-surface bg-white/80 backdrop-blur-md px-4 md:px-6 sticky top-14 z-20 transition-all duration-200",
+        slots.subHeader ? "py-1 opacity-100 translate-y-0" : "h-0 py-0 border-0 opacity-0 -translate-y-1 pointer-events-none"
+      )}
+    >
       {slots.subHeader}
     </div>
   );
