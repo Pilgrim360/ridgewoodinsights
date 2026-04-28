@@ -32,7 +32,7 @@ const DEFAULT_STATE: EditorState = {
 
 export function Editor({ postId, initialData }: EditorProps) {
   const router = useRouter();
-  const { showError } = useCmsError();
+  const { showError, showSuccess } = useCmsError();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [editorInstance, setEditorInstance] = useState<TiptapEditor | null>(null);
 
@@ -64,33 +64,22 @@ export function Editor({ postId, initialData }: EditorProps) {
     }
 
     try {
-      let currentPostId = postId;
       const nextStatus = 'published';
       const now = new Date().toISOString();
 
-      const savedPost = await performSave({
+      await performSave({
         ...state,
         status: nextStatus,
         published_at: state.published_at || now,
       });
 
-      if (!currentPostId && savedPost?.id) {
-        currentPostId = savedPost.id;
-      }
-
-      if (!currentPostId) return;
-
-      await publishMutation.mutateAsync({
-        id: currentPostId,
-        published_at: state.published_at || now,
-      });
-
+      showSuccess('Post published');
       router.refresh();
       router.push('/cms/posts');
     } catch {
       // Errors are already surfaced via the global cms toast system.
     }
-  }, [performSave, postId, publishMutation, router, showError, state]);
+  }, [performSave, router, showError, showSuccess, state]);
 
   const updateFieldWithNull = <K extends keyof EditorState>(
     field: K,

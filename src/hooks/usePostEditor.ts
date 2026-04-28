@@ -81,6 +81,7 @@ export function usePostEditor({ postId, initialState }: UsePostEditorOptions) {
           cover_image: stateToSave.cover_image,
           excerpt: stateToSave.excerpt,
           status: stateToSave.status,
+          published_at: stateToSave.published_at,
           author_id: stateToSave.author_id,
           disclaimer_type: stateToSave.disclaimer_type,
         });
