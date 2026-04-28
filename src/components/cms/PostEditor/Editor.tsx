@@ -65,8 +65,15 @@ export function Editor({ postId, initialData }: EditorProps) {
 
     try {
       let currentPostId = postId;
+      const nextStatus = 'published';
+      const now = new Date().toISOString();
 
-      const savedPost = await performSave(state);
+      const savedPost = await performSave({
+        ...state,
+        status: nextStatus,
+        published_at: state.published_at || now,
+      });
+
       if (!currentPostId && savedPost?.id) {
         currentPostId = savedPost.id;
       }
@@ -75,7 +82,7 @@ export function Editor({ postId, initialData }: EditorProps) {
 
       await publishMutation.mutateAsync({
         id: currentPostId,
-        published_at: state.published_at,
+        published_at: state.published_at || now,
       });
 
       router.refresh();
