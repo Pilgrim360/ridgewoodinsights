@@ -52,6 +52,7 @@ export function Editor({ postId, initialData }: EditorProps) {
     saveError,
     explicitSave,
     performSave,
+    performLockedAction,
   } = usePostEditor({
     postId,
     initialState,
@@ -64,26 +65,64 @@ export function Editor({ postId, initialData }: EditorProps) {
     }
 
     try {
-      let currentPostId = postId;
+      const now = new Date().toISOString();
 
-      const savedPost = await performSave(state);
-      if (!currentPostId && savedPost?.id) {
-        currentPostId = savedPost.id;
-      }
+      // Immediately update status to prevent any accidental auto-saves
+      // from overwriting the status back to draft.
+      updateField('status', 'published');
+      updateField('published_at', now);
 
-      if (!currentPostId) return;
+      await performLockedAction(async () => {
+        let currentPostId = postId;
 
-      await publishMutation.mutateAsync({
-        id: currentPostId,
-        published_at: state.published_at,
+        // If the post doesn't exist yet, we need to create it first.
+        // We pass the latest state which now has status: 'published'.
+        if (!currentPostId) {
+          const savedPost = await performSave({
+            ...state,
+            status: 'published',
+            published_at: now,
+          });
+          currentPostId = savedPost?.id;
+        }
+
+        if (!currentPostId) return;
+
+        // Atomic update and publish
+        await publishMutation.mutateAsync({
+          id: currentPostId,
+          published_at: now,
+          updates: {
+            title: state.title,
+            slug: state.slug,
+            content: state.content,
+            category_id: state.category_id,
+            cover_image: state.cover_image,
+            excerpt: state.excerpt,
+            disclaimer_type: state.disclaimer_type,
+          },
+        });
+
+        return undefined; // Action expected to return PostData | undefined
       });
 
       router.refresh();
       router.push('/cms/posts');
-    } catch {
+    } catch (error) {
+      console.error('Publish failed:', error);
       // Errors are already surfaced via the global cms toast system.
     }
-  }, [performSave, postId, publishMutation, router, showError, state]);
+  }, [
+    state,
+    updateField,
+    performLockedAction,
+    postId,
+    performSave,
+    publishMutation,
+    router,
+    showError,
+  ]);
+
 
   const updateFieldWithNull = <K extends keyof EditorState>(
     field: K,
@@ -210,8 +249,8 @@ interface EditorHeaderActionsProps {
   isSaving: boolean;
   lastSaved: Date | null;
   saveError: string | null;
-  onSave: () => Promise<void>;
-  onPublish: () => Promise<void>;
+  onSave: () => Promise<unknown>;
+  onPublish: () => Promise<unknown>;
   canPublish: boolean;
   publishDisabledReason?: string;
   postStatus: 'draft' | 'published' | 'scheduled';

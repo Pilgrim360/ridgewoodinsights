@@ -415,12 +415,13 @@ export function usePublishPost() {
   return useMutation<
     PostData,
     unknown,
-    { id: string; published_at?: string },
+    { id: string; published_at?: string; updates?: Partial<PostData> },
     { previousPost: PostData | undefined }
   >({
-    mutationFn: ({ id, published_at }) => withSupabaseAuthRetry(() => publishPost(id, published_at)),
+    mutationFn: ({ id, published_at, updates }) =>
+      withSupabaseAuthRetry(() => publishPost(id, published_at, updates)),
     meta: mutationMeta,
-    onMutate: async ({ id, published_at }) => {
+    onMutate: async ({ id, published_at, updates }) => {
       await queryClient.cancelQueries({ queryKey: cmsQueryKeys.posts.all });
 
       const previousPost = queryClient.getQueryData<PostData>(cmsQueryKeys.posts.byId(id));
@@ -429,6 +430,7 @@ export function usePublishPost() {
       if (previousPost) {
         queryClient.setQueryData<PostData>(cmsQueryKeys.posts.byId(id), {
           ...previousPost,
+          ...updates,
           status: 'published',
           published_at: nextPublishedAt,
         });
