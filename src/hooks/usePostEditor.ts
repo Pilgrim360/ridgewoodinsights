@@ -36,18 +36,42 @@ export function usePostEditor({ postId, initialState }: UsePostEditorOptions) {
   const isSaving = updateMutation.isPending || createMutation.isPending;
 
   const savingLockRef = useRef(false);
+  const currentSavePromise = useRef<Promise<PostData | undefined> | null>(null);
+
+  /**
+   * Performs an action while ensuring no other save actions are running.
+   * If a save is already in progress, it waits for it to complete.
+   */
+  const performLockedAction = useCallback(
+    async (action: () => Promise<PostData | undefined>): Promise<PostData | undefined> => {
+      // Wait for any in-flight save to finish
+      if (currentSavePromise.current) {
+        await currentSavePromise.current;
+      }
+
+      const promise = (async () => {
+        try {
+          savingLockRef.current = true;
+          return await action();
+        } finally {
+          savingLockRef.current = false;
+          currentSavePromise.current = null;
+        }
+      })();
+
+      currentSavePromise.current = promise;
+      return promise;
+    },
+    []
+  );
 
   const saveDraftOrUpdate = useCallback(
     async (stateToSave: EditorState): Promise<PostData | undefined> => {
-      if (savingLockRef.current) return;
-
       if (!postId && !stateToSave.title.trim()) return;
 
       setSaveError(null);
 
       try {
-        savingLockRef.current = true;
-
         if (stateToSave.status === 'published' && !isContentValid(stateToSave.content)) {
           throw new Error('Content cannot be empty for published posts');
         }
@@ -80,7 +104,7 @@ export function usePostEditor({ postId, initialState }: UsePostEditorOptions) {
           category_id: stateToSave.category_id,
           cover_image: stateToSave.cover_image,
           excerpt: stateToSave.excerpt,
-          status: 'draft',
+          status: stateToSave.status || 'draft',
           author_id: stateToSave.author_id,
           disclaimer_type: stateToSave.disclaimer_type,
         });
@@ -93,8 +117,6 @@ export function usePostEditor({ postId, initialState }: UsePostEditorOptions) {
           error instanceof Error ? error.message : 'Failed to save post';
         setSaveError(errorMessage);
         return undefined;
-      } finally {
-        savingLockRef.current = false;
       }
     },
     [createMutation, postId, updateMutation]
@@ -104,12 +126,15 @@ export function usePostEditor({ postId, initialState }: UsePostEditorOptions) {
     () =>
       debounce(
         (nextState: EditorState) => {
-          void saveDraftOrUpdate(nextState);
+          // For auto-saves, if a lock is held, we just skip it because
+          // a more important save (manual or auto) is already happening.
+          if (savingLockRef.current) return;
+          void performLockedAction(() => saveDraftOrUpdate(nextState));
         },
         300,
         { leading: false, trailing: true }
       ),
-    [saveDraftOrUpdate]
+    [performLockedAction, saveDraftOrUpdate]
   );
 
   useEffect(() => {
@@ -133,8 +158,8 @@ export function usePostEditor({ postId, initialState }: UsePostEditorOptions) {
 
   const explicitSave = useCallback(async () => {
     debouncedAutoSave.cancel();
-    await saveDraftOrUpdate(state);
-  }, [debouncedAutoSave, saveDraftOrUpdate, state]);
+    return await performLockedAction(() => saveDraftOrUpdate(state));
+  }, [debouncedAutoSave, performLockedAction, saveDraftOrUpdate, state]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -157,5 +182,6 @@ export function usePostEditor({ postId, initialState }: UsePostEditorOptions) {
     saveError,
     explicitSave,
     performSave: saveDraftOrUpdate,
+    performLockedAction,
   };
 }

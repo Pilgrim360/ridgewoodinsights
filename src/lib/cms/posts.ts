@@ -267,10 +267,15 @@ export async function deletePost(id: string): Promise<void> {
 /**
  * Publish a post (set status and published_at)
  */
-export async function publishPost(id: string, published_at?: string): Promise<PostData> {
+export async function publishPost(
+  id: string,
+  published_at?: string,
+  updates: Partial<PostData> = {}
+): Promise<PostData> {
   const now = published_at || new Date().toISOString();
 
   return updatePost(id, {
+    ...updates,
     status: 'published',
     published_at: now,
   });
