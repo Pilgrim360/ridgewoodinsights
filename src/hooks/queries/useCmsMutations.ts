@@ -416,12 +416,19 @@ export function usePublishPost() {
     PostData,
     unknown,
     { id: string; published_at?: string },
-    { previousPost: PostData | undefined }
+    {
+      previousLists: Array<[QueryKey, PaginatedResult<PostData> | undefined]>;
+      previousPost: PostData | undefined;
+    }
   >({
     mutationFn: ({ id, published_at }) => withSupabaseAuthRetry(() => publishPost(id, published_at)),
     meta: mutationMeta,
     onMutate: async ({ id, published_at }) => {
       await queryClient.cancelQueries({ queryKey: cmsQueryKeys.posts.all });
+
+      const previousLists = queryClient.getQueriesData<PaginatedResult<PostData>>({
+        queryKey: cmsQueryKeys.posts.all,
+      });
 
       const previousPost = queryClient.getQueryData<PostData>(cmsQueryKeys.posts.byId(id));
       const nextPublishedAt = published_at ?? new Date().toISOString();
@@ -434,17 +441,44 @@ export function usePublishPost() {
         });
       }
 
-      return { previousPost };
+      previousLists.forEach(([key, data]) => {
+        const filters = getPostsFiltersFromKey(key);
+        if (!filters || !data) return;
+
+        const next: PostData[] = data.data
+          .map((post): PostData => {
+            if (post.id !== id) return post;
+            return {
+              ...post,
+              status: 'published',
+              published_at: nextPublishedAt,
+            } as PostData;
+          })
+          .filter((post) => shouldIncludePostInList(filters, post));
+
+        queryClient.setQueryData<PaginatedResult<PostData>>(key, {
+          ...data,
+          data: next,
+        });
+      });
+
+      return { previousLists, previousPost };
     },
     onError: (error, variables, context) => {
       if (context?.previousPost) {
         queryClient.setQueryData(cmsQueryKeys.posts.byId(variables.id), context.previousPost);
       }
 
+      context?.previousLists?.forEach(([key, data]) => {
+        queryClient.setQueryData(key, data);
+      });
+
       const parsed = CmsErrorHandler.parse(error);
       showError(parsed.message);
     },
-    onSuccess: () => {
+    onSuccess: (published) => {
+      queryClient.setQueryData(cmsQueryKeys.posts.byId(published.id!), published);
+
       queryClient.invalidateQueries({ queryKey: cmsQueryKeys.posts.all });
       queryClient.invalidateQueries({ queryKey: cmsQueryKeys.posts.stats() });
       queryClient.invalidateQueries({ queryKey: ['activity'] });

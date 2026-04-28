@@ -80,7 +80,8 @@ export function usePostEditor({ postId, initialState }: UsePostEditorOptions) {
           category_id: stateToSave.category_id,
           cover_image: stateToSave.cover_image,
           excerpt: stateToSave.excerpt,
-          status: 'draft',
+          status: stateToSave.status,
+          published_at: stateToSave.published_at,
           author_id: stateToSave.author_id,
           disclaimer_type: stateToSave.disclaimer_type,
         });
@@ -131,10 +132,17 @@ export function usePostEditor({ postId, initialState }: UsePostEditorOptions) {
     setIsDirty(true);
   }, []);
 
+  const performSave = useCallback(
+    async (stateToSave: EditorState) => {
+      debouncedAutoSave.cancel();
+      return await saveDraftOrUpdate(stateToSave);
+    },
+    [debouncedAutoSave, saveDraftOrUpdate]
+  );
+
   const explicitSave = useCallback(async () => {
-    debouncedAutoSave.cancel();
-    await saveDraftOrUpdate(state);
-  }, [debouncedAutoSave, saveDraftOrUpdate, state]);
+    await performSave(state);
+  }, [performSave, state]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -156,6 +164,6 @@ export function usePostEditor({ postId, initialState }: UsePostEditorOptions) {
     lastSaved,
     saveError,
     explicitSave,
-    performSave: saveDraftOrUpdate,
+    performSave,
   };
 }
